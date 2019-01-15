@@ -341,6 +341,7 @@ TSWLatexianTemp*
 *.glstex
 
 ### Matlab ###
+*.mat
 # Windows default autosave extension
 *.asv
 
