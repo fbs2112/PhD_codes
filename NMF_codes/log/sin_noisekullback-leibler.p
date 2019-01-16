@@ -1,0 +1,1 @@
+{"alpha": 0.0, "beta_loss": "kullback-leibler", "init": "nndsvda", "l1_ratio": 0.0, "max_iter": 10000, "n_components": 2, "random_state": 1, "shuffle": false, "solver": "mu", "tol": 1e-16, "verbose": 2, "nfft": 256, "nperseg": 256}
