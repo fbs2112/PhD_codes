@@ -12,7 +12,6 @@ class Differentiator:
         
         self.filt_length = filt_length
         self.window = window
-
         self.idealImpulseResponse = self.get_impulse_response()
         self.truncImpulseResponse = self.get_trunc_impulse_response()
         
@@ -20,15 +19,12 @@ class Differentiator:
 
         n = np.arange(1, ((self.filt_length - 1)/2) + 1)
         idealImpulseResponse = (-1**n)/n
-        idealImpulseResponse = np.concatenate((-idealImpulseResponse[::-1], idealImpulseResponse))
-        idealImpulseResponse = np.insert(idealImpulseResponse, len(idealImpulseResponse)//2, 0)
+        idealImpulseResponse = np.concatenate((-idealImpulseResponse[::-1], np.array([0]), idealImpulseResponse))
         return idealImpulseResponse
 
     def get_trunc_impulse_response(self):
         if len(self.window) != len(self.idealImpulseResponse):
             raise ValueError('Window and impulse response sizes do not match')
-        if np.sum(self.window) != 1:
-            self.window = self.window/np.sum(self.window)
         return self.idealImpulseResponse*self.window
 
     def diff_eval(self, x):
