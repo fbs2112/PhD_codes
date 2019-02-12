@@ -32,3 +32,19 @@ def db2pow(y):
 
 def pow_eval(y):
     return (np.linalg.norm(y)**2)/len(y)
+
+def TK_filtering(x):
+    
+    def TK_eval(x):
+        b = x**2
+        aux = np.concatenate((np.zeros(1), x[:-1]))
+        aux2 = np.concatenate((x[1:], np.zeros(1)))
+        a = b - aux2*aux
+        return a
+    
+    isreal = np.isreal(x).all()
+    
+    if isreal:
+        return TK_eval(x)
+    else:
+        return TK_eval(np.real(x)) + TK_eval(np.imag(x))
