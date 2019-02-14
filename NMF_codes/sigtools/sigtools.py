@@ -33,13 +33,17 @@ def db2pow(y):
 def pow_eval(y):
     return (np.linalg.norm(y)**2)/len(y)
 
-def TK_filtering(x):
+def TK_filtering(x, threshold=1e-1):
     
     def TK_eval(x):
-        b = x**2
-        aux = np.concatenate((np.zeros(1), x[:-1]))
-        aux2 = np.concatenate((x[1:], np.zeros(1)))
-        a = b - aux2*aux
+        a = np.empty(x.shape)
+        for i in range(x.shape[0]):
+            y = x[i,:]
+            b = y**2
+            aux = np.concatenate((np.zeros(1), y[:-1]))
+            aux2 = np.concatenate((y[1:], np.zeros(1)))
+            a[i,:] = b - aux2*aux
+            # a[:,i] = np.where(np.abs(a[:,i]) < threshold, 0, a[:,i])
         return a
     
     isreal = np.isreal(x).all()
