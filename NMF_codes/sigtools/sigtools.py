@@ -37,12 +37,12 @@ def TK_filtering(x, threshold=1e-1):
     
     def TK_eval(x):
         a = np.empty(x.shape)
-        for i in range(x.shape[0]):
-            y = x[i,:]
+        for i in range(x.shape[1]):
+            y = x[:,i]
             b = y**2
             aux = np.concatenate((np.zeros(1), y[:-1]))
             aux2 = np.concatenate((y[1:], np.zeros(1)))
-            a[i,:] = b - aux2*aux
+            a[:,i] = b - aux2*aux
             # a[:,i] = np.where(np.abs(a[:,i]) < threshold, 0, a[:,i])
         return a
     
