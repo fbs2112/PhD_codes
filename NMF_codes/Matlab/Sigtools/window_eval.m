@@ -25,3 +25,4 @@ idxNonzero = find(lastColumn, 1, 'last');
 idxZero = find(~lastColumn);
 yAux(idxZero,end) = lastColumn(idxNonzero);
 window = function_eval(yAux, 1);
+window(window<=eps) = 0;

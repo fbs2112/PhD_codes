@@ -1,0 +1,5 @@
+results 01: results using chirp, with similarity function and variance window;
+results 02: results using chirp, with similarity function and no variance window;
+results 03: results using chirp, with no similarity function and variance window;
+results 04: results using chirp, with no similarity function and no variance window;
+
