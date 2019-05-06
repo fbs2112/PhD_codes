@@ -1,5 +1,8 @@
 results 01: results using chirp, with gaussian kernel;
 results 02: results using chirp, with gaussian kernel, variance window;
-results 03: same as 01, but with a median window over the detector output;
-results 04: same as 02, but with a median window over the detector output;
+results 03: same as 01, but with inner product and a median window over the detector output;
+results 04: same as 02, but with inner product and a median window over the detector output;
+results 05: same as 01, but with a median window over the detector output;
+results 06: same as 02, but with a median window over the detector output;
+
 
