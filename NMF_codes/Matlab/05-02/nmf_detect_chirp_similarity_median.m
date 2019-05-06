@@ -6,21 +6,8 @@ set(groot, 'defaultAxesTickLabelInterpreter','latex');
 set(groot, 'defaultLegendInterpreter','latex');
 set(groot, 'defaulttextInterpreter','latex')
 
-
-% set(groot,'defaultFigureVisible','off')
-% set(groot,'defaultFigureVisible','on')
-
-
 addpath(['..' filesep '.' filesep 'Sigtools' filesep])
 addpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
-addpath(['..' filesep '.' filesep 'Misc'])
-
-linewidth = 1.5;
-fontname = 'Times';
-fontsize = 24;
-figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
-
-dataPath = ['.' filesep 'figs' filesep '04-10' filesep];
 
 fs = 32.768e6;
 numberOfSources = 1;
@@ -47,7 +34,6 @@ params.repetitions = 1;
 params.JNRVector = [-20 -15 -10 -5 0];
 
 rng(random_state);
-save_fig = false;
 
 %signal mixture definition---------
 t = 0:1/fs:(secondsOfData - 1/fs);
@@ -61,7 +47,6 @@ offsetTime = onsetTime + length(signal1)/fs;
 
 signal1 = [zeros(round(onsetTime*fs), 1); signal1;zeros(round(onsetTime*fs), 1)];
 signal1Length = length(signal1);
-
 
 onset = find(signal1, 1, 'first') - params.nperseg;
 offset = find(signal1, 1, 'last') - params.nperseg;
@@ -78,9 +63,8 @@ if strcmp(similarityName, 'gaussian')
     stdVector = 7:2:13;
 end
 
-expName = 'detect_chirp_sim';
+expName = 'detect_chirp_similarity_gaussian_median';
 thresholdVector = 0.1:0.1:0.9;
-% thresholdVector = 0.5;
 monteCarloLoops = 50;
 
 %Pre allocation------------------------------------------------------------
@@ -110,32 +94,11 @@ for loopIndex = 1:monteCarloLoops
                     end
                 end
                 
-%                 figure;
+                figure;
                 outputMean = output ./ max(output);
-%                 plot(t.'*1e6, outputMean);
-%                 ylabel('Normalized Magnitude');
-%                 xlabel('Time [$\mu$s]');
-%                 ylim([0 1.1])
-%                 xlim([min(t) max(t)]*1e6);
-%                 hold on
-%                 line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','red','LineStyle','--');
-%                 line([t(offset) t(offset)]*1e6, [0 1.1], 'Color','red','LineStyle','--');
-%                
-%                 
-%                 %Drawing lines------------------------------------------------------
-%                 line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','red','LineStyle','--');
-%                 line([t(offset) t(offset)]*1e6, [0 1.1], 'Color','red','LineStyle','--');
-%                 
-%                 line([t(onset  + round(window_length*2)) t(onset + round(window_length*2))]*1e6, [0 1.1], 'Color','black','LineStyle','--');
-%                 line([t(offset - round(window_length*2)) t(offset - round(window_length*2))]*1e6, [0 1.1], 'Color','black','LineStyle','--');
-%                 
-%                 line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','magenta','LineStyle','--');
-%                 line([t(offset + round(window_length*2)) t(offset + round(window_length*2))]*1e6, [0 1.1], 'Color','magenta','LineStyle','--');
-%                 %-------------------------------------------------------------------
                 
                 %Detection assessment---------------------------
                 detection_res = detection_eval(outputMean, thresholdVector(thresholdIndex), window_median_length);
-%                 plot(t.'*1e6, detection_res, '*-g')
                 if any(detection_res(1:onset))
                     fp_sim(loopIndex, thresholdIndex, JNRIndex, stdIndex) = fp_sim(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
                 else
@@ -155,9 +118,6 @@ for loopIndex = 1:monteCarloLoops
                 end
                 
                 %------------------------------------------------
-%                 if save_fig
-%                     formatFig(gcf, [dataPath expName  '_' 'activation_'  num2str(params.JNRVector(JNRIndex))], 'en', figProp); %#ok<*UNRCH>
-%                 end
             end
         end
     end
@@ -165,6 +125,5 @@ end
 
 save(['..' filesep '.' filesep 'data' filesep '05-02' filesep 'results05.mat'], 'fp_sim', 'tp_sim', 'tn_sim', 'fn_sim');
 
-rmpath(['..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
