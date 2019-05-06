@@ -62,7 +62,7 @@ for i = 1:numberOfIterations
         H = H0 .* (numH ./ denH);
     end
     
-    reconstructError(i) = beta_divergence(X, W, H, betaDivergence, true(1));
+    reconstructError(i) = beta_divergence(X, W, H, betaDivergence, true);
     dw = max(max(abs(W - W0) / (sqrteps + max(max(abs(W0))))));
     dh = max(max(abs(H - H0) / (sqrteps + max(max(abs(H0))))));
     delta = max(dw, dh);
