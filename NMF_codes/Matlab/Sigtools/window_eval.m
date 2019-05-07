@@ -17,7 +17,7 @@ end
 y = [y(1)*ones(window_length-1, 1); y]; % padding with the first element of y
 y(y==0) = eps;
 
-yAux = flipud(buffer(y, window_length, window_length - hop_size, 'nodelay'));
+yAux = buffer(y, window_length, window_length - hop_size, 'nodelay');
 
 lastColumn = yAux(:, end);
 
