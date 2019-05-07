@@ -94,7 +94,6 @@ for loopIndex = 1:monteCarloLoops
                     end
                 end
                 
-                figure;
                 outputMean = output ./ max(output);
                 
                 %Detection assessment---------------------------
@@ -123,7 +122,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '05-02' filesep 'results05.mat'], 'fp_sim', 'tp_sim', 'tn_sim', 'fn_sim');
+save(['..' filesep '.' filesep 'data' filesep '05-02' filesep 'results07.mat'], 'fp_sim', 'tp_sim', 'tn_sim', 'fn_sim');
 
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
