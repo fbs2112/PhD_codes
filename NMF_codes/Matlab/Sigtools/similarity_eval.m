@@ -16,7 +16,7 @@ switch similarity
     case 'inner'
         output = (x.'*y);
         if strcmp(varargin{1}, 'normalized')
-            output = output/(norm(x)*norm(y));
+            output = output/(norm(x)*norm(y) + eps);
         end
         
     case 'gaussian'
@@ -26,6 +26,13 @@ switch similarity
         
         sigma = varargin{1};
         output =  exp(-(norm(x - y)^2)/(2*sigma^2));
+        
+    case 'euc'       
+        output =  1/(norm(x - y) + eps);
+        
+    case 'corr'
+        output =  sum(xcorr(x, y));
+        
         
     case 'polinomial'
         if nargin < 3
