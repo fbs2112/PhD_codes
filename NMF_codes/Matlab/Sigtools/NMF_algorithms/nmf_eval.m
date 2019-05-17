@@ -38,7 +38,7 @@ for i = 1:length(params.JNRVector)
     
     dataCell{1, i} = PxxAux;
 
-    if nargin > 2 
+    if nargin == 3 
         if varargin{1}
             dataCell{2, i} = TK_filtering(PxxAux);
         end
@@ -46,6 +46,20 @@ for i = 1:length(params.JNRVector)
     
     for j = 1:size(dataCell, 1)
         inputNMF = abs(dataCell{j, i}).^2;
+        
+        if nargin > 3 && strcmp(varargin{2}, 'filt')
+            inputNMF_TPSW = zeros(size(inputNMF));
+            for timeIdx = 1:size(inputNMF, 1)
+                freqComponent = filter(params.tpsw_coeffs, 1, inputNMF(timeIdx,:));
+                inputNMF_TPSW(timeIdx,:) = inputNMF(timeIdx,:);
+                inputNMF_TPSW(timeIdx, inputNMF(timeIdx,:) > params.alpha*freqComponent) = freqComponent(inputNMF(timeIdx,:) > params.alpha*freqComponent);
+                inputNMF_TPSW(timeIdx,:) = filter(params.tpsw_coeffs, 1, inputNMF_TPSW(timeIdx,:));
+            end
+            inputNMF = inputNMF - inputNMF_TPSW;
+            inputNMF(inputNMF < 0) = eps;
+        end
+        
+        
         WAux = cell(params.repetitions, 1);
         HAux = cell(params.repetitions, 1);
         reconstructErrorAux = zeros(params.numberOfIterations, params.repetitions);
