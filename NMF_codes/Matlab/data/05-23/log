@@ -5,6 +5,8 @@ results 04: results using sum of correlation, moving median window
 results 05: results using inner product, two sources, max of window, and moving median window
 results 06: results using inner product with variance window, one source, CFAR, and moving median window
 results 07: results using inner product with variance window, one source, TPSW, CFAR, and moving median window
+results 08: results using inner product with variance window, one source, TPSW, CFAR, without moving median window
+results 09: results using inner product with variance window, one source, CFAR, without median window
 
 
 
