@@ -8,6 +8,7 @@ set(groot, 'defaulttextInterpreter','latex')
 
 addpath(['..' filesep '.' filesep 'Sigtools' filesep])
 addpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
+addpath(['..' filesep '.' filesep 'Misc'])
 
 fs = 32.768e6;
 numberOfSources = 1;
@@ -31,7 +32,7 @@ params.numberOfIterations = 10000;
 params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
-params.JNRVector = [-20 -15 -10 -5 0 inf];
+params.JNRVector = [-20 -15 -10 -5 0];
 numberOfTrainingCells = 800;
 numberOfGuardCells = 10;
 rng(random_state);
@@ -71,7 +72,7 @@ if strcmp(similarityName, 'gaussian')
 end
 
 thresholdVector = 1;
-monteCarloLoops = 1;
+monteCarloLoops = 50;
 
 %Pre allocation------------------------------------------------------------
 fp = zeros(monteCarloLoops, length(thresholdVector), length(params.JNRVector), length(stdVector));
@@ -100,7 +101,7 @@ for loopIndex = 1:monteCarloLoops
                 
                 for tIndex = 1:length(t)
                     if strcmp(similarityName, 'inner')
-                        output(tIndex) = similarity_eval(inputNMF(:,tIndex), W{1, JNRIndex}(:,1), similarityName, 'normalized', false);
+                        output(tIndex) = similarity_eval(inputNMF(:,tIndex), W{1, JNRIndex}(:,1), similarityName, 'normalized', true);
                     else
                         output(tIndex) = similarity_eval(inputNMF(:,tIndex), W{1, JNRIndex}(:,1), similarityName, stdVector(stdIndex), true);
                     end
@@ -108,9 +109,9 @@ for loopIndex = 1:monteCarloLoops
                 
                 
                 outputVar = window_eval(output, window_length, @var);
-%                 outputVarTPSW = tpsw_filt(outputVar, M, N, alpha);
+                outputVarTPSW = tpsw_filt(outputVar, M, N, alpha);
                 outputVar = outputVar ./ max(outputVar);
-%                 outputVarTPSW = outputVarTPSW ./ max(outputVarTPSW);
+                outputVarTPSW = outputVarTPSW ./ max(outputVarTPSW);
                 %Detection assessment---------------------------
                 
 %                 [detection_res, thres] = detector(outputVar.', 1:length(outputVar));
@@ -124,40 +125,38 @@ for loopIndex = 1:monteCarloLoops
                 
 %                 [detection_res, thres] = detector(outputMean, 1:length(outputMean));
 %                 detection_res = detection_eval(outputMean, thresholdVector(thresholdIndex), window_median_length);
-                [detection_res, thres] = detector(outputVar.', 1:length(outputVar));
-                detection_res = window_eval(detection_res, window_median_length, @median);
-                figure;
-                plot(t*1e6, outputVar);
-                hold on;
-%                 plot(t*1e6, outputVarTPSW);
+%                 [detection_res, thres] = detector(outputVarTPSW.', 1:length(outputVarTPSW));
+%                 detection_res = window_eval(detection_res, window_median_length, @median);
 %                 figure;
-                plot(t*1e6, detection_res);
-                hold on;
-                plot(t*1e6, thres, '-.');
-                ylabel('Normalized Magnitude');
-                xlabel('Time [$\mu$s]');
-                ylim([0 1.1])
-                xlim([min(t) max(t)]*1e6);
-                
+%                 plot(t*1e6, outputVar);
+%                 hold on;
+%                 plot(t*1e6, outputVarTPSW);
+%                 plot(t*1e6, detection_res);
+%                 plot(t*1e6, thres, '-.');
+%                 ylabel('Normalized Magnitude');
+%                 xlabel('Time [$\mu$s]');
+%                 ylim([0 1.1])
+%                 xlim([min(t) max(t)]*1e6);
+%                 
 %               %Drawing lines------------------------------------------------------
 %                 line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','red','LineStyle','--');
 %                 line([t(offset) t(offset)]*1e6, [0 1.1], 'Color','red','LineStyle','--');
                 
-                line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
-                line([t(onset  + round(5*window_length/2)) t(onset + round(5*window_length/2))]*1e6, [0 1.1], 'Color','black','LineStyle','--');
+%                 line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
+%                 line([t(onset  + round(5*window_length/2)) t(onset + round(5*window_length/2))]*1e6, [0 1.1], 'Color','black','LineStyle','--');
                 
-                h = findobj(gca,'Type','line');
-                legend([h(5) h(4) h(3)], 'Variance', 'Detector', 'Threshold')
+%                 h = findobj(gca,'Type','line');
+%                 legend([h(6) h(5) h(4)  h(3)], 'Variance', 'TPSW', 'Detector', 'Threshold')
                 
-                linewidth = 1.5;
-                fontname = 'Times';
-                fontsize = 24;
-                
-                figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
-                
-                dataPath = ['..' filesep 'figs' filesep '05-23' filesep];
-                
-                formatFig(gcf, [dataPath 'cfar' num2str(params.JNRVector(JNRIndex))], 'en', figProp);
+%                 linewidth = 1.5;
+%                 fontname = 'Times';
+%                 fontsize = 24;
+%                 
+%                 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+%                 
+%                 dataPath = ['..' filesep 'figs' filesep '05-23' filesep];
+%                 
+%                 formatFig(gcf, [dataPath 'cfar_tpsw' num2str(params.JNRVector(JNRIndex))], 'en', figProp);
                 
 %                 line([t(offset) t(offset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
 %                 line([t(offset + round(5*window_length/2)) t(offset + round(5*window_length/2))]*1e6, [0 1.1], 'Color','black','LineStyle','--');
@@ -167,7 +166,7 @@ for loopIndex = 1:monteCarloLoops
                 %-------------------------------------------------------------------
                 
                %Detection assessment---------------------------
-               [detection_res, ~] = detector(outputVar.', 1:length(outputVar));
+               [detection_res, ~] = detector(outputVarTPSW.', 1:length(outputVarTPSW));
                detection_res = window_eval(detection_res, window_median_length, @median);
                if any(detection_res(1:onset))
                    fp(loopIndex, thresholdIndex, JNRIndex, stdIndex) = fp(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
@@ -193,7 +192,8 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '05-23' filesep 'results06.mat'], 'fp', 'tp', 'tn', 'fn');
+save(['..' filesep '.' filesep 'data' filesep '05-23' filesep 'results07.mat'], 'fp', 'tp', 'tn', 'fn');
 
+rmpath(['..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
