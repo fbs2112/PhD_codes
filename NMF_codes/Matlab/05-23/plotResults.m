@@ -9,40 +9,36 @@ linewidth = 1.5;
 fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
-expName = 'detect_chirp_sim_gaussian';
-dataPath = ['..' filesep '.' filesep 'figs' filesep '05-02' filesep];
-
-save_fig = false;
+dataPath = ['..' filesep '.' filesep 'figs' filesep '05-23' filesep];
 
 threshold = 0.1:0.1:0.9;
 stdVector = 7:2:13;
 
 addpath(['..' filesep '.' filesep 'data' filesep '05-23']);    
 
-load results03.mat;
+load results01.mat;
 
 for i = 1:5
-    tp = squeeze(tp_sim(:,:,i,1));
-    fp = squeeze(fp_sim(:,:,i,1));
-    fn = squeeze(fn_sim(:,:,i,1));
-    tn = squeeze(tn_sim(:,:,i,1));
+    tpVector = squeeze(tp(:,:,i,1));
+    fpVector = squeeze(fp(:,:,i,1));
+    fnVector = squeeze(fn(:,:,i,1));
+    tnVector = squeeze(tn(:,:,i,1));
     
-    fp = fp/2;
-    tn = tn/2;
+    fpVector = fpVector/2;
+    tnVector = tnVector/2;
+   
+    accuracyStd = std((tpVector + tnVector)./(tpVector + fnVector + tnVector + fpVector), 1);
     
-    
-    accuracyStd = std((tp + tn)./(tp + fn + tn + fp), 1);
-    
-    tpr = tp./(tp+fn);
-    fpr = fp./(fp+tn);
+    tpr = tpVector./(tpVector+fnVector);
+    fpr = fpVector./(fpVector+tnVector);
     
     tprStd = std(tpr, 1);
     fprStd = std(fpr, 1);
     
-    tp = mean(tp, 1);
-    fp = mean(fp, 1);
-    fn = mean(fn, 1);
-    tn = mean(tn, 1);
+    tpMean = mean(tpVector, 1);
+    fpMean = mean(fpVector, 1);
+    fnMean = mean(fnVector, 1);
+    tnMean = mean(tnVector, 1);
     
     tpr = mean(tpr, 1);
     fpr = mean(fpr, 1);
@@ -50,7 +46,7 @@ for i = 1:5
     plot(fpr, tpr);
     hold on
     
-    accuracy2(:,i) = (tp + tn)./(tp + fn + tn + fp);
+    accuracy2(:,i) = (tpMean + tnMean)./(tpMean + fnMean + tnMean + fpMean);
     [maxAccuracy(i), indexes(i)] = max(accuracy2(:,i), [], 1);
     
     disp('------------------------------------')
@@ -71,9 +67,10 @@ grid on
 xlabel('Probability of false alarm');
 ylabel('Probability of detection');
 legend('-20 dB', '-15 dB', '-10 dB', '-5 dB', '0 dB', 'Random guess', 'Location', 'southeast');
-
+expName = 'detect_chirp_sim_tpsw';
+save_fig = true;
 if save_fig
-    formatFig(gcf, [dataPath expName '_' 'roc_'  '1_' num2str(j)], 'en', figProp); %#ok<*UNRCH>
+    formatFig(gcf, [dataPath expName '_' 'roc_'], 'en', figProp); %#ok<*UNRCH>
 end
 %-------------------------------------------------------
 
@@ -136,32 +133,32 @@ end
 %-------------------------------------------------------
 clc;
 
-load results03.mat;
+load results06.mat;
 
 expName = 'detect_chirp_sim_inner_median';
 
 figure;
 for i = 1:5
-    tp = squeeze(tp_sim(:,:,i,1));
-    fp = squeeze(fp_sim(:,:,i,1));
-    fn = squeeze(fn_sim(:,:,i,1));
-    tn = squeeze(tn_sim(:,:,i,1));
+    tpVector = squeeze(tp(:,:,i,1));
+    fpVector = squeeze(fp(:,:,i,1));
+    fnVector = squeeze(fn(:,:,i,1));
+    tnVector = squeeze(tn(:,:,i,1));
     
-    fp = fp/2;
-    tn = tn/2;
+    fpVector = fpVector/2;
+    tnVector = tnVector/2;
    
-    accuracyStd = std((tp + tn)./(tp + fn + tn + fp), 1);
+    accuracyStd = std((tpVector + tnVector)./(tpVector + fnVector + tnVector + fpVector), 1);
     
-    tpr = tp./(tp+fn);
-    fpr = fp./(fp+tn);
+    tpr = tpVector./(tpVector+fnVector);
+    fpr = fpVector./(fpVector+tnVector);
     
     tprStd = std(tpr, 1);
     fprStd = std(fpr, 1);
     
-    tp = mean(tp, 1);
-    fp = mean(fp, 1);
-    fn = mean(fn, 1);
-    tn = mean(tn, 1);
+    tpMean = mean(tpVector, 1);
+    fpMean = mean(fpVector, 1);
+    fnMean = mean(fnVector, 1);
+    tnMean = mean(tnVector, 1);
     
     tpr = mean(tpr, 1);
     fpr = mean(fpr, 1);
@@ -169,7 +166,7 @@ for i = 1:5
     plot(fpr, tpr);
     hold on
     
-    accuracy2(:,i) = (tp + tn)./(tp + fn + tn + fp);
+    accuracy2(:,i) = (tpMean + tnMean)./(tpMean + fnMean + tnMean + fpMean);
     [maxAccuracy(i), indexes(i)] = max(accuracy2(:,i), [], 1);
     
     disp('------------------------------------')
