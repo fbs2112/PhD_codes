@@ -3,6 +3,8 @@ results 02: results using inner product, moving median window, and filtering W
 results 03: results using euclidean distance, moving median window
 results 04: results using sum of correlation, moving median window
 results 05: results using inner product, two sources, max of window, and moving median window
+results 06: results using inner product with variance window, one source, CFAR, and moving median window
+results 07: results using inner product with variance window, one source, TPSW, CFAR, and moving median window
 
 
 
