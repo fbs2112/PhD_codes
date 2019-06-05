@@ -4,9 +4,11 @@ results 03: results using euclidean distance, moving median window
 results 04: results using sum of correlation, moving median window
 results 05: results using inner product, two sources, max of window, and moving median window
 results 06: results using inner product with variance window, one source, CFAR, and moving median window
-results 07: results using inner product with variance window, one source, TPSW, CFAR, and moving median window
+results 07: results using inner product with variance window, one source, TPSW, CFAR, and moving median window using probability of false alarm as 0.5%
 results 08: results using inner product with variance window, one source, TPSW, CFAR, without moving median window
 results 09: results using inner product with variance window, one source, CFAR, without median window
+results 10: same as 06, but using probability of false alarm as 0.5%
+results 11: same as 06, but using probability of false alarm as 5%
 
 
 
