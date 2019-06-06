@@ -102,6 +102,7 @@ hold on
 pd_output = fitdist(x, 'Normal');
 y = pdf(pd_output,edges);
 plot(edges, y);
+legend('Data pdf', 'Fitted pdf');
 
 figure
 [N, edges] = histcounts(x, 100, 'Normalization', 'cdf');
@@ -113,7 +114,7 @@ plot(edges, y);
 [y, edge] = ecdf(x);
 plot(edge, y);
 
-legend('Fitted', 'cdf', ' ecdf');
+legend('Fitted', 'cdf', 'ecdf');
 
 [hjb,pjb,kjb,cjb] = jbtest(x); 
 [hlillie,plillie,klillie,clillie] = lillietest(x); 
@@ -124,9 +125,26 @@ mean_gauss = 0;
 var_gauss = 1;
 gauss_data = gaussian_fun(data, mean_gauss, var_gauss);
 
-figure
-plot(data, gauss_data);
+% figure
+% plot(data, gauss_data);
 % [h,p,k,c] = jbtest(x);  
+
+random_vector = randn(length(x), 1);
+
+[hjb2,pjb2,kjb2,cjb2] = jbtest(random_vector); 
+[hlillie2,plillie2,klillie2,clillie2] = lillietest(random_vector); 
+
+
+
+figure
+[N, edges] = histcounts(abs(x).^2, 100, 'Normalization', 'pdf');
+edges = (edges(1:end-1) + edges(2:end))/2;
+plot(edges, N);
+hold on
+pd_output = fitdist(abs(x).^2, 'Exponential');
+y = pdf(pd_output,edges);
+plot(edges, y);
+legend('Data pdf', 'Fitted pdf');
 
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
