@@ -36,7 +36,7 @@ params.JNRVector = [-20 -15 -10 -5 0];
 params.JNRVector = [10];
 
 numberOfTrainingCells = 1000;
-numberOfGuardCells = 10;
+numberOfGuardCells = 100;
 rng(random_state);
 
 %signal mixture definition---------
@@ -67,7 +67,7 @@ alpha = 4;
 %-------------------------------------------
 
 window_length = round(3e-6*fs);
-window_median_length = 201;
+window_median_length = 401;
 similarityName = 'inner';
 stdVector = 0;
 
@@ -87,7 +87,7 @@ tn = zeros(monteCarloLoops, length(params.JNRVector), length(stdVector), length(
 
 detector = phased.CFARDetector('NumTrainingCells', numberOfTrainingCells, 'NumGuardCells', numberOfGuardCells,...
     'ProbabilityFalseAlarm', 0.05, 'ThresholdOutputPort', true);
-detector.Method = 'GOCA';
+detector.Method = 'SOCA';
 % detector.Rank = 100;
 
 for loopIndex = 1:monteCarloLoops
@@ -167,6 +167,11 @@ for loopIndex = 1:monteCarloLoops
                 hold on;
                 plot(t*1e6, detection_res);
                 plot(t*1e6, threshold)
+                legend('$\mathbf{s}$', ' $\mathbf{o}_{\mathrm{med}}$', 'CFAR Threshold');  
+                xlim([0 max(t)*1e6]);
+                xlabel('Time [$\mu$s]');
+                ylabel('Magnitude');
+                
                 if any(detection_res(1:onset))
                     fp(loopIndex, JNRIndex, stdIndex,thresholdIndex) = fp(loopIndex, JNRIndex, stdIndex, thresholdIndex) + 1;
                 else
