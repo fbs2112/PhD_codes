@@ -15,16 +15,6 @@ if aux < 0
 end
 
 inputLength = length(y);
-y = [y(1)*ones(window_length-1, 1); y ; y(end)*ones(window_length-1, 1)]; % padding with the first element of y
-% y(y==0) = eps;
-
+y = [y(1)*ones(window_length-1, 1); y ; y(end)*ones(window_length-1, 1)]; % padding with the first and last elements of y
 yAux = buffer(y, window_length, window_length - hop_size, 'nodelay');
 window = function_eval(yAux(:, 1:inputLength));
-
-% lastColumn = yAux(:, end);
-% 
-% idxNonzero = find(lastColumn, 1, 'last');
-% idxZero = find(~lastColumn);
-% yAux(idxZero,end) = lastColumn(idxNonzero);
-% window = function_eval(yAux, 1);
-% window(window<=eps) = 0;
