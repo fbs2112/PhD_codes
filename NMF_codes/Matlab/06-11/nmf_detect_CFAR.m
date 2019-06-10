@@ -35,8 +35,7 @@ params.repetitions = 1;
 params.JNRVector = [-20 -15 -10 -5 0];
 params.JNRVector = [10];
 
-numberOfTrainingCells = 1000;
-numberOfGuardCells = 100;
+
 rng(random_state);
 
 %signal mixture definition---------
@@ -47,16 +46,19 @@ f1 = 1;
 signal1 = exp(1j*2*pi*f1*f.*t).';
 % signal1 = repmat(signal1, ceil(100e-6/secondsOfData), 1);
 signal1 = repmat(signal1, 2, 1);
+signal1Length = length(signal1);
 
 onsetTime = 1000e-6;
 offsetTime = onsetTime + length(signal1)/fs;
 signal1 = [zeros(round(onsetTime*fs), 1); signal1; zeros(round(1000e-6*fs), 1)];
-signal1Length = length(signal1);
 
 onset = find(signal1, 1, 'first') - params.nperseg;
-offset = signal1Length;
+offset = find(signal1, 1, 'last') - params.nperseg;
 
 mixtureSignal = signal1;
+
+numberOfTrainingCells = 1000;
+numberOfGuardCells = 10;
 %--------------------------------------------
 
 
@@ -67,7 +69,7 @@ alpha = 4;
 %-------------------------------------------
 
 window_length = round(3e-6*fs);
-window_median_length = 401;
+window_median_length = 201;
 similarityName = 'inner';
 stdVector = 0;
 
@@ -87,8 +89,7 @@ tn = zeros(monteCarloLoops, length(params.JNRVector), length(stdVector), length(
 
 detector = phased.CFARDetector('NumTrainingCells', numberOfTrainingCells, 'NumGuardCells', numberOfGuardCells,...
     'ProbabilityFalseAlarm', 0.05, 'ThresholdOutputPort', true);
-detector.Method = 'SOCA';
-% detector.Rank = 100;
+detector.Method = 'GOCA';
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -110,7 +111,15 @@ for loopIndex = 1:monteCarloLoops
             end
             
             output = abs(output).^2;
+                
+            figure;
             
+            plot(output);
+            hold on;
+            [detection_res, thres] = detector(output, 1:length(output));
+            detection_res = window_eval(detection_res, window_median_length, @median);
+            plot(detection_res);
+            plot(thres);
             
 %             outputVar = window_eval(output, window_length, @var);
 %             outputVarTPSW = tpsw_filt(outputVar, M, N, alpha);

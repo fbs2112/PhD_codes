@@ -8,6 +8,7 @@ set(groot, 'defaulttextInterpreter','latex')
 
 addpath(['..' filesep '.' filesep 'Sigtools' filesep])
 addpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
+addpath(['..' filesep 'Misc'])
 
 fs = 32.768e6;
 numberOfSources = 1;
@@ -39,8 +40,6 @@ signalLength = 125e-6;
 numberOfSamples = round(signalLength*fs);
 desiredSignalPower = db2pow(10);
 
-window_length = round(3e-6*fs);
-window_median_length = 201; 
 similarityName = 'inner';
 stdVector = 0;
 
@@ -51,11 +50,14 @@ end
 monteCarloLoops = 200;
 
 output = zeros((numberOfSamples - params.nperseg + 1)/(params.nperseg - params.overlap), length(params.JNRVector), monteCarloLoops);
-% outputZscore = zeros((numberOfSamples - params.nperseg + 1)/(params.nperseg - params.overlap), length(params.JNRVector), monteCarloLoops);
-% outputNotNorm = zeros((numberOfSamples - params.nperseg + 1)/(params.nperseg - params.overlap), length(params.JNRVector), monteCarloLoops);
-% outputNormNotZscore = zeros((numberOfSamples - params.nperseg + 1)/(params.nperseg - params.overlap), length(params.JNRVector), monteCarloLoops);
-
 WTensor = zeros(params.nfft, length(params.JNRVector), monteCarloLoops);
+
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+dataPath = ['..' filesep '.' filesep 'figs' filesep '06-11' filesep];
+expName = 'stats_eval';
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -101,8 +103,13 @@ plot(edges, N);
 hold on
 pd_output = fitdist(x, 'Normal');
 y = pdf(pd_output,edges);
-plot(edges, y);
+plot(edges, y, '--');
 legend('Data pdf', 'Fitted pdf');
+xlabel('$s$');
+ylabel('$f(s)$')
+xlim([-4 4]);
+formatFig(gcf, [dataPath expName '_' 'pdf'], 'en', figProp);
+
 
 figure
 [N, edges] = histcounts(x, 100, 'Normalization', 'cdf');
@@ -110,11 +117,13 @@ edges = (edges(1:end-1) + edges(2:end))/2;
 plot(edges, N);
 hold on
 y = cdf(pd_output, edges);
-plot(edges, y);
-[y, edge] = ecdf(x);
-plot(edge, y);
+plot(edges, y, '--');
+xlabel('$s$');
+ylabel('$F(s)$')
+legend('Fitted', 'cdf');
+xlim([-4 4]);
+formatFig(gcf, [dataPath expName '_' 'cdf'], 'en', figProp);
 
-legend('Fitted', 'cdf', 'ecdf');
 
 [hjb,pjb,kjb,cjb] = jbtest(x); 
 [hlillie,plillie,klillie,clillie] = lillietest(x); 
@@ -125,9 +134,9 @@ mean_gauss = 0;
 var_gauss = 1;
 gauss_data = gaussian_fun(data, mean_gauss, var_gauss);
 
-% figure
-% plot(data, gauss_data);
-% [h,p,k,c] = jbtest(x);  
+figure
+plot(data, gauss_data);
+[h,p,k,c] = jbtest(x);  
 
 random_vector = randn(length(x), 1);
 
@@ -146,5 +155,6 @@ y = pdf(pd_output,edges);
 plot(edges, y);
 legend('Data pdf', 'Fitted pdf');
 
+rmpath(['..' filesep 'Misc'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])

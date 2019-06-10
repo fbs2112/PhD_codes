@@ -33,40 +33,36 @@ params.tolError = 1e-6;
 params.repetitions = 1;
 params.JNRVector = [-20 -15 -10 -5 0 10];
 
-params.JNRVector = inf;
-
-
 rng(random_state);
 
-
-signalLength = 125e-6;
-numberOfSamples = round(signalLength*fs);
+% %signal mixture definition---------
+% params.JNRVector = inf;
+% signalLength = 125e-6;
+% numberOfSamples = round(signalLength*fs);
+% signal = randn(numberOfSamples, 1) + 1j*randn(numberOfSamples, 1);
+% signalPower = signal'*signal/numberOfSamples;
+% 
+% desiredSignalPower = db2pow(10);
+% signal = signal*sqrt(desiredSignalPower/signalPower);
+% mixtureSignal = signal;
+% 
+% signalLength = length(signal);
+% %--------------------------------------------
 
 %signal mixture definition---------
-signal = randn(numberOfSamples, 1) + 1j*randn(numberOfSamples, 1);
-signalPower = signal'*signal/numberOfSamples;
+t = 0:1/fs:(secondsOfData - 1/fs);
+f = ((bandwidth/2)/secondsOfData)*t + f0;
+f1 = 1;
 
-desiredSignalPower = db2pow(10);
-signal = signal*sqrt(desiredSignalPower/signalPower);
-mixtureSignal = signal;
+signal1 = exp(1j*2*pi*f1*f.*t).';
+signal1 = repmat(signal1, ceil(100e-6/secondsOfData), 1);
 
-signalLength = length(signal);
+onsetTime = 20e-6;
+offsetTime = onsetTime + length(signal1)/fs;
+signal1 = [zeros(round(onsetTime*fs), 1); signal1; zeros(round(20e-6*fs), 1)];
+signalLength = length(signal1);
+mixtureSignal = signal1;
 %--------------------------------------------
-
-% %signal mixture definition---------
-% t = 0:1/fs:(secondsOfData - 1/fs);
-% f = ((bandwidth/2)/secondsOfData)*t + f0;
-% f1 = 1;
-% 
-% signal1 = exp(1j*2*pi*f1*f.*t).';
-% signal1 = repmat(signal1, ceil(100e-6/secondsOfData), 1);
-% 
-% onsetTime = 40e-6;
-% offsetTime = onsetTime + length(signal1)/fs;
-% signal1 = [zeros(round(onsetTime*fs), 1); signal1; zeros(round(40e-6*fs), 1)];
-% signal1Length = length(signal1);
-% mixtureSignal = signal1;
-% %--------------------------------------------
 
 window_length = round(3e-6*fs);
 similarityName = 'inner';
@@ -112,7 +108,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '06-11' filesep 'resultsEdiz2.mat'], 'output', 'outputVar', 'outputTK', 'outputTKVar');
+save(['..' filesep '.' filesep 'data' filesep '06-11' filesep 'resultsEdiz2.mat'], 'output', 'outputVar', 'outputTK', 'outputTKVar', 't');
 
 rmpath(['..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])

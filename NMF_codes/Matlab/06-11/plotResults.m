@@ -3,18 +3,17 @@ clc;
 close all;
 
 addpath(['..' filesep '.' filesep 'Misc'])
-
+addpath(['..' filesep '.' filesep 'data' filesep '06-11']);    
 
 linewidth = 1.5;
 fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
-dataPath = ['..' filesep '.' filesep 'figs' filesep '05-23' filesep];
+dataPath = ['..' filesep '.' filesep 'figs' filesep '06-11' filesep];
 
 threshold = 0.1:0.1:0.9;
 stdVector = 7:2:13;
 
-addpath(['..' filesep '.' filesep 'data' filesep '06-11']);    
 
 % load results01.mat;
 % 
@@ -136,26 +135,100 @@ addpath(['..' filesep '.' filesep 'data' filesep '06-11']);
 % 
 % clc;
 
-load resultsEdiz2.mat;
+% load resultsEdiz.mat;
+% expName = 'output_analysis';
 
 JNR = [-20 -15 -10 -5 0 10];
-JNRIndex = 1;   
 
-figure;
+% for JNRIndex = 1:length(JNR)
+% 
+%     figure;
+%     plot(t*1e6, output(:, JNRIndex, 1)./ max(output(:, JNRIndex, 1)))
+%     ylabel('Normalized Magnitude');
+%     xlabel('Time [$\mu$s]');
+%     ylim([0 1.1])
+%     xlim([min(t) max(t)]*1e6);
+%     formatFig(gcf, [dataPath expName '_' 'sim_' num2str(JNR(JNRIndex))], 'en', figProp);
+% 
+%     figure
+%     plot(t*1e6, outputVar(:, JNRIndex, 1) ./ max(outputVar(:, JNRIndex, 1)))
+%     ylabel('Normalized Magnitude');
+%     xlabel('Time [$\mu$s]');
+%     ylim([0 1.1])
+%     xlim([min(t) max(t)]*1e6);
+%     formatFig(gcf, [dataPath expName '_' 'sim_var_' num2str(JNR(JNRIndex))], 'en', figProp);
+% 
+%     figure
+%     plot(t*1e6, outputTK(:, JNRIndex, 1))
+%     ylabel('Normalized Magnitude');
+%     xlabel('Time [$\mu$s]');
+%     % ylim([0 1.1])
+%     xlim([min(t) max(t)]*1e6);
+%     formatFig(gcf, [dataPath expName '_' 'TK_' num2str(JNR(JNRIndex))], 'en', figProp);
+% 
+%     figure
+%     plot(t*1e6, outputTKVar(:, JNRIndex, 1))
+%     ylabel('Magnitude');
+%     xlabel('Time [$\mu$s]');
+%     % ylim([0 1.1])
+%     xlim([min(t) max(t)]*1e6);
+%     formatFig(gcf, [dataPath expName '_' 'TK_var_' num2str(JNR(JNRIndex))], 'en', figProp);
+% end
 
-plot(output(:, JNRIndex, 1)./ max(output(:, JNRIndex, 1)))
-figure
-plot(outputVar(:, JNRIndex, 1) ./ max(outputVar(:, JNRIndex, 1)))
-figure
-plot(outputTK(:, JNRIndex, 1) ./ max(outputTK(:, JNRIndex, 1)))
+close all;
 
-figure
+load resultsEdiz2.mat;
+expName = 'output_analysis_signal';
+onset = 528;
+offset = 3911;
 
-plot(outputTKVar(:, JNRIndex, 1) ./ max(outputTKVar(:, JNRIndex, 1)))
+for JNRIndex = 1:length(JNR)
 
-x = fftshift(abs(fft(outputTKVar(:, JNRIndex, 1))));
-figure;
-plot(x);
+    figure;
+    plot(t*1e6, output(:, JNRIndex, 1)./ max(output(:, JNRIndex, 1)))
+    ylabel('Normalized Magnitude');
+    xlabel('Time [$\mu$s]');
+    
+    hold on;
+    line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
+    line([t(offset) t(offset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
+    ylim([0 1.1])
+    xlim([min(t) max(t)]*1e6);
+    formatFig(gcf, [dataPath expName '_' 'sim_' num2str(JNR(JNRIndex))], 'en', figProp);
+
+    figure
+    plot(t*1e6, outputVar(:, JNRIndex, 1) ./ max(outputVar(:, JNRIndex, 1)))
+    ylabel('Normalized Magnitude');
+    xlabel('Time [$\mu$s]');
+    hold on;
+    line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
+    line([t(offset) t(offset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
+    ylim([0 1.1])
+    xlim([min(t) max(t)]*1e6);
+    formatFig(gcf, [dataPath expName '_' 'sim_var_' num2str(JNR(JNRIndex))], 'en', figProp);
+
+    figure
+    plot(t*1e6, outputTK(:, JNRIndex, 1))
+    ylabel('Magnitude');
+    xlabel('Time [$\mu$s]');
+    hold on;
+    line([t(onset) t(onset)]*1e6, [1.1*min(outputTK(:, JNRIndex, 1)) 1.1*max(outputTK(:, JNRIndex, 1))], 'Color','black','LineStyle','--');
+    line([t(offset) t(offset)]*1e6, [1.1*min(outputTK(:, JNRIndex, 1)) 1.1*max(outputTK(:, JNRIndex, 1))], 'Color','black','LineStyle','--');
+    ylim([1.1*min(outputTK(:, JNRIndex, 1)) 1.1*max(outputTK(:, JNRIndex, 1))])
+    xlim([min(t) max(t)]*1e6);
+    formatFig(gcf, [dataPath expName '_' 'TK_' num2str(JNR(JNRIndex))], 'en', figProp);
+
+    figure
+    plot(t*1e6, outputTKVar(:, JNRIndex, 1))
+    ylabel('Magnitude');
+    xlabel('Time [$\mu$s]');
+    hold on;
+    line([t(onset) t(onset)]*1e6, [1.1*min(outputTKVar(:, JNRIndex, 1)) 1.1*max(outputTKVar(:, JNRIndex, 1))], 'Color','black','LineStyle','--');
+    line([t(offset) t(offset)]*1e6, [1.1*min(outputTKVar(:, JNRIndex, 1)) 1.1*max(outputTKVar(:, JNRIndex, 1))], 'Color','black','LineStyle','--');
+    ylim([1.1*min(outputTKVar(:, JNRIndex, 1)) 1.1*max(outputTKVar(:, JNRIndex, 1))])
+    xlim([min(t) max(t)]*1e6);
+    formatFig(gcf, [dataPath expName '_' 'TK_var_' num2str(JNR(JNRIndex))], 'en', figProp);
+end
 
 
 rmpath(['..' filesep '.' filesep 'data' filesep '06-11']);    

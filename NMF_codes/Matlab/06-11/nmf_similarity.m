@@ -43,7 +43,7 @@ f1 = 1;
 
 signal1 = exp(1j*2*pi*f1*f.*t).';
 signal1 = repmat(signal1, ceil(100e-6/secondsOfData), 1);
-onsetTime = 40e-6;
+onsetTime = 20e-6;
 offsetTime = onsetTime + length(signal1)/fs;
 
 signal1 = [zeros(round(onsetTime*fs), 1); signal1;zeros(round(onsetTime*fs), 1)];
