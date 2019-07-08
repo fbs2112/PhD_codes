@@ -32,6 +32,7 @@ desiredSignalPower = db2pow(10);
 monteCarloLoops = 100;
 
 stftSignal = zeros(params.nfft, (numberOfSamples - params.nperseg + 1)/(params.nperseg - params.overlap), monteCarloLoops);
+wVector = rand([params.nfft, 1]);
 
 for i = 1:monteCarloLoops
     
@@ -52,11 +53,13 @@ for i = 1:monteCarloLoops
     
     stftSignal(:,:,i) = dftMatrix*mixtureSignalBuffered;
     stftSignal(:,:,i) = fftshift(stftSignal(:,:,i), 1);    
+    
+    inputNMF2(:,:,i) = abs(stftSignal(:,:,i)).^2;
+    s(:,i) = inputNMF2(:,:,i).'*wVector;
 end
 
 inputNMF = abs(stftSignal).^2;
-wVector = rand([size(inputNMF, 2), 1]);
-b = squeeze(sum(inputNMF, 1)).*wVector;
+% b = squeeze(sum(inputNMF, 1)).*wVector;
 
 xNMF = reshape(inputNMF, size(inputNMF,1)*size(inputNMF,3),size(inputNMF,2));
 x = real(reshape(stftSignal, size(stftSignal,1)*size(stftSignal,3),size(stftSignal,2)));
@@ -126,12 +129,12 @@ axis tight;
 pd = fitdist(xNMF(:,1), 'exponential');
 hexp = chi2gof(xNMF(:,1),'CDF',pd);
 
-for j = 1:size(b, 1)
-    pd = fitdist(b(j,:).', 'Gamma');
-    [hgamma(j), pgamma(j)] = chi2gof(b(j,:).','CDF',pd);
+for j = 1:size(s, 1)
+    pd = fitdist(s(j,:).', 'Gamma');
+    [hgamma(j), pgamma(j)] = chi2gof(s(j,:).', 'CDF', pd);
 
-    pd = fitdist(b(j,:).', 'normal');
-    [hgaussian(j), pgaussian(j)] = chi2gof(b(j,:).','CDF',pd);
+    pd = fitdist(s(j,:).', 'normal');
+    [hgaussian(j), pgaussian(j)] = chi2gof(s(j,:).', 'CDF', pd);
 end
 
 figure;
