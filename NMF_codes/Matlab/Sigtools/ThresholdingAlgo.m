@@ -13,9 +13,9 @@ for i=lag+2:length(y)
         if y(i) > avgFilter(i-1)
             % Positive signal
             signals(i) = 1;
-        else
-            % Negative signal
-            signals(i) = -1;
+%         else
+%             % Negative signal
+%             signals(i) = -1;
         end
         % Make influence lower
         filteredY(i) = influence*y(i)+(1-influence)*filteredY(i-1);
