@@ -2,10 +2,6 @@ clear;
 clc;
 close all;
 
-set(groot, 'defaultAxesTickLabelInterpreter','latex');
-set(groot, 'defaultLegendInterpreter','latex');
-set(groot, 'defaulttextInterpreter','latex')
-
 addpath(['..' filesep '.' filesep 'Sigtools' filesep])
 addpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['..' filesep '.' filesep 'Misc'])
@@ -32,9 +28,7 @@ params.numberOfIterations = 10000;
 params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
-params.JNRVector = [-20 -15 -10 -5 0];
-params.JNRVector = [0];
-
+params.JNRVector = [-5 0];
 
 rng(random_state);
 
@@ -66,28 +60,16 @@ if strcmp(similarityName, 'gaussian')
     stdVector = 7:2:13;
 end
 
-thresholdVector = 1;
+lengthVector = [600 700 800];
+stdVector2 = [3 4];
+forgettingFactorVector = [0.5 0.6 0.7];
 monteCarloLoops = 50;
-
-N = 10;
-M = 5;
-
-window_coeffs = zeros(N-1, 1);
-window_coeffs(M:end) = 1;
-window_coeffs = 1/(2*(N-M))*[window_coeffs(end:-1:1);0;window_coeffs];
-alpha = 4;
+outputLength = (signal1Length - params.nperseg + 1)/(params.nperseg - params.overlap);
 
 %Pre allocation------------------------------------------------------------
-fp = zeros(monteCarloLoops, length(params.JNRVector), length(stdVector), length(thresholdVector));
-tp = zeros(monteCarloLoops, length(params.JNRVector), length(stdVector), length(thresholdVector));
-fn = zeros(monteCarloLoops, length(params.JNRVector), length(stdVector), length(thresholdVector));
-tn = zeros(monteCarloLoops, length(params.JNRVector), length(stdVector), length(thresholdVector));
+detection_res = zeros(monteCarloLoops, length(params.JNRVector), ...
+    length(stdVector), length(lengthVector), length(stdVector2), length(forgettingFactorVector), outputLength);
 %--------------------------------------------------------------------------
-numberOfTrainingCells = 300;
-numberOfGuardCells = 100;
-detector = phased.CFARDetector('NumTrainingCells', numberOfTrainingCells, 'NumGuardCells', numberOfGuardCells,...
-    'ProbabilityFalseAlarm', 0.05, 'ThresholdOutputPort', true);
-detector.Method = 'GOCA';
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -109,72 +91,21 @@ for loopIndex = 1:monteCarloLoops
             end
             
             output = TK_filtering(output);
-            output = output.^2;
-%             output = filter(window_coeffs, 1, output);
-            
-            for thresholdIndex = 1:length(thresholdVector)
-                %Detection assessment---------------------------
-%                 [detection_res, threshold] = detector(output, 1:length(output));
-                
-                [detection_res, ~, ~] = ThresholdingAlgo(output, 400, 3, 0.5);
-%                 detection_res = window_eval(detection_res, window_median_length, @median);
-                x = output./max(output);
-%                 y = window_eval(output./max(output), window_length, @median);
-                figure;
-                plot(t*1e6, x)
-                hold on;
-                plot(t*1e6, detection_res);
-%                 figure
-%                 z = x(1:end - window_length+1) - y(window_length:end).';
-%                 plot(z);
-%                 
-                
-                
-                figure;
-                plot(t*1e6, detection_res);
-                ylim([0 1.1]);
-                figure;
-                plot(t*1e6, threshold)
-%                 legend('$\mathbf{s}$', ' $\mathbf{o}_{\mathrm{med}}$', 'CFAR Threshold');  
-                xlim([0 max(t)*1e6]);
-%                 xlabel('Time [$\mu$s]');
-%                 ylabel('Magnitude');
-                
-
-                figure;
-                histogram(output, 50);
-                
-%                if any(detection_res(1:onset))
-%                    fp(loopIndex, thresholdIndex, JNRIndex, stdIndex) = fp(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
-%                else
-%                    tn(loopIndex, thresholdIndex, JNRIndex, stdIndex) = tn(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
-%                end
-%                
-%                if any(detection_res(onset+1:onset + round(5*window_length/2)))
-%                    tp(loopIndex, thresholdIndex, JNRIndex, stdIndex) = tp(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
-%                else
-%                    fn(loopIndex, thresholdIndex, JNRIndex, stdIndex) = fn(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
-%                end
-%                
-%                if any(detection_res(onset  + round(5*window_length/2) + 1:end))
-%                    fp(loopIndex, thresholdIndex, JNRIndex) = fp(loopIndex, thresholdIndex, JNRIndex) + 1;
-%                else
-%                    tn(loopIndex, thresholdIndex, JNRIndex) = tn(loopIndex, thresholdIndex, JNRIndex) + 1;
-%                end
-%                
-%                if any(detection_res(onset+1:onset + round(5*window_length/2)))
-%                    tp(loopIndex, thresholdIndex, JNRIndex, stdIndex) = tp(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
-%                else
-%                    fn(loopIndex, thresholdIndex, JNRIndex, stdIndex) = fn(loopIndex, thresholdIndex, JNRIndex, stdIndex) + 1;
-%                end
-%                 
-%                 %-------------------------------------------------
+            for lengthVectorIndex = 1:length(lengthVector)
+                for stdVector2Index = 1:length(stdVector2)
+                    for forgettingFactorVectorIndex = 1:length(forgettingFactorVector)
+                        [detection_res(loopIndex, JNRIndex, stdIndex, lengthVectorIndex, ...
+                            stdVector2Index, forgettingFactorVectorIndex, :), ~, ~] = ThresholdingAlgo(output, ...
+                            lengthVector(lengthVectorIndex), stdVector2(stdVector2Index), forgettingFactorVector(forgettingFactorVectorIndex));
+                    end
+                end
             end
+            
         end
     end
 end
 
-% save(['..' filesep '.' filesep 'data' filesep '06-11' filesep 'results11.mat'], 'fp', 'tp', 'tn', 'fn');
+save(['..' filesep '.' filesep 'data' filesep '07-09' filesep 'results01.mat'], 'detection_res');
 
 rmpath(['..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
