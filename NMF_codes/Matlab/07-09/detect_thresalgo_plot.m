@@ -33,7 +33,7 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 params.JNRVector = [-20 -15 -10 -5 0];
-params.JNRVector = [0];
+params.JNRVector = [-10];
 
 
 rng(random_state);
@@ -105,9 +105,27 @@ for loopIndex = 1:monteCarloLoops
                 figure;
                 plot(t*1e6, x)
                 hold on;
-                plot(t*1e6, detection_res);
-                line([t(onset) t(onset)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
-                line([t(offset + 100) t(offset + 100)]*1e6, [0 1.1], 'Color','black','LineStyle','--');
+                plot(t*1e6, detection_res, 'r--');
+%                 figure
+%                 [a,b] = findpeaks(detection_res);
+%                 plot(findpeaks(detection_res));
+                
+                line([t(onset) t(onset)]*1e6, [-0.3 1.1], 'Color','black','LineStyle','-.');
+                line([t(offset + 100) t(offset + 100)]*1e6, [-0.3 1.1], 'Color','black','LineStyle','-.');
+                
+                 ylabel('Normalized Magnitude');
+                 xlabel('Time [$\mu$s]');
+                 ylim([-0.3 1.1])
+                 xlim([min(t) max(t)]*1e6);
+                 
+                 linewidth = 1.5;
+                 fontname = 'Times';
+                 fontsize = 24;
+                 
+                 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+                 
+                 dataPath = ['..' filesep 'figs' filesep '07-09' filesep];
+                 formatFig(gcf, [dataPath 'tk' num2str(params.JNRVector(JNRIndex))], 'en', figProp);
 %                 figure
 %                 z = x(1:end - window_length+1) - y(window_length:end).';
 %                 plot(z);

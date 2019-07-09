@@ -28,7 +28,7 @@ params.numberOfIterations = 10000;
 params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
-params.JNRVector = [-5 0];
+params.JNRVector = [-10 -5 0];
 
 rng(random_state);
 
@@ -60,10 +60,10 @@ if strcmp(similarityName, 'gaussian')
     stdVector = 7:2:13;
 end
 
-lengthVector = [600 700 800];
-stdVector2 = [3 4];
-forgettingFactorVector = [0.5 0.6 0.7];
-monteCarloLoops = 50;
+lengthVector = 200:100:500;
+stdVector2 = [2 3 4];
+forgettingFactorVector = [0.3 0.4 0.5 0.6];
+monteCarloLoops = 100;
 outputLength = (signal1Length - params.nperseg + 1)/(params.nperseg - params.overlap);
 
 %Pre allocation------------------------------------------------------------
