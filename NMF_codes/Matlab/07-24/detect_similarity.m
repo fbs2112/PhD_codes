@@ -62,7 +62,7 @@ window_median_length_vector = 51:50:401;
 monteCarloLoops = 100;
 
 outputLength = (length(signal1) - params.nperseg + 1)/(params.nperseg - params.overlap);
-detection_res = zeros(monteCarloLoops, length(params.JNRVector), length(window_median_length_vector), outputLength);
+detection_res = zeros(monteCarloLoops, length(params.JNRVector), length(thresholdVector), length(window_median_length_vector), outputLength);
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -73,9 +73,7 @@ for loopIndex = 1:monteCarloLoops
         for thresholdIndex = 1:length(thresholdVector)
             
             inputNMF = abs(PxxAux{1, JNRIndex}).^2;
-            output = zeros(length(t), 1);
             for stdIndex = 1:length(stdVector)
-                
                 
                 inputNMF = inputNMF - mean(inputNMF);
                 inputNMF = inputNMF.*sqrt(1./var(inputNMF));
@@ -90,7 +88,7 @@ for loopIndex = 1:monteCarloLoops
                 outputNormalised = output ./ max(output);
                 
                 for window_median_length_index = 1:length(window_median_length_vector)
-                    detection_res(loopIndex, JNRIndex, window_median_length_index, :) = detection_eval(outputNormalised, thresholdVector(thresholdIndex), ...
+                    detection_res(loopIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = detection_eval(outputNormalised, thresholdVector(thresholdIndex), ...
                         window_median_length_vector(window_median_length_index));
                 end
             end
