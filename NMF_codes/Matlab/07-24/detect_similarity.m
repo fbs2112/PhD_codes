@@ -96,7 +96,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '07-24' filesep 'results02.mat'], 'detection_res');
+save(['..' filesep '.' filesep 'data' filesep '07-24' filesep 'results02.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
