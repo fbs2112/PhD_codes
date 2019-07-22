@@ -25,7 +25,6 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 params.JNRVector = [-20 -15 -10 -5 0];
-params.JNRVector = [-10];
 
 rng(random_state);
 
