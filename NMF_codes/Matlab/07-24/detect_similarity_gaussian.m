@@ -77,6 +77,8 @@ for loopIndex = 1:monteCarloLoops
                     end
                 end
                 
+                outputNormalised = output ./ max(output);
+                
                 for window_median_length_index = 1:length(window_median_length_vector)
                     detection_res(loopIndex, JNRIndex, thresholdIndex, stdIndex, window_median_length_index, :) = detection_eval(outputNormalised, thresholdVector(thresholdIndex), ...
                         window_median_length_vector(window_median_length_index));
