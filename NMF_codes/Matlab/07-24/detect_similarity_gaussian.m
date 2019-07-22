@@ -8,9 +8,6 @@ addpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 fs = 32.768e6;
 numberOfSources = 1;
 secondsOfData = 8.62e-6;
-secondsOfSilence = 100e-6;
-numberOfSamples = secondsOfData*fs;
-totalSamples = 4096;
 bandwidth = 1e6;
 f0 = 0;
 random_state = 42;
@@ -40,14 +37,8 @@ f1 = 1;
 signal1 = exp(1j*2*pi*f1*f.*t).';
 signal1 = repmat(signal1, ceil(100e-6/secondsOfData), 1);
 onsetTime = 20e-6;
-offsetTime = onsetTime + length(signal1)/fs;
 
 signal1 = [zeros(round(onsetTime*fs), 1); signal1;zeros(round(onsetTime*fs), 1)];
-signal1Length = length(signal1);
-
-onset = find(signal1, 1, 'first') - params.nperseg;
-offset = find(signal1, 1, 'last') - params.nperseg;
-
 mixtureSignal = signal1;
 %--------------------------------------------
 
@@ -55,7 +46,7 @@ similarityName = 'gaussian';
 stdVector = 0;
 
 if strcmp(similarityName, 'gaussian')
-    stdVector = 1:13;
+    stdVector = 7:13;
 end
 
 thresholdVector = 0.1:0.05:0.9;
@@ -63,11 +54,11 @@ window_median_length_vector = 51:50:401;
 monteCarloLoops = 100;
 
 outputLength = (length(signal1) - params.nperseg + 1)/(params.nperseg - params.overlap);
-detection_res = zeros(monteCarloLoops, length(params.JNRVector), length(thresholdVector), length(stdIndex), length(window_median_length_vector), outputLength);
+detection_res = zeros(monteCarloLoops, length(params.JNRVector), length(thresholdVector), length(stdVector), length(window_median_length_vector), outputLength);
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
-    [W, H, reconstructError, PxxAux, f, t] = nmf_eval(mixtureSignal, params);
+    [W, ~, ~, PxxAux, ~, ~] = nmf_eval(mixtureSignal, params);
     
     for JNRIndex = 1:length(params.JNRVector)
         
@@ -75,8 +66,8 @@ for loopIndex = 1:monteCarloLoops
             
             inputNMF = abs(PxxAux{1, JNRIndex}).^2;
             for stdIndex = 1:length(stdVector)
-                output = zeros(length(t), 1);
-                for tIndex = 1:length(t)
+                output = zeros(outputLength, 1);
+                for tIndex = 1:outputLength
                     if strcmp(similarityName, 'inner')
                         output(tIndex) = similarity_eval(inputNMF(:,tIndex), W{1, JNRIndex}(:,1), similarityName, 'normalized', true);
                     elseif strcmp(similarityName, 'gaussian')
@@ -99,3 +90,4 @@ save(['..' filesep '.' filesep 'data' filesep '07-24' filesep 'results04.mat'], 
 
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
+exit;
