@@ -60,9 +60,7 @@ if strcmp(similarityName, 'gaussian')
 end
 
 thresholdVector = 1;
-window_length_vector = 50:50:200;
-
-window_length_vector = 20;
+window_length_vector = 20:20:100;
 
 window_median_length_vector = 1;
 monteCarloLoops = 100;
