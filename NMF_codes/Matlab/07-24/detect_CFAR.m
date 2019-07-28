@@ -28,6 +28,8 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 params.JNRVector = [-20 -15 -10 -5 0];
+params.JNRVector = [0];
+
 
 rng(random_state);
 
@@ -59,7 +61,10 @@ end
 
 thresholdVector = 1;
 window_length_vector = 50:50:200;
-window_median_length_vector = 51:50:401;
+
+window_length_vector = 20;
+
+window_median_length_vector = 1;
 monteCarloLoops = 100;
 
 numberOfTrainingCellsVector = 200:100:800;
@@ -75,7 +80,7 @@ detector.Method = 'GOCA';
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
-    [W, ~, ~, PxxAux, ~, ~] = nmf_eval(mixtureSignal, params);
+    [W, ~, ~, PxxAux, ~, t] = nmf_eval(mixtureSignal, params);
     
     for JNRIndex = 1:length(params.JNRVector)
         
@@ -95,16 +100,17 @@ for loopIndex = 1:monteCarloLoops
 
                 output = inputNMFNormalised.'*WNormalised;
                 for window_length_index = 1:length(window_length_vector)
-                    output = window_eval(output, window_length_vector(window_length_index), @var);
+                   
+                    
+                    output = window_eval(output, window_length_vector(window_length_index), @var);                    
                     
                     for numberOfTrainingCellsIndex = 1:length(numberOfTrainingCellsVector)
                         detector.NumTrainingCells = numberOfTrainingCellsVector(numberOfTrainingCellsIndex);
                         for numberOfGuardCellsIndex = 1:length(numberOfGuardCellsVector)
                             detector.NumGuardCells = numberOfGuardCellsVector(numberOfGuardCellsIndex);
                             for window_median_length_index = 1:length(window_median_length_vector)
-                                [detection_res_aux, ~] = detector(output.', 1:length(output));
-                                detection_res(loopIndex, JNRIndex, thresholdIndex, window_length_index,...
-                                     numberOfTrainingCellsIndex, numberOfGuardCellsIndex, window_median_length_index, :) = window_eval(detection_res_aux, window_median_length_vector(window_median_length_index), @median);
+                                [detection_res(loopIndex, JNRIndex, thresholdIndex, window_length_index,...
+                                     numberOfTrainingCellsIndex, numberOfGuardCellsIndex, window_median_length_index, :), ~] = detector(output.', 1:length(output));
                             end
                             release(detector);
                         end
@@ -115,7 +121,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '07-24' filesep 'results05.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '.' filesep 'data' filesep '07-24' filesep 'results06.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
