@@ -27,7 +27,8 @@ params.numberOfIterations = 10000;
 params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
-params.JNRVector = [-20 -15 -10 -5 0];
+% params.JNRVector = [-20 -15 -10 -5 0];
+params.JNRVector = [0];
 
 rng(random_state);
 
@@ -70,21 +71,36 @@ for loopIndex = 1:monteCarloLoops
     
     for JNRIndex = 1:length(params.JNRVector)
         
-        inputNMF = abs(PxxAux{1, JNRIndex}).^2;
-        for stdIndex = 1:length(stdVector)
+        for thresholdIndex = 1:length(thresholdVector)
             
-            inputNMF = inputNMF - mean(inputNMF);
-            inputNMF = inputNMF.*sqrt(1./var(inputNMF));
-            inputNMFAux = sqrt(sum(inputNMF.*inputNMF)) + eps;
-            inputNMFNormalised = inputNMF./inputNMFAux;
-            
-            WNormalised = W{1, JNRIndex}(:,1) - mean(W{1, JNRIndex}(:,1));
-            WNormalised = WNormalised.*sqrt(1./var(WNormalised));
-            WNormalised = WNormalised ./ (norm(WNormalised) + eps);
-            
-            output = inputNMFNormalised.'*WNormalised;
-            outputNormalised = output ./ max(output);
-            for thresholdIndex = 1:length(thresholdVector)
+            inputNMF = abs(PxxAux{1, JNRIndex}).^2;
+            for stdIndex = 1:length(stdVector)
+               
+                inputNMFAux = sqrt(sum(inputNMF.*inputNMF)) + eps;
+                inputNMFNormalised = inputNMF./inputNMFAux;
+                
+                WNormalised = W{1, JNRIndex}(:,1) ./ (norm(W{1, JNRIndex}(:,1)) + eps);
+
+                output = inputNMFNormalised.'*WNormalised;
+                outputNormalised = output ./ max(output);
+                
+                plot(outputNormalised);
+                
+                inputNMF = inputNMF - mean(inputNMF);
+                inputNMF = inputNMF.*sqrt(1./var(inputNMF));
+                inputNMFAux = sqrt(sum(inputNMF.*inputNMF)) + eps;
+                inputNMFNormalised = inputNMF./inputNMFAux;
+                
+                WNormalised = W{1, JNRIndex}(:,1) - mean(W{1, JNRIndex}(:,1));
+                WNormalised = WNormalised.*sqrt(1./var(WNormalised));
+                WNormalised = WNormalised ./ (norm(WNormalised) + eps);
+
+                output = inputNMFNormalised.'*WNormalised;
+                outputNormalised = output ./ max(output);
+                
+                figure;
+                plot(outputNormalised)
+                
                 for window_median_length_index = 1:length(window_median_length_vector)
                     detection_res(loopIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = detection_eval(outputNormalised, thresholdVector(thresholdIndex), ...
                         window_median_length_vector(window_median_length_index));
@@ -94,7 +110,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results01.mat'], 'detection_res', '-v7.3');
+% save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results01.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
