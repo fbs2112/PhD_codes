@@ -39,7 +39,8 @@ window_median_length_vector = 51:50:401;
 monteCarloLoops = 100;
 
 outputLength = (numberOfRawSamples + silenceSamples*2 - params.nperseg + 1)/(params.nperseg - params.overlap);
-detection_res = zeros(monteCarloLoops, length(params.JNRVector), length(thresholdVector), length(window_median_length_vector), outputLength);
+detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
+    length(params.JNRVector), length(thresholdVector), length(window_median_length_vector), outputLength);
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
