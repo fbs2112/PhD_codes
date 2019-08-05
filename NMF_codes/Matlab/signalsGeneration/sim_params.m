@@ -20,17 +20,17 @@ paramsSignal.Loopnumb = 50;
 
 
 %------Interference parameters-------------------------------------------
-paramsSignal.Sweeptimeup = 6.8e-6;                             % ramp-up sweep time
-paramsSignal.Sweeptimedown = 1.9e-6;                           % ramp-down sweep time
-paramsSignal.Sweeptime = 8.7e-6;                               % sweep time
-paramsSignal.Nup = round(paramsSignal.Sweeptimeup*paramsSignal.Freqsamp);               % number of samples with a ramp-up sweep time 
-paramsSignal.Ndown = round(paramsSignal.Sweeptimedown*paramsSignal.Freqsamp);           % number of samples with a ramp-down sweep time
-paramsSignal.Noneperiod = paramsSignal.Nup+paramsSignal.Ndown;                         % number of samples with a sweep time
-paramsSignal.IFmin = 4e6;                                      % start frequency
-paramsSignal.IFmax = 8e6;                                      % end frequency
-
-paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
-paramsSignal.Initphase = 0;
+% paramsSignal.Sweeptimeup = 6.8e-6;                             % ramp-up sweep time
+% paramsSignal.Sweeptimedown = 1.9e-6;                           % ramp-down sweep time
+% paramsSignal.Sweeptime = 8.7e-6;                               % sweep time
+% paramsSignal.Nup = round(paramsSignal.Sweeptimeup*paramsSignal.Freqsamp);               % number of samples with a ramp-up sweep time 
+% paramsSignal.Ndown = round(paramsSignal.Sweeptimedown*paramsSignal.Freqsamp);           % number of samples with a ramp-down sweep time
+% paramsSignal.Noneperiod = paramsSignal.Nup+paramsSignal.Ndown;                         % number of samples with a sweep time
+% paramsSignal.IFmin = 4e6;                                      % start frequency
+% paramsSignal.IFmax = 8e6;                                      % end frequency
+% 
+% paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
+% paramsSignal.Initphase = 0;
 %-------------------------------------------------------------------------
 
 
