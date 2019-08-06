@@ -9,6 +9,7 @@ set(groot, 'defaulttextInterpreter','latex')
 
 addpath(['..' filesep '.' filesep 'Sigtools' filesep])
 addpath(['..' filesep 'signalsGeneration' filesep]);
+addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 
 load sim_params_1.mat;
 
@@ -18,9 +19,9 @@ numberOfSources = 1;
 random_state = 42;
 
 params.fs = fs;
-params.nfft = 128;
-params.nperseg = 128;
-params.overlap = params.nperseg-1;
+params.nfft = 9;
+params.nperseg = 9;
+params.overlap = 0;
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = numberOfSources;
 params.init = 'random';
@@ -34,6 +35,16 @@ params.JNRVector = [0];
 
 numberOfRawSamples = 4096;
 silenceSamples = round(20e-6*fs);
+
+initialFrequency = 4e6;
+bandwidthVector = 4e6;
+periodVector = 8.72e-6;
+
+paramsSignal.Noneperiod = round(periodVector*params.fs);                   % number of samples with a sweep time
+paramsSignal.IFmin = initialFrequency;                                                  % start frequency
+paramsSignal.IFmax = bandwidthVector + initialFrequency;                    % end frequency
+paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
+paramsSignal.Initphase = 0;
 
 [interferenceSignal, GPSSignals] = signalGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
@@ -53,11 +64,12 @@ mixtureGPS = sum(GPSSignals.*GPSMultiplier, 2) + noise;
 interferenceSignal = interferenceSignal*sqrt(noisePower*10^(params.JNRVector/10)/interferenceSignalPower);
 
 mixtureSignal = mixtureGPS + interferenceSignal;
+window = ones(params.nperseg, 1);
 
 if isreal(mixtureSignal)
-    [PxxAux, f, t] = spectrogram(mixtureSignal, hann(params.nperseg), params.overlap, params.nfft, params.fs, 'power');
+    [PxxAux, f, t] = spectrogram(mixtureSignal, window, params.overlap, params.nfft, params.fs, 'power');
 else
-    [PxxAux, f, t] = spectrogram(mixtureSignal, hann(params.nperseg), params.overlap, params.nfft, params.fs, 'centered', 'power');
+    [PxxAux, f, t] = spectrogram(mixtureSignal, window, params.overlap, params.nfft, params.fs, 'centered', 'power');
 end
 
 figure;
@@ -73,5 +85,6 @@ set(ax, 'CLim', [-10 50], 'colormap', jet);
 c = colorbar;
 c.Label.String = '[dB]';
 
+rmpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);
