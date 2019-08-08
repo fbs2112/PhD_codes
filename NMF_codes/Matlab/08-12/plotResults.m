@@ -872,69 +872,37 @@ figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth
 
 load results05.mat;
 
-onset = 528;
-offset = 4623;
-window_length = 98;
 
 thresholdVector = 0.1:0.05:0.9;
 window_median_length_vector = 51:50:401;
 monteCarloLoops = 100;
 % JNRVector = [-20 -15 -10 -5 0];
-JNRVector = [-17];
+JNRVector = [0.7209 2.2798 7.2092 22.7975 72.09];
 
-bandwidthVector = 10.72e6;
-periodVector = 8.72e-6;
-
-averageFP = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-averageTN = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-averageTP = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-averageFN = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-
-averageTPR = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
 averageFPR = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-stdTPR = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
 stdFPR = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
 
-averageACC = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-stdACC = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-averageF1 = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-stdF1 = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-averagePrec = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-stdPrec = zeros(length(JNRVector), length(thresholdVector), length(window_median_length_vector));
-
 for JNRIndex = 1:length(JNRVector)
-    for bandwidthVectorIndex = 1:length(bandwidthVector)
-        for periodIndex = 1:length(periodVector)
-            for thresholdIndex = 1:length(thresholdVector)
-                for window_median_length_index = 1:length(window_median_length_vector)
-                    
-                    fp = zeros(monteCarloLoops, 1);
-                    tp = zeros(monteCarloLoops, 1);
-                    fn = zeros(monteCarloLoops, 1);
-                    tn = zeros(monteCarloLoops, 1);
-                    
-                    for loopIndex = 1:monteCarloLoops
-                        fpRegion = squeeze(detection_res(loopIndex, bandwidthVectorIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :));
-                        
-                        fp(loopIndex) = sum(fpRegion);
-                        tn(loopIndex) = length(fpRegion) - fp(loopIndex);
-                        
-                    end
-                    
-                   
-                    fpr = fp./(fp+tn);
-                    
-                    fpStd = std(fp);
-                    tnStd = std(tn);
-                    tpStd = std(tp);
-                    fnStd = std(fn);
-                    
-                    
-                    averageFPR(JNRIndex, thresholdIndex, window_median_length_index) = mean(fpr);
-                    stdFPR(JNRIndex, thresholdIndex, window_median_length_index) = std(fpr);
-                    
-                end
+    for thresholdIndex = 1:length(thresholdVector)
+        for window_median_length_index = 1:length(window_median_length_vector)
+            
+            fp = zeros(monteCarloLoops, 1);
+            tp = zeros(monteCarloLoops, 1);
+            fn = zeros(monteCarloLoops, 1);
+            tn = zeros(monteCarloLoops, 1);
+            
+            for loopIndex = 1:monteCarloLoops
+                fpRegion = squeeze(detection_res(loopIndex, JNRIndex, thresholdIndex, window_median_length_index, :));
+                fp(loopIndex) = sum(fpRegion);
+                tn(loopIndex) = length(fpRegion) - fp(loopIndex);
+                
             end
+            
+            fpr = fp./(fp+tn);
+            
+            averageFPR(JNRIndex, thresholdIndex, window_median_length_index) = mean(fpr);
+            stdFPR(JNRIndex, thresholdIndex, window_median_length_index) = std(fpr);
+            
         end
     end
 end
