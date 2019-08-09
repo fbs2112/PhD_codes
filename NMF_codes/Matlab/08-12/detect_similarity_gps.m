@@ -56,10 +56,7 @@ for loopIndex = 1:monteCarloLoops
             paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
             paramsSignal.Initphase = 0;
             
-            [~, GPSSignals] = signalGen(paramsSignal);
-            t = 0:1/params.fs:(numberOfRawSamples/params.fs - 1/params.fs);
-            f = params.fs*0.12;
-            interferenceSignal = sin(2*pi*f.*t).';
+            [interferenceSignal, GPSSignals] = signalGen(paramsSignal);
             GPSSignals = GPSSignals(1:numberOfRawSamples,:);
             interferenceSignal = interferenceSignal(1:numberOfRawSamples);
             
