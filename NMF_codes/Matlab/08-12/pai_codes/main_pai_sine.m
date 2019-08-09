@@ -13,7 +13,7 @@ load sim_params_1.mat;
 
 global Emuindex;                                   % emulate index
 global Loopnumb;                                   % loop number
-Loopnumb = 100;
+Loopnumb = 1000;
 
 global Segnumb;                                    % number of TF observation intervals within an integration time
 Segnumb = 8;
@@ -27,12 +27,12 @@ MBlock = fix(Nonesegment/WinLBlock);
 global Pfa;                                        % false alarm probability for interference detection
 Pfa = 1e-4;                                   % false alarm probability for interference detection
 global PfaVector
-PfaVector = [1e-5 1e-4 1e-3 1e-2 1e-1 1];
+PfaVector = logspace(-5, 0, 50);
 global GoFBlockDeteflag;                           % detection flag for GoF-based interference detection algorithm using block-wise STFT
 GoFBlockDeteflag = zeros(length(PfaVector), MBlock,Segnumb*Loopnumb);
 
 params.fs = paramsSignal.Freqsamp;
-JNRVector = 20;
+JNRVector = -17;
 SNR = -25;
 random_state = 42;
 initialFrequency = 2e6;
