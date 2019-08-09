@@ -24,7 +24,7 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 SNR = -25;
-params.JNRVector = [17];
+params.JNRVector = [-17];
 
 bandwidthVector = 0;
 periodVector = 8.72e-6;
