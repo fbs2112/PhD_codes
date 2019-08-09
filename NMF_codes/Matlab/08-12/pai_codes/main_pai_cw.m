@@ -35,9 +35,9 @@ params.fs = paramsSignal.Freqsamp;
 JNRVector = -17;
 SNR = -25;
 random_state = 42;
-initialFrequency = 2e6;
+initialFrequency = params.fs*0.12;
 numberOfRawSamples = 4096;
-bandwidthVector = 2e6;
+bandwidthVector = 0;
 periodVector = 8.72e-6;
 
 paramsSignal.Noneperiod = round(periodVector*params.fs);                   % number of samples with a sweep time
@@ -50,10 +50,7 @@ mixtureSignal = zeros(numberOfRawSamples*Segnumb, length(JNRVector));
 noise = randn(numberOfRawSamples*Segnumb, 1) + 1j*randn(numberOfRawSamples*Segnumb, 1);
 noisePower = pow_eval(noise);
 
-[~, GPSSignals] = signalGen(paramsSignal);
-t = 0:1/params.fs:(numberOfRawSamples*Segnumb/params.fs - 1/params.fs);
-f = params.fs*0.12;
-interferenceSignal = sin(2*pi*f.*t).';
+[interferenceSignal, GPSSignals] = signalGen(paramsSignal);
 interferenceSignalPower = pow_eval(interferenceSignal);
 GPSSignalsPower = pow_eval(GPSSignals);
 

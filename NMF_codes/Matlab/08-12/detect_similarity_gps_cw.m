@@ -24,14 +24,14 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 SNR = -25;
-params.JNRVector = [-17];
+params.JNRVector = [17];
 
-bandwidthVector = 10.72e6;
+bandwidthVector = 0;
 periodVector = 8.72e-6;
 
 rng(random_state)
 
-initialFrequency = 2e6;
+initialFrequency = params.fs*0.12;
 numberOfRawSamples = 4096;
 silenceSamples = round(20e-6*params.fs);
 thresholdVector = 0.1:0.05:0.9;
@@ -56,10 +56,7 @@ for loopIndex = 1:monteCarloLoops
             paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
             paramsSignal.Initphase = 0;
             
-            [~, GPSSignals] = signalGen(paramsSignal);
-            t = 0:1/params.fs:(numberOfRawSamples/params.fs - 1/params.fs);
-            f = params.fs*0.12;
-            interferenceSignal = sin(2*pi*f.*t).';
+            [interferenceSignal, GPSSignals] = signalGen(paramsSignal);
             GPSSignals = GPSSignals(1:numberOfRawSamples,:);
             interferenceSignal = interferenceSignal(1:numberOfRawSamples);
             
