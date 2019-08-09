@@ -1,0 +1,1 @@
+resultsPai01: results considering Pai's codes using sinusoidal input
