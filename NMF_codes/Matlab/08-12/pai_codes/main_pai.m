@@ -13,7 +13,7 @@ load sim_params_1.mat;
 
 global Emuindex;                                   % emulate index
 global Loopnumb;                                   % loop number
-Loopnumb = 50;
+Loopnumb = 100;
 
 global Segnumb;                                    % number of TF observation intervals within an integration time
 Segnumb = 8;
@@ -21,7 +21,7 @@ global Nonesegment;                                % number of samples within a 
 Nonesegment = 4096;
 
 global WinLBlock;                                  % window length used in block-wise STFT
-WinLBlock = 15;
+WinLBlock = 19;
 global MBlock;                                     % number of samples for each block-wise STFT
 MBlock = fix(Nonesegment/WinLBlock);
 global Pfa;                                        % false alarm probability for interference detection
@@ -31,7 +31,7 @@ global GoFBlockDeteflag;                           % detection flag for GoF-base
 GoFBlockDeteflag = zeros(MBlock,Segnumb*Loopnumb);
 
 params.fs = paramsSignal.Freqsamp;
-JNRVector = 20;
+JNRVector = -17;
 SNR = -25;
 random_state = 42;
 initialFrequency = 2e6;
@@ -50,8 +50,6 @@ noise = randn(numberOfRawSamples*Segnumb, 1) + 1j*randn(numberOfRawSamples*Segnu
 noisePower = pow_eval(noise);
 
 [interferenceSignal, GPSSignals] = signalGen(paramsSignal);
-% GPSSignals = GPSSignals(1:numberOfRawSamples,:);
-% interferenceSignal = interferenceSignal(1:numberOfRawSamples);
 
 interferenceSignalPower = pow_eval(interferenceSignal);
 GPSSignalsPower = pow_eval(GPSSignals);
