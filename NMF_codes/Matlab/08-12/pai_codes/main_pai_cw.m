@@ -16,7 +16,7 @@ global Loopnumb;                                   % loop number
 Loopnumb = 1000;
 
 global Segnumb;                                    % number of TF observation intervals within an integration time
-Segnumb = 8;
+Segnumb = 1;
 global Nonesegment;                                % number of samples within a TF observation interval
 Nonesegment = 4096;
 
@@ -27,7 +27,7 @@ MBlock = fix(Nonesegment/WinLBlock);
 global Pfa;                                        % false alarm probability for interference detection
 Pfa = 1e-4;                                   % false alarm probability for interference detection
 global PfaVector
-PfaVector = logspace(-5, 0, 50);
+PfaVector = logspace(-5, 0, 25);
 global GoFBlockDeteflag;                           % detection flag for GoF-based interference detection algorithm using block-wise STFT
 GoFBlockDeteflag = zeros(length(PfaVector), MBlock,Segnumb*Loopnumb);
 
@@ -51,6 +51,8 @@ noise = randn(numberOfRawSamples*Segnumb, 1) + 1j*randn(numberOfRawSamples*Segnu
 noisePower = pow_eval(noise);
 
 [interferenceSignal, GPSSignals] = signalGen(paramsSignal);
+GPSSignals = GPSSignals(1:numberOfRawSamples,:);
+interferenceSignal = interferenceSignal(1:numberOfRawSamples);
 interferenceSignalPower = pow_eval(interferenceSignal);
 GPSSignalsPower = pow_eval(GPSSignals);
 
