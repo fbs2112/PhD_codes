@@ -37,6 +37,6 @@ for pfaIndex = 1:length(PfaVector)
     % Compute the detection probability
     if Emuindex == Loopnumb
 %         GoFBlockdete(:,pfaIndex) = sum(GoFBlockDeteflag,2)/(Loopnumb*Segnumb);
-        save(['.' filesep 'data' filesep 'resultsPai01.mat'], 'GoFBlockDeteflag');
+        save(['.' filesep 'data' filesep 'resultsPai02.mat'], 'GoFBlockDeteflag');
     end
 end
