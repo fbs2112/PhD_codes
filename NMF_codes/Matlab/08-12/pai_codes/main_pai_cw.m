@@ -34,9 +34,8 @@ Pfa = 1e-4;                                   % false alarm probability for inte
 global PfaVector
 PfaVector = logspace(-5, 0, 25);
 global GoFBlockDeteflag;                           % detection flag for GoF-based interference detection algorithm using block-wise STFT
-GoFBlockDeteflag = zeros(length(PfaVector), MBlock,Segnumb*Loopnumb);
 
-JNRVector = -17;
+JNRVector = -20:0;
 SNR = -25;
 random_state = 42;
 initialFrequency = params.fs*0.12;
@@ -61,28 +60,26 @@ interferenceSignalPower = pow_eval(interferenceSignal);
 GPSSignalsPower = pow_eval(GPSSignals);
 
 global Signal;                                     % aggregated signal
-
+global JNRIndex;
 % Run simulations
-for Emuindex = 1:Loopnumb
-    Emuindex
-    
-    noise = randn(numberOfRawSamples + silenceSamples*2, 1) + 1j*randn(numberOfRawSamples + silenceSamples*2, 1);
-    noisePower = pow_eval(noise);
-    
-    mixtureSignal = zeros(numberOfRawSamples + silenceSamples*2, length(JNRVector));
 
-    for i = 1:length(JNRVector)
-        GPSSignalsAux = GPSSignals;
-        interferenceSignalAux = interferenceSignal;
-        GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
-        mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
-        interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(i)/10)/interferenceSignalPower);
-        mixtureSignal(:,i) = mixtureGPS + interferenceSignalAux;
-    end
-    
+for JNRIndex = 1:length(JNRVector)
+    GoFBlockDeteflag = zeros(length(PfaVector), MBlock,Segnumb*Loopnumb);
+
+    noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
+    noisePower = pow_eval(noise);
+    GPSSignalsAux = GPSSignals;
+    interferenceSignalAux = interferenceSignal;
+    GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
+    mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
+    interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
+    mixtureSignal = mixtureGPS + interferenceSignalAux;
     Signal = mixtureSignal;
-    
-    DeteBlockGoF;
+
+    for Emuindex = 1:Loopnumb
+        Emuindex
+        DeteBlockGoF;        
+    end
 end
 warning('on','all')
 

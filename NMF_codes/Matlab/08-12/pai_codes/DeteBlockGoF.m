@@ -12,6 +12,7 @@ global MBlock;                                     % number of samples for each 
 global Pfa;                                        % false alarm probability for interference detection
 global PfaVector
 global GoFBlockDeteflag;                           % detection flag for GoF-based interference detection algorithm using block-wise STFT
+global JNRIndex;
 % global GoFBlockPd;                                 % detection probability for GoF-based interference detection algorithm using block-wise STFT
 
 %% GoF-based interference detection algorithm using block-wise STFT
@@ -37,6 +38,6 @@ for pfaIndex = 1:length(PfaVector)
     % Compute the detection probability
     if Emuindex == Loopnumb
 %         GoFBlockdete(:,pfaIndex) = sum(GoFBlockDeteflag,2)/(Loopnumb*Segnumb);
-        save(['.' filesep 'data' filesep 'resultsPai02.mat'], 'GoFBlockDeteflag');
+        save(['.' filesep 'data' filesep 'resultsPai03_' num2str(JNRIndex) '.mat'], 'GoFBlockDeteflag');
     end
 end
