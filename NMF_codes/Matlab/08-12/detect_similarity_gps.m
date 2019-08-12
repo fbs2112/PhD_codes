@@ -24,7 +24,7 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 SNR = -25;
-params.JNRVector = [-17];
+params.JNRVector = -20:0;
 
 bandwidthVector = 10.72e6;
 periodVector = 8.72e-6;
@@ -105,7 +105,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results04.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results06.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 rmpath(['..' filesep 'signalsGeneration' filesep]);
