@@ -18,7 +18,7 @@ totalSamples = numberOfRawSamples + silenceSamples*2;
 
 global Emuindex;                                   % emulate index
 global Loopnumb;                                   % loop number
-Loopnumb = 1000;
+Loopnumb = 100;
 
 global Segnumb;                                    % number of TF observation intervals within an integration time
 Segnumb = 1;
@@ -36,6 +36,7 @@ PfaVector = logspace(-5, 0, 25);
 global GoFBlockDeteflag;                           % detection flag for GoF-based interference detection algorithm using block-wise STFT
 
 JNRVector = -20:0;
+
 SNR = -25;
 random_state = 42;
 initialFrequency = params.fs*0.12;
@@ -64,20 +65,20 @@ global JNRIndex;
 % Run simulations
 
 for JNRIndex = 1:length(JNRVector)
+    JNRIndex
     GoFBlockDeteflag = zeros(length(PfaVector), MBlock,Segnumb*Loopnumb);
-
-    noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
-    noisePower = pow_eval(noise);
-    GPSSignalsAux = GPSSignals;
-    interferenceSignalAux = interferenceSignal;
-    GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
-    mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
-    interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
-    mixtureSignal = mixtureGPS + interferenceSignalAux;
-    Signal = mixtureSignal;
-
     for Emuindex = 1:Loopnumb
-        Emuindex
+        
+         noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
+        noisePower = pow_eval(noise);
+        GPSSignalsAux = GPSSignals;
+        interferenceSignalAux = interferenceSignal;
+        GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
+        mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
+        interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
+        mixtureSignal = mixtureGPS + interferenceSignalAux;
+        Signal = mixtureSignal;
+
         DeteBlockGoF;        
     end
 end
