@@ -24,7 +24,7 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 SNR = -25;
-params.JNRVector = [-17];
+params.JNRVector = -20:0;
 
 bandwidthVector = 0;
 periodVector = 8.72e-6;
@@ -36,7 +36,7 @@ numberOfRawSamples = 4096;
 silenceSamples = round(20e-6*params.fs);
 thresholdVector = 0.1:0.05:0.9;
 window_median_length_vector = 51:50:401;
-monteCarloLoops = 1000;
+monteCarloLoops = 100;
 
 outputLength = (numberOfRawSamples + silenceSamples*2 - params.nperseg + 1)/(params.nperseg - params.overlap);
 detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
@@ -105,7 +105,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results04.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results07.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 rmpath(['..' filesep 'signalsGeneration' filesep]);
