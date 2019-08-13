@@ -14,11 +14,13 @@ load sim_params_1.mat;
 params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
 silenceSamples = round(20e-6*params.fs);
-totalSamples = numberOfRawSamples + silenceSamples*2;
+% totalSamples = numberOfRawSamples + silenceSamples*2;
+totalSamples = numberOfRawSamples;
+
 
 global Emuindex;                                   % emulate index
 global Loopnumb;                                   % loop number
-Loopnumb = 100;
+Loopnumb = 1000;
 
 global Segnumb;                                    % number of TF observation intervals within an integration time
 Segnumb = 1;
@@ -27,6 +29,10 @@ Nonesegment = totalSamples;
 
 global WinLBlock;                                  % window length used in block-wise STFT
 WinLBlock = 19;
+global WinLCano;
+WinLCano = 5;
+global WintypeCano;
+WintypeCano = 1;
 global MBlock;                                     % number of samples for each block-wise STFT
 MBlock = fix(Nonesegment/WinLBlock);
 global Pfa;                                        % false alarm probability for interference detection
@@ -34,8 +40,10 @@ Pfa = 1e-4;                                   % false alarm probability for inte
 global PfaVector
 PfaVector = logspace(-5, 0, 25);
 global GoFBlockDeteflag;                           % detection flag for GoF-based interference detection algorithm using block-wise STFT
+global GoFCanoDeteflag;
+% JNRVector = -20:0;
+JNRVector = -17;
 
-JNRVector = -20:0;
 
 SNR = -25;
 random_state = 42;
@@ -54,8 +62,8 @@ paramsSignal.Initphase = 0;
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 interferenceSignal = interferenceSignal(1:numberOfRawSamples);
 
-GPSSignals = [zeros(silenceSamples, size(GPSSignals, 2)); GPSSignals; zeros(silenceSamples, size(GPSSignals, 2))];
-interferenceSignal = [zeros(silenceSamples, 1); interferenceSignal; zeros(silenceSamples, 1)];
+% GPSSignals = [zeros(silenceSamples, size(GPSSignals, 2)); GPSSignals; zeros(silenceSamples, size(GPSSignals, 2))];
+% interferenceSignal = [zeros(silenceSamples, 1); interferenceSignal; zeros(silenceSamples, 1)];
 
 interferenceSignalPower = pow_eval(interferenceSignal);
 GPSSignalsPower = pow_eval(GPSSignals);
@@ -67,9 +75,10 @@ global JNRIndex;
 for JNRIndex = 1:length(JNRVector)
     JNRIndex
     GoFBlockDeteflag = zeros(length(PfaVector), MBlock,Segnumb*Loopnumb);
+    GoFCanoDeteflag = zeros(length(PfaVector), MBlock,Segnumb*Loopnumb);
     for Emuindex = 1:Loopnumb
-        
-         noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
+        Emuindex
+        noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
         noisePower = pow_eval(noise);
         GPSSignalsAux = GPSSignals;
         interferenceSignalAux = interferenceSignal;
@@ -79,7 +88,8 @@ for JNRIndex = 1:length(JNRVector)
         mixtureSignal = mixtureGPS + interferenceSignalAux;
         Signal = mixtureSignal;
 
-        DeteBlockGoF;        
+        DeteBlockGoF;       
+        DeteCanoGoF;
     end
 end
 warning('on','all')
