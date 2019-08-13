@@ -27,25 +27,26 @@ SNR = -25;
 params.JNRVector = -20:0;
 
 bandwidthVector = 10.72e6;
-periodVector = 8.72e-6;
+periodVector = 8.62e-6;
 
 rng(random_state)
 
 initialFrequency = 2e6;
 numberOfRawSamples = 4096;
 silenceSamples = round(20e-6*params.fs);
+totalSamples = numberOfRawSamples + 2*silenceSamples;
 thresholdVector = 0.1:0.05:0.9;
 window_median_length_vector = 51:50:401;
 monteCarloLoops = 100;
 
-outputLength = (numberOfRawSamples + silenceSamples*2 - params.nperseg + 1)/(params.nperseg - params.overlap);
+outputLength = (totalSamples - params.nperseg + 1)/(params.nperseg - params.overlap);
 detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
     length(params.JNRVector), length(thresholdVector), length(window_median_length_vector), outputLength);
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
-    mixtureSignal = zeros(numberOfRawSamples + silenceSamples*2, length(params.JNRVector));
-    noise = randn(numberOfRawSamples + silenceSamples*2, 1) + 1j*randn(numberOfRawSamples + silenceSamples*2, 1);
+    mixtureSignal = zeros(totalSamples, length(params.JNRVector));
+    noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
     noisePower = pow_eval(noise);
     
     for bandwidthIndex = 1:length(bandwidthVector)
@@ -105,7 +106,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results06.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '.' filesep 'data' filesep '08-12' filesep 'results08.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 rmpath(['..' filesep 'signalsGeneration' filesep]);

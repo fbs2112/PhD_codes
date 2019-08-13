@@ -265,11 +265,13 @@ clc;
 
 addpath(['.' filesep 'data']);
 
-load resultsPai02_2.mat
+% load resultsPai02_2.mat
+load resultsPai01.mat
 
-PfaVector = logspace(-5, 0, 17);
-% frequencySliceCW = 26;
-frequencySliceCW = 35;
+
+PfaVector = logspace(-5, 0, 25);
+frequencySliceCW = 26;
+% frequencySliceCW = 35;
 
 aux = 1:size(GoFBlockDeteflag, 2);
 aux(frequencySliceCW) = 0;
