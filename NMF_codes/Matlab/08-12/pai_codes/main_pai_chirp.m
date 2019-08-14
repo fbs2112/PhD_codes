@@ -37,10 +37,11 @@ MBlock = fix(Nonesegment/WinLBlock);
 global Pfa;                                        % false alarm probability for interference detection
 Pfa = 1e-4;                                   % false alarm probability for interference detection
 global PfaVector
-PfaVector = logspace(-5, 0, 17);
+PfaVector = logspace(-8, 0, 17);
 global GoFBlockDeteflag;                           % detection flag for GoF-based interference detection algorithm using block-wise STFT
 global GoFCanoDeteflag;
 JNRVector = -20:0;
+
 SNR = -25;
 random_state = 42;
 initialFrequency = 2e6;
