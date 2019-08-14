@@ -82,7 +82,7 @@ for loopIndex = 1:monteCarloLoops
             [W, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
             
             for JNRIndex = 1:length(params.JNRVector)
-                
+                JNRIndex
                 inputNMF = abs(PxxAux{1, JNRIndex}).^2;
                 
                 inputNMF = inputNMF - mean(inputNMF);

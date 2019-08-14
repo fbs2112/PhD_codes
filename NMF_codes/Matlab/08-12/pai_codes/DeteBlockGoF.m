@@ -13,7 +13,8 @@ global GoFBlockDeteflag;                           % detection flag for GoF-base
 global JNRIndex;
 global periodIndex
 global bandwidthIndex
-global bandwithLoop
+global counter
+global counterLoop
 %% GoF-based interference detection algorithm using block-wise STFT
 % Window function
 h = window('rectwin',WinLBlock);
@@ -35,6 +36,6 @@ for index = 1:Segnumb
     end
 end
 % Compute the detection probability
-if bandwidthIndex == bandwithLoop
+if counter == counterLoop
     save(['.' filesep 'data' filesep 'resultsPai05.mat'], 'GoFBlockDeteflag');
 end
