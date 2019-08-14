@@ -27,7 +27,7 @@ global Nonesegment;                                % number of samples within a 
 Nonesegment = totalSamples;
 
 global WinLBlock;                                  % window length used in block-wise STFT
-WinLBlock = 19;
+WinLBlock = 3;
 global WinLCano;
 WinLCano = 5;
 global WintypeCano;
