@@ -86,6 +86,7 @@ for bandwidthIndex = 1:length(bandwidthVector)
             JNRIndex
             
             for Emuindex = 1:Loopnumb
+                Emuindex
                 noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
                 noisePower = pow_eval(noise);
                 GPSSignalsAux = GPSSignals;
@@ -95,9 +96,9 @@ for bandwidthIndex = 1:length(bandwidthVector)
                 interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
                 mixtureSignal = mixtureGPS + interferenceSignalAux;
                 Signal = mixtureSignal;
-
-                DeteBlockGoF;    
+  
                 counter = counter + 1;
+                DeteBlockGoF
         %         DeteCanoGoF;
             end
         end
