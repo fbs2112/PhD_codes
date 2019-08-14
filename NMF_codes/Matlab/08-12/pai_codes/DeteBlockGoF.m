@@ -13,29 +13,28 @@ global GoFBlockDeteflag;                           % detection flag for GoF-base
 global JNRIndex;
 global periodIndex
 global bandwidthIndex
-global counter
-global counterLoop
+global windowLengthIndex
+% global GoFBlockDeteflagCell
+% global counter
+% global counterLoop
 %% GoF-based interference detection algorithm using block-wise STFT
 % Window function
-h = window('rectwin',WinLBlock);
+h = window('rectwin',WinLBlock(windowLengthIndex));
 
 for index = 1:Segnumb
     % Compute block-wise STFT
-    [tfr,~,~] = tfrstftblock(Signal((index-1)*Nonesegment+1:index*Nonesegment),1:MBlock,MBlock,h);
+    [tfr,~,~] = tfrstftblock(Signal((index-1)*Nonesegment+1:index*Nonesegment),1:MBlock(windowLengthIndex),MBlock(windowLengthIndex),h);
     % Apply GoF test to each frequency slice of block-wise STFT, and determine the detection flag
-    for k = 1:MBlock
+    for k = 1:MBlock(windowLengthIndex)
         [~, GoFBlockpvalue] = chi2gof((abs(tfr(k,:))).^2,'cdf',{@chi2cdf,2},'nparams',0);
         for pfaIndex = 1:length(PfaVector)
             
             if GoFBlockpvalue < PfaVector(pfaIndex)
-                GoFBlockDeteflag(bandwidthIndex, periodIndex, JNRIndex, pfaIndex, k,(Emuindex-1)*Segnumb+index) = 1;
+                GoFBlockDeteflag(bandwidthIndex, periodIndex, pfaIndex, k,(Emuindex-1)*Segnumb+index) = 1;
             else
-                GoFBlockDeteflag(bandwidthIndex, periodIndex, JNRIndex, pfaIndex, k,(Emuindex-1)*Segnumb+index) = 0;
+                GoFBlockDeteflag(bandwidthIndex, periodIndex, pfaIndex, k,(Emuindex-1)*Segnumb+index) = 0;
             end
         end
     end
 end
-% Compute the detection probability
-if counter == counterLoop
-    save(['.' filesep 'data' filesep 'resultsPai06.mat'], 'GoFBlockDeteflag');
-end
+
