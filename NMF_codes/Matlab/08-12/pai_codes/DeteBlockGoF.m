@@ -37,5 +37,5 @@ for index = 1:Segnumb
 end
 % Compute the detection probability
 if counter == counterLoop
-    save(['.' filesep 'data' filesep 'resultsPai05.mat'], 'GoFBlockDeteflag');
+    save(['.' filesep 'data' filesep 'resultsPai06.mat'], 'GoFBlockDeteflag');
 end
