@@ -37,15 +37,18 @@ xAux = linspace(0, 1, size(averageFpr, 2));
 yAux = linspace(0, 1, size(averageFpr, 2));
 plot(xAux, yAux, '--');
 legend('$L = 3$', '$L = 19$', 'Random guess'); 
+grid on;
 
 figure;
 loglog(PfaVector, averageFpr(1,:));
 hold on;
 loglog(PfaVector, averageFpr(2,:));
+ylim([1e-5 1e0]);
 
 xAux = logspace(-5, 0, size(averageFpr, 2));
 yAux = logspace(-5, 0, size(averageFpr, 2));
 plot(xAux, yAux, '--');
 legend('$L = 3$', '$L = 19$', 'Random guess'); 
+grid on;
 
 rmpath(['.' filesep 'data']);
