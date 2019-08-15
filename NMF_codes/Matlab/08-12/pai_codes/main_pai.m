@@ -16,7 +16,7 @@ global Loopnumb;                                   % loop number
 Loopnumb = 100;
 
 global Segnumb;                                    % number of TF observation intervals within an integration time
-Segnumb = 8;
+Segnumb = 1;
 global Nonesegment;                                % number of samples within a TF observation interval
 Nonesegment = 4096;
 
