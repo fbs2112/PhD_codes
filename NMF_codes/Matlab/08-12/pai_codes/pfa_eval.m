@@ -57,10 +57,6 @@ global windowLengthIndex;
 global GoFBlockDeteflagCell;
 GoFBlockDeteflagCell = cell(length(MBlock), 1);
 
-% global counter;
-% counter = 0;
-% global counterLoop;
-
 counterLoop = length(bandwidthVector) * length(periodVector) * length(WinLBlock) * Loopnumb;
 for bandwidthIndex = 1:length(bandwidthVector)
     for periodIndex = 1:length(periodVector)
