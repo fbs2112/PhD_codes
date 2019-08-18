@@ -2,55 +2,69 @@ clear;
 clc;
 close all;
 
-addpath(['.' filesep 'data']);
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaulttextInterpreter','latex')
 
-load resultsPai01.mat
+addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);  
 
-PfaVector = logspace(-5, 0, 25);
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-for i = 1:length(PfaVector)
-   x = squeeze(GoFBlockDeteflag(i,:,:));
-   tpRegion = x(26,:);
-   fpRegion = x(50:end,:);
-   for j = 1:1
-        tp(j,i) = tpRegion(j);
-        fn(j,i) = 1 - tp(j,i);
-        fp(j,i) = sum(fpRegion(:,j));
-        tn(j,i) = size(fpRegion(:,j), 1) - fp(j,i);
-   end
+load results01.mat;
+
+WinLBlock = [3 19];
+PfaVector = logspace(-5, 0, 17);
+monteCarloLoops = 1000;
+
+for k = 1:length(WinLBlock)
+    x = squeeze(detection_res_cell{k, 1});
+    fp = zeros(length(PfaVector), monteCarloLoops);
+    tn = zeros(length(PfaVector), monteCarloLoops);
+    for j = 1:length(PfaVector)
+        for i = 1:monteCarloLoops
+       
+        fp(j,i) = sum(x(i, :,j));
+        tn(j,i) = size(x, 2) - fp(j,i);
+        end
+    end
+    fpr(k,:,:) = fp./(fp+tn);
 end
 
-tpr = tp./(tp+fn);
-fpr = fp./(fp+tn);
-
-tprAverage = mean(tpr, 1);
-fprAverage = mean(fpr, 1);
-tprStd = std(tpr, 1);
-fprStd = std(fpr, 1);
-
+averageFpr = squeeze(mean(fpr, 3));
+stdFpr = squeeze(std(fpr, [], 3));
 
 figure;
-plot(fprAverage, tprAverage);
-hold on;
-xAux = linspace(0, 1, numel(fprAverage));
-yAux = linspace(0, 1, numel(fprAverage));
-plot(xAux, yAux, '--');
-box 'off'
-grid on
-xlabel('Probability of false alarm');
-ylabel('Probability of detection');
+for i = 1:size(averageFpr, 1)
+    plot(PfaVector, averageFpr(i,:))
+    hold on;
+end
+
+ylabel('Probability of false alarm');
+xlabel('$\bar{\gamma}$');
+xlim([min(PfaVector) max(PfaVector)]);
+legend('$L_{\mathrm{STFT}} = 3$', '$L_{\mathrm{STFT}} = 19$');
+grid on;
 
 figure;
-loglog(fprAverage, tprAverage);
-xlabel('Probability of false alarm');
-ylabel('Probability of detection');
+for i = 1:size(averageFpr, 1)
+    loglog(PfaVector, averageFpr(i,:))
+    hold on;
+end
 
-figure;
-loglog(PfaVector, tprAverage);
-xlabel('Probability of false alarm');
-ylabel('Probability of detection');
+ylabel('Probability of false alarm');
+xlabel('$\bar{\gamma}$');
+xlim([min(PfaVector) max(PfaVector)]);
+legend('$L_{\mathrm{STFT}} = 3$', '$L_{\mathrm{STFT}} = 19$');
+grid on;
 
-rmpath(['.' filesep 'data']);
+% save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'pfa_data.mat'], 'averageFpr', 'stdFpr')
+
+rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);  
 %%
 
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
