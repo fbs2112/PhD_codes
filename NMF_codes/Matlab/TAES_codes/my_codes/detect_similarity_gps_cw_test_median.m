@@ -40,7 +40,7 @@ monteCarloLoops = 100;
 
 outputLength = (totalSamples - params.nperseg + 1)/(params.nperseg - params.overlap);
 detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
-    length(params.JNRVector), length(thresholdVector), length(window_median_length_vector), outputLength);
+    length(params.JNRVector), length(thresholdVector), length(window_median_length_vector));
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -91,7 +91,7 @@ for loopIndex = 1:monteCarloLoops
                 output = inputNMFNormalised.'*WNormalised;
                 for thresholdIndex = 1:length(thresholdVector)
                     for window_median_length_index = 1:length(window_median_length_vector)
-                        detection_res(loopIndex, bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = ...
+                        detection_res(loopIndex, bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index) = ...
                             median(detection_eval(output, thresholdVector(thresholdIndex)));
                         
                     end
