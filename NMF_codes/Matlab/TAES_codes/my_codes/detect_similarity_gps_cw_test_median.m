@@ -35,7 +35,7 @@ initialFrequency = params.fs*0.12;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0.1:0.05:0.9;
-window_median_length_vector = 51:50:401;
+window_median_length_vector = 0;
 monteCarloLoops = 100;
 
 outputLength = (totalSamples - params.nperseg + 1)/(params.nperseg - params.overlap);
