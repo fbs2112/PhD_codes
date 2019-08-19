@@ -25,10 +25,6 @@ params.tolError = 1e-6;
 params.repetitions = 1;
 SNR = -25;
 params.JNRVector = -20:0;
-
-params.JNRVector = -20;
-
-
 bandwidthVector = 0;
 periodVector = 8.72e-6;
 
@@ -107,7 +103,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results03.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results06.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
