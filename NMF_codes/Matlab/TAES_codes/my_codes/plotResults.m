@@ -14,54 +14,56 @@ fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-load results04.mat;
+load results10.mat;
 
 thresholdVector = 0.1:0.05:0.9;
 window_median_length_vector = 51:50:401;
+window_median_length_vector = 0;
+
 
 for k = 1:length(thresholdVector)
     for j = 1:length(window_median_length_vector)
        
-        x = squeeze(detection_res(:,k,j,:));
-        fp(j,k,:) = sum(x, 2);
-        tn(j,k,:) = size(x, 2) - fp(j,k,:) ;
+        x = squeeze(detection_res(:,k));
+        fp(:,k) = x;
+        tn(:,k) = 1 - fp(:,k) ;
     end
 end
 
 fpr = fp./(fp+tn);
 
-averageFpr = squeeze(mean(fpr, 3));
-stdFpr = squeeze(std(fpr, [], 3));
+averageFpr = squeeze(mean(fpr, 1));
+stdFpr = squeeze(std(fpr, [], 1));
 
 figure;
-for i = 1:size(averageFpr, 1)
-    plot(thresholdVector, averageFpr(i,:))
-    hold on;
-end
+% for i = 1:size(averageFpr, 1)
+plot(thresholdVector, averageFpr)
+%     hold on;
+% end
 
 ylabel('Probability of false alarm');
 xlabel('$\bar{\gamma}$');
 xlim([min(thresholdVector) max(thresholdVector)]);
 
-legend('$L_{\mathrm{med}} = 51$', '$L_{\mathrm{med}} = 101$', '$L_{\mathrm{med}} = 151$','$L_{\mathrm{med}} = 201$',...
-    '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
+% legend('$L_{\mathrm{med}} = 51$', '$L_{\mathrm{med}} = 101$', '$L_{\mathrm{med}} = 151$','$L_{\mathrm{med}} = 201$',...
+%     '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
 grid on;
 
 figure;
-for i = 1:size(averageFpr, 1)
-    loglog(thresholdVector, averageFpr(i,:))
-    hold on;
-end
+% for i = 1:size(averageFpr, 1)
+    loglog(thresholdVector, averageFpr)
+%     hold on;
+% end
 
 ylabel('Probability of false alarm');
 xlabel('$\bar{\gamma}$');
 xlim([min(thresholdVector) max(thresholdVector)]);
 
-legend('$L_{\mathrm{med}} = 51$', '$L_{\mathrm{med}} = 101$', '$L_{\mathrm{med}} = 151$','$L_{\mathrm{med}} = 201$',...
-    '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
+% legend('$L_{\mathrm{med}} = 51$', '$L_{\mathrm{med}} = 101$', '$L_{\mathrm{med}} = 151$','$L_{\mathrm{med}} = 201$',...
+%     '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
 grid on;
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'pfa_data.mat'], 'averageFpr', 'stdFpr')
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'pfa_data_median_full.mat'], 'averageFpr', 'stdFpr')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
@@ -163,4 +165,107 @@ ylim([1e-5 1e0]);
 grid on;
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
+rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']); 
+
+%%
+clear;
+clc;
+close all;
+
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaulttextInterpreter','latex')
+
+addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
+
+load pfa_data_median_full;
+
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+
+load results09.mat;
+
+monteCarloLoops = 100;
+
+thresholdVector = 0.1:0.05:0.9;
+window_median_length_vector = 0;
+periodVector = 0;
+bandwidthVector = 0;
+JNRVector = -20:0;
+
+for JNRIndex = 1:length(JNRVector)
+    for bandwidthIndex = 1:length(bandwidthVector)
+        for periodIndex = 1:length(periodVector)
+            for thresholdIndex = 1:length(thresholdVector)
+                for window_median_length_index = 1:length(window_median_length_vector)
+                    x = squeeze(detection_res(:, bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index,:));
+                    tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = sum(x, 2);
+                    fn(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = ...
+                        size(x, 2) - tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :);
+                end
+            end
+        end
+    end
+end
+
+tpr = squeeze(tp./(tp+fn));
+
+averageTpr = mean(tpr, 3);
+stdTpr = std(tpr, [], 3);
+
+JNRIdx = 1;
+figure;
+% for i = 1:size(averageTpr, 3)
+    plot(thresholdVector, averageTpr(JNRIdx,:))
+%     hold on
+% end
+
+ylabel('Probability of detection');
+xlabel('$\bar{\gamma}$');
+xlim([min(thresholdVector) max(thresholdVector)]);
+% legend('$L_{\mathrm{med}} = 51$', '$L_{\mathrm{med}} = 101$', '$L_{\mathrm{med}} = 151$','$L_{\mathrm{med}} = 201$',...
+%     '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
+grid on;
+
+figure;
+% for i = 1:size(averageTpr, 3)
+    loglog(thresholdVector, averageTpr(JNRIdx,:))
+%     hold on
+% end
+
+ylabel('Probability of detection');
+xlabel('$\bar{\gamma}$');
+xlim([min(thresholdVector) max(thresholdVector)]);
+% legend('$L_{\mathrm{med}} = 51$', '$L_{\mathrm{med}} = 101$', '$L_{\mathrm{med}} = 151$','$L_{\mathrm{med}} = 201$',...
+%     '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
+grid on;
+    
+% cfun = @(tpr, fpr) sqrt(fpr.^2 + (1-tpr).^2);
+% 
+% for i = 1:length(JNRVector)
+%     c = cfun(squeeze(averageTpr(i,:,:)).', averageFpr);
+%     cMin(i) = min(c(:));
+% end
+% 
+% figure;
+% plot(JNRVector, cMin)
+
+%Plot ROC
+figure;
+% for i = 1:size(averageTpr, 3)
+    loglog(averageFpr, averageTpr(JNRIdx,:));
+%     hold on;
+% end
+% legend('$L_{\mathrm{med}} = 51$', '$L_{\mathrm{med}} = 101$', '$L_{\mathrm{med}} = 151$','$L_{\mathrm{med}} = 201$',...
+%     '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
+xlim([1e-5 1e0]);
+ylim([1e-5 1e0]);
+ylabel('Probability of detection');
+xlabel('Probability of false alarm');
+grid on;
+
+rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']); 
