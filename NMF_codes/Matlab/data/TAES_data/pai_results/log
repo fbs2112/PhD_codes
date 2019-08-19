@@ -1,1 +1,9 @@
 results01: results to evaluate false-alarm probability 
+results02: results to evaluate ROC curve under -17 dB JNR for cw interference
+results03: results to evaluate ROC curve under -17 dB JNR for chirp considering period of 8.62 mus and 10.72 MHz of bandwidth
+results04: results to evaluate ROC curve under -17 dB JNR for cw interference with silence periods
+results05: results to evaluate ROC curve under -20:0 dB JNR for cw interference
+results06: results to evaluate ROC curve under -20:0 dB JNR for cw interference with silence periods
+results07: results to evaluate ROC curve under -20:0 JNR for chirp considering period of 8.62 mus and 10.72 MHz of bandwidth
+results08: results to evaluate ROC curve under -20:0 JNR for chirp considering period of 8.62 mus and 10.72 MHz of bandwidth with silence periods
+
