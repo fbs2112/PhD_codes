@@ -33,7 +33,9 @@ rng(random_state)
 
 initialFrequency = 2e6;
 numberOfRawSamples = 4096;
-totalSamples = numberOfRawSamples;
+silenceSamples = round(20e-6*params.fs);
+totalSamples = numberOfRawSamples + 2*silenceSamples;
+
 thresholdVector = 0.1:0.05:0.9;
 window_median_length_vector = 51:50:401;
 monteCarloLoops = 100;
@@ -60,6 +62,9 @@ for loopIndex = 1:monteCarloLoops
             interferenceSignal = interferenceGen(paramsSignal);
             GPSSignals = GPSSignals(1:numberOfRawSamples,:);
             interferenceSignal = interferenceSignal(1:numberOfRawSamples);
+            
+            GPSSignals = [zeros(silenceSamples, size(GPSSignals, 2)); GPSSignals; zeros(silenceSamples, size(GPSSignals, 2))];
+            interferenceSignal = [zeros(silenceSamples, 1); interferenceSignal; zeros(silenceSamples, 1)];
             
             interferenceSignalPower = pow_eval(interferenceSignal);
             GPSSignalsPower = pow_eval(GPSSignals);
@@ -100,7 +105,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results08.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
