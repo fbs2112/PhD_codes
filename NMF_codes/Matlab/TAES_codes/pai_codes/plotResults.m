@@ -1,3 +1,5 @@
+%Probability of false alarm evaluation
+
 clear;
 clc;
 close all;
@@ -27,7 +29,7 @@ for k = 1:length(WinLBlock)
     for j = 1:length(PfaVector)
         for i = 1:monteCarloLoops
        
-        fp(j,i) = sum(x(i, :,j));
+        fp(j,i) = sum(x(i,:,j));
         tn(j,i) = size(x, 2) - fp(j,i);
         end
     end
@@ -58,13 +60,249 @@ end
 ylabel('Probability of false alarm');
 xlabel('$\bar{\gamma}$');
 xlim([min(PfaVector) max(PfaVector)]);
+ylim([1e-5 1e-0]);
 legend('$L_{\mathrm{STFT}} = 3$', '$L_{\mathrm{STFT}} = 19$');
 grid on;
 
-% save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'pfa_data.mat'], 'averageFpr', 'stdFpr')
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'pfa_data.mat'], 'averageFpr', 'stdFpr')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);  
+%%
+%ROC curve under -17 dB JNR for cw interference
+clear;
+clc;
+close all;
+
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaulttextInterpreter','latex')
+
+addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);  
+
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+
+load results02.mat;
+load pfa_data.mat;
+
+PfaVector = logspace(-5, 0, 17);
+monteCarloLoops = 100;
+pdIndex = 26;
+
+for j = 1:length(PfaVector)
+    for i = 1:monteCarloLoops
+        
+        tp(j,i) = detection_res(1,i,pdIndex,j);
+        fn(j,i) = 1 - tp(j,i);
+    end
+end
+tpr = tp./(tp+fn);
+
+averageTprPai = squeeze(mean(tpr, 2));
+stdTpr = squeeze(std(tpr, [], 2));
+
+averageFprPai = averageFpr;
+
+figure;
+plot(averageFprPai(2,:) , averageTprPai.')
+
+ylabel('Probability of false alarm');
+xlabel('$\bar{\gamma}$');
+xlim([min(PfaVector) max(PfaVector)]);
+grid on;
+
+
+figure;
+loglog(PfaVector , averageTprPai.')
+
+ylabel('Probability of false alarm');
+xlabel('$\bar{\gamma}$');
+xlim([min(PfaVector) max(PfaVector)]);
+ylim([1e-5 1e-0]);
+grid on;
+
+figure;
+semilogx(averageFprPai(2,:) , averageTprPai.')
+grid on;
+hold on;
+
+rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);
+%------------------------------------------------------------------------------------------------
+
+addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
+
+load pfa_data;
+
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+
+monteCarloLoops = 100;
+
+thresholdVector = 0.1:0.05:0.9;
+window_median_length_vector = 51:50:401;
+periodVector = 0;
+bandwidthVector = 0;
+JNRVector = 1;
+
+tp = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), length(thresholdVector), length(window_median_length_vector), monteCarloLoops);
+fn = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), length(thresholdVector), length(window_median_length_vector), monteCarloLoops);
+
+for JNRIndex = 4:4%length(JNRVector)
+    load(['results05_' num2str(JNRIndex)]);
+    for bandwidthIndex = 1:length(bandwidthVector)
+        for periodIndex = 1:length(periodVector)
+            for thresholdIndex = 1:length(thresholdVector)
+                for window_median_length_index = 1:length(window_median_length_vector)
+                    x = squeeze(detection_res(:, bandwidthIndex, periodIndex, 1, thresholdIndex, window_median_length_index,:));
+                    tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = sum(x, 2);
+                    fn(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = ...
+                        size(x, 2) - tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :);
+                end
+            end
+        end
+    end
+end
+
+tpr = squeeze(tp./(tp+fn));
+
+averageTpr = mean(tpr, 4);
+stdTpr = std(tpr, [], 4);
+
+for i = 1:size(averageTpr, 3)
+    semilogx(averageFpr(i,:), squeeze(averageTpr(4,:,i)));
+end
+
+xlabel('Probability of false alarm');
+ylabel('Probability of detection');
+xlim([min(PfaVector) max(PfaVector)]);
+ylim([1e-2 1e-0]);
+
+rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
+
+%%
+%ROC curve under -17 dB JNR for cw interference with silence periods
+clear;
+clc;
+close all;
+
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaulttextInterpreter','latex')
+
+addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);  
+
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+
+load results04.mat;
+load pfa_data.mat;
+
+PfaVector = logspace(-5, 0, 17);
+monteCarloLoops = 100;
+pdIndex = 26;
+
+for j = 1:length(PfaVector)
+    for i = 1:monteCarloLoops
+        
+        tp(j,i) = detection_res(1,i,pdIndex,j);
+        fn(j,i) = 1 - tp(j,i);
+    end
+end
+tpr = tp./(tp+fn);
+
+averageTprPai = squeeze(mean(tpr, 2));
+stdTpr = squeeze(std(tpr, [], 2));
+
+averageFprPai = averageFpr;
+
+figure;
+plot(averageFprPai(2,:) , averageTprPai.')
+
+ylabel('Probability of false alarm');
+xlabel('$\bar{\gamma}$');
+xlim([min(PfaVector) max(PfaVector)]);
+grid on;
+
+
+figure;
+loglog(PfaVector , averageTprPai.')
+
+ylabel('Probability of false alarm');
+xlabel('$\bar{\gamma}$');
+xlim([min(PfaVector) max(PfaVector)]);
+ylim([1e-5 1e-0]);
+grid on;
+
+figure;
+semilogx(averageFprPai(2,:) , averageTprPai.')
+grid on;
+hold on;
+
+rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);
+%------------------------------------------------------------------------------------------------
+
+addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
+
+load pfa_data;
+
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+
+monteCarloLoops = 100;
+
+thresholdVector = 0.1:0.05:0.9;
+window_median_length_vector = 51:50:401;
+periodVector = 0;
+bandwidthVector = 0;
+JNRVector = 1;
+
+tp = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), length(thresholdVector), length(window_median_length_vector), monteCarloLoops);
+fn = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), length(thresholdVector), length(window_median_length_vector), monteCarloLoops);
+
+for JNRIndex = 4:4%length(JNRVector)
+    load(['results05_' num2str(JNRIndex)]);
+    for bandwidthIndex = 1:length(bandwidthVector)
+        for periodIndex = 1:length(periodVector)
+            for thresholdIndex = 1:length(thresholdVector)
+                for window_median_length_index = 1:length(window_median_length_vector)
+                    x = squeeze(detection_res(:, bandwidthIndex, periodIndex, 1, thresholdIndex, window_median_length_index,:));
+                    tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = sum(x, 2);
+                    fn(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :) = ...
+                        size(x, 2) - tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index, :);
+                end
+            end
+        end
+    end
+end
+
+tpr = squeeze(tp./(tp+fn));
+
+averageTpr = mean(tpr, 4);
+stdTpr = std(tpr, [], 4);
+
+for i = 1:size(averageTpr, 3)
+    semilogx(averageFpr(i,:), squeeze(averageTpr(4,:,i)));
+end
+
+xlabel('Probability of false alarm');
+ylabel('Probability of detection');
+xlim([min(PfaVector) max(PfaVector)]);
+ylim([1e-2 1e-0]);
+
+rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
 %%
 
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
