@@ -16,6 +16,7 @@ params.fs = paramsSignal.Freqsamp;
 params.nfft = 512;
 params.nperseg = 512;
 params.overlap = params.nperseg-1;
+
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = 1;
 params.init = 'random';
@@ -30,21 +31,20 @@ SNR = -25;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0.1:0.05:0.9;
-window_median_length_vector = 51:50:401;
+window_median_length_vector = 0;
 monteCarloLoops = 1000;
 
-outputLength = (totalSamples - params.nperseg + 1)/(params.nperseg - params.overlap);
-detection_res = zeros(monteCarloLoops, length(thresholdVector), length(window_median_length_vector), outputLength);
+GPSSignals = GPSGen(paramsSignal);
+GPSSignals = GPSSignals(1:numberOfRawSamples,:);
+GPSSignalsPower = pow_eval(GPSSignals);
+    
+detection_res = zeros(monteCarloLoops, length(thresholdVector), length(window_median_length_vector));
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
     noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
     noisePower = pow_eval(noise);
-    
-    GPSSignals = GPSGen(paramsSignal);
-    GPSSignals = GPSSignals(1:numberOfRawSamples,:);
-    GPSSignalsPower = pow_eval(GPSSignals);
-    
+   
     GPSSignalsAux = GPSSignals;
     GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
     mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
@@ -66,13 +66,12 @@ for loopIndex = 1:monteCarloLoops
     output = inputNMFNormalised.'*WNormalised;
     for thresholdIndex = 1:length(thresholdVector)
         for window_median_length_index = 1:length(window_median_length_vector)
-            detection_res(loopIndex, thresholdIndex, window_median_length_index, :) = ...
-                detection_eval(output, thresholdVector(thresholdIndex), window_median_length_vector(window_median_length_index));
+            detection_res(loopIndex, thresholdIndex, window_median_length_index) = median(detection_eval(output, thresholdVector(thresholdIndex)));
         end
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results04.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results10.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
