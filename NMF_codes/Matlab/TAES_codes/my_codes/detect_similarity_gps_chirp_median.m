@@ -14,7 +14,7 @@ random_state = 42;
 params.fs = paramsSignal.Freqsamp;
 params.nfft = 512;
 params.nperseg = 512;
-params.overlap = params.nperseg-1;
+params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = 1;
 params.init = 'random';
@@ -41,6 +41,10 @@ monteCarloLoops = 100;
 detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
     length(params.JNRVector), length(thresholdVector), length(window_median_length_vector));
 
+GPSSignals = GPSGen(paramsSignal);
+GPSSignals = GPSSignals(1:numberOfRawSamples,:);
+GPSSignalsPower = pow_eval(GPSSignals);
+
 for loopIndex = 1:monteCarloLoops
     loopIndex
     mixtureSignal = zeros(totalSamples, length(params.JNRVector));
@@ -54,14 +58,10 @@ for loopIndex = 1:monteCarloLoops
             paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                    % end frequency
             paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
             paramsSignal.Initphase = 0;
-            
-            GPSSignals = GPSGen(paramsSignal);
+           
             interferenceSignal = interferenceGen(paramsSignal);
-            GPSSignals = GPSSignals(1:numberOfRawSamples,:);
             interferenceSignal = interferenceSignal(1:numberOfRawSamples);
-            
             interferenceSignalPower = pow_eval(interferenceSignal);
-            GPSSignalsPower = pow_eval(GPSSignals);
             
             for i = 1:length(params.JNRVector)
                 GPSSignalsAux = GPSSignals;
@@ -99,7 +99,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results11.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results26.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
