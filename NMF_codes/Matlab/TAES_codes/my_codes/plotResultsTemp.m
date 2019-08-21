@@ -167,7 +167,7 @@ rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep
 
 clear;
 clc;
-close all;
+% close all;
 
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
 set(groot, 'defaultLegendInterpreter','latex');
@@ -184,7 +184,8 @@ fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 dataPath = ['..' filesep '..' filesep '.' filesep 'figs' filesep 'group_presentation' filesep];
 
-load results18.mat;
+load results18
+% end.mat;
 
 monteCarloLoops = 100;
 
@@ -212,17 +213,17 @@ tpr = squeeze(tp./(tp+fn));
 averageTpr = mean(tpr, 3);
 stdTpr = std(tpr, [], 3);
 
-for i = 1:size(averageTpr, 1)
-    figure;
-    plot(averageFpr, averageTpr(i,:));
-    hold on 
-    plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
-    title(['JNR: ' num2str(JNRVector(i))]);
-    ylabel('Probability of detection');
-    xlabel('Probability of false alarm');
-    grid on;
-    formatFig(gcf, [dataPath  'roc_chirp_dot_' num2str(JNRVector(i))], 'en', figProp)
-end
+% for i = 1:size(averageTpr, 1)
+%     figure;
+%     plot(averageFpr, averageTpr(i,:));
+%     hold on 
+%     plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
+%     title(['JNR: ' num2str(JNRVector(i))]);
+%     ylabel('Probability of detection');
+%     xlabel('Probability of false alarm');
+%     grid on;
+% %     formatFig(gcf, [dataPath  'roc_chirp_dot_' num2str(JNRVector(i))], 'en', figProp)
+% end
 
 cfun = @(tpr, fpr) sqrt(fpr.^2 + (1-tpr).^2);
 
@@ -276,17 +277,17 @@ tprPai = tpPai./(tpPai+fnPai);
 averageTprPai = mean(tprPai, 3);
 stdTprPai = std(tprPai, [], 3);
 
-for i = 1:size(averageTprPai, 1)
-    figure;
-    plot(averageFprPai(1,:), averageTprPai(i,:));
-    hold on 
-    plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
-    title(['JNR: ' num2str(JNRVector(i))]);
-    ylabel('Probability of detection');
-    xlabel('Probability of false alarm');
-    grid on;
-    formatFig(gcf, [dataPath  'roc_chirp_pai_' num2str(JNRVector(i))], 'en', figProp);
-end
+% for i = 1:size(averageTprPai, 1)
+%     figure;
+%     plot(averageFprPai(1,:), averageTprPai(i,:));
+%     hold on 
+%     plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
+%     title(['JNR: ' num2str(JNRVector(i))]);
+%     ylabel('Probability of detection');
+%     xlabel('Probability of false alarm');
+%     grid on;
+% %     formatFig(gcf, [dataPath  'roc_chirp_pai_' num2str(JNRVector(i))], 'en', figProp);
+% end
 
 for i = 1:length(JNRVector)
     c = cfun(averageTprPai(i,:), averageFpr(1,:));
@@ -304,7 +305,7 @@ ylabel('C$_{\mathrm{min}}$');
 xlabel('JNR [dB]');
 legend('Dot', 'Pai');
 
-formatFig(gcf, [dataPath  'cmin_chirp_'], 'en', figProp);
+% formatFig(gcf, [dataPath  'cmin_chirp_'], 'en', figProp);
 
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])

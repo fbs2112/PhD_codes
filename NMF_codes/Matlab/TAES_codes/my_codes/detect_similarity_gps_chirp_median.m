@@ -12,8 +12,8 @@ load sim_params_1.mat;
 random_state = 42;
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 512;
-params.nperseg = 512;
+params.nfft = 256;
+params.nperseg = 128;
 params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = 1;
@@ -99,7 +99,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results26.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results42.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])

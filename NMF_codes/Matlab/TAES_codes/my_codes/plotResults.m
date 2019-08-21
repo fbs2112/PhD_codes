@@ -14,7 +14,7 @@ fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-load results25.mat;
+load results17.mat;
 
 thresholdVector = 0.1:0.05:0.9;
 window_median_length_vector = 51:50:401;
@@ -63,7 +63,7 @@ xlim([min(thresholdVector) max(thresholdVector)]);
 %     '$L_{\mathrm{med}} = 251$', '$L_{\mathrm{med}} = 301$', '$L_{\mathrm{med}} = 351$', '$L_{\mathrm{med}} = 401$');
 grid on;
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'pfa_data_median_full_512.mat'], 'averageFpr', 'stdFpr')
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'pfa_data_median_full_128.mat'], 'averageFpr', 'stdFpr')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
@@ -189,7 +189,7 @@ fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-load results21.mat;
+load results20.mat;
 
 monteCarloLoops = 100;
 
@@ -234,16 +234,16 @@ xlabel('$\bar{\gamma}$');
 xlim([min(thresholdVector) max(thresholdVector)]);
 grid on;
     
-for i = 1:size(averageTpr, 1)
-    figure;
-    plot(averageFpr, averageTpr(i,:));
-    hold on 
-    plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
-    title(['JNR: ' num2str(JNRVector(i))]);
-    ylabel('Probability of detection');
-    xlabel('Probability of false alarm');
-    grid on;
-end
+% for i = 1:size(averageTpr, 1)
+%     figure;
+%     plot(averageFpr, averageTpr(i,:));
+%     hold on 
+%     plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
+%     title(['JNR: ' num2str(JNRVector(i))]);
+%     ylabel('Probability of detection');
+%     xlabel('Probability of false alarm');
+%     grid on;
+% end
 cfun = @(tpr, fpr) sqrt(fpr.^2 + (1-tpr).^2);
 
 for i = 1:length(JNRVector)
@@ -274,14 +274,14 @@ set(groot, 'defaulttextInterpreter','latex')
 addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
 addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
 
-load pfa_data_median_full_512;
+load pfa_data_median_full_128;
 
 linewidth = 1.5;
 fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-load results26.mat;
+load results18.mat;
 
 monteCarloLoops = 100;
 
@@ -310,32 +310,32 @@ averageTpr = mean(tpr, 3);
 stdTpr = std(tpr, [], 3);
 
 JNRIdx = 1;
-figure;
-plot(thresholdVector, averageTpr(JNRIdx,:))
-
-ylabel('Probability of detection');
-xlabel('$\bar{\gamma}$');
-xlim([min(thresholdVector) max(thresholdVector)]);
-grid on;
-
-figure;
-loglog(thresholdVector, averageTpr(JNRIdx,:))
-
-ylabel('Probability of detection');
-xlabel('$\bar{\gamma}$');
-xlim([min(thresholdVector) max(thresholdVector)]);
-grid on;
-    
-for i = 1:size(averageTpr, 1)
-    figure;
-    plot(averageFpr, averageTpr(i,:));
-    hold on 
-    plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
-    title(['JNR: ' num2str(JNRVector(i))]);
-    ylabel('Probability of detection');
-    xlabel('Probability of false alarm');
-    grid on;
-end
+% figure;
+% plot(thresholdVector, averageTpr(JNRIdx,:))
+% 
+% ylabel('Probability of detection');
+% xlabel('$\bar{\gamma}$');
+% xlim([min(thresholdVector) max(thresholdVector)]);
+% grid on;
+% 
+% figure;
+% loglog(thresholdVector, averageTpr(JNRIdx,:))
+% 
+% ylabel('Probability of detection');
+% xlabel('$\bar{\gamma}$');
+% xlim([min(thresholdVector) max(thresholdVector)]);
+% grid on;
+%     
+% for i = 1:size(averageTpr, 1)
+%     figure;
+%     plot(averageFpr, averageTpr(i,:));
+%     hold on 
+%     plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
+%     title(['JNR: ' num2str(JNRVector(i))]);
+%     ylabel('Probability of detection');
+%     xlabel('Probability of false alarm');
+%     grid on;
+% end
 
 cfun = @(tpr, fpr) sqrt(fpr.^2 + (1-tpr).^2);
 

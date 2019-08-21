@@ -13,8 +13,8 @@ random_state = 42;
 rng(random_state)
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 512;
-params.nperseg = 512;
+params.nfft = 256;
+params.nperseg = 128;
 params.overlap = params.nperseg - 1;
 
 params.hop_size = params.nperseg - params.overlap;
@@ -64,6 +64,7 @@ for loopIndex = 1:monteCarloLoops
     WNormalised = WNormalised ./ (norm(WNormalised) + eps);
     
     output = inputNMFNormalised.'*WNormalised;
+    
     for thresholdIndex = 1:length(thresholdVector)
         for window_median_length_index = 1:length(window_median_length_vector)
             detection_res(loopIndex, thresholdIndex, window_median_length_index) = median(detection_eval(output, thresholdVector(thresholdIndex)));
@@ -71,7 +72,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results25.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results41.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
