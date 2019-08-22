@@ -26,5 +26,15 @@ results25: results to evaluate probability of false alarm considering a large me
 results26: results for chirp with period of 8.62 mus, bandwidth of 10.72 MHz, without silence periods considering my proposed technique for nfft:512
 
 
+results29: results for chirp with period of 8.62 mus, bandwidth of 10.72 MHz, without silence periods considering my proposed technique for nfft:512 with median prior to detector
+results30: results to evaluate the probability of false alarm considering my proposed technique for nfft:512 with median prior to detector
+results31: results to evaluate the probability of false alarm considering my proposed technique for nfft:512 with mean prior to detector
+results32: results for chirp with period of 8.62 mus, bandwidth of 10.72 MHz, without silence periods considering my proposed technique for nfft:512 with mean prior to detector
+results33: results to evaluate probability of false alarm considering a large median window for nfft=512 with W fixed (chirp)
+results34: results to evaluate probability of false alarm considering a large median window for nfft=128 with W fixed (another noise realisation)
+results35: results for chirp with period of 8.62 mus, bandwidth of 10.72 MHz, without silence periods considering my proposed technique for nfft:128 using median window with size equals to output size
+results36: results for chirp with period of 8.62 mus, bandwidth of 10.72 MHz, without silence periods considering my proposed technique for nfft:128 using median window with size equals to output size and with w fixed
 
 
+
+    
