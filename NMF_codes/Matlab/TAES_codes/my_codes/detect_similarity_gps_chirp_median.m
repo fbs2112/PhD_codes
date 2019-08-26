@@ -34,7 +34,7 @@ rng(random_state)
 initialFrequency = 2e6;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
-thresholdVector = 0.1:0.05:0.9;
+thresholdVector = 0:0.005:2;
 window_median_length_vector = 0;
 monteCarloLoops = 100;
 
@@ -99,8 +99,11 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results42.mat'], 'detection_res', '-v7.3');
-
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
+else
+end
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '..' filesep  'signalsGeneration' filesep]);

@@ -1,4 +1,5 @@
-%This code employ the sample median prior the detector output
+%This code uses the sample median prior to detector
+
 clear;
 clc;
 close all;
@@ -13,8 +14,8 @@ load sim_params_1.mat;
 random_state = 42;
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 64;
-params.nperseg = 64;
+params.nfft = 128;
+params.nperseg = 128;
 params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = 1;
@@ -27,12 +28,12 @@ params.repetitions = 1;
 SNR = -25;
 params.JNRVector = -25:0;
 
-bandwidthVector = 10.72e6;
+bandwidthVector = 0;
 periodVector = 8.62e-6;
 
 rng(random_state)
 
-initialFrequency = 2e6;
+initialFrequency = params.fs*0.12;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0:0.005:2;
@@ -88,12 +89,11 @@ for loopIndex = 1:monteCarloLoops
                 WNormalised = WNormalised.*sqrt(1./var(WNormalised));
                 WNormalised = WNormalised ./ (norm(WNormalised) + eps);
                 
-                output = inputNMFNormalised.'*WNormalised;
-                output = median(output);
+                output = median(inputNMFNormalised.'*WNormalised);
                 for thresholdIndex = 1:length(thresholdVector)
                     for window_median_length_index = 1:length(window_median_length_vector)
                         detection_res(loopIndex, bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index) = ...
-                            (detection_eval(output, thresholdVector(thresholdIndex)));
+                            detection_eval(output, thresholdVector(thresholdIndex));
                     end
                 end
             end
