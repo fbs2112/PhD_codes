@@ -16,7 +16,7 @@ numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
 WinLBlock = 19;
-JNRVector = -17;
+JNRVector = 0;
 SNR = -25;
 random_state = 42;
 
@@ -44,6 +44,7 @@ h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
 
 detection_res = zeros(length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
+pvalue = zeros(length(JNRVector), monteCarloLoops, MBlock);
 
 for JNRIndex = 1:length(JNRVector)
    
@@ -57,12 +58,12 @@ for JNRIndex = 1:length(JNRVector)
         mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
         interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
         mixtureSignal = mixtureGPS + interferenceSignalAux;
-        detection_res(JNRIndex, Emuindex, :, :) = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
+        [pvalue(JNRIndex, Emuindex, :), detection_res(JNRIndex, Emuindex, :, :)] = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
     end
     
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'results02.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'results05.mat'], 'detection_res', '-v7.3');
 
 warning('on','all')
 

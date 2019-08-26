@@ -16,7 +16,8 @@ numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
 WinLBlock = 3;
-JNRVector = 10;
+JNRVector = -20:0;
+
 SNR = -25;
 random_state = 42;
 
@@ -65,7 +66,7 @@ for JNRIndex = 1:length(JNRVector)
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'results03.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
 
 warning('on','all')
 
