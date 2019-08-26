@@ -31,14 +31,16 @@ SNR = -25;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0.1:0.05:0.9;
-window_median_length_vector = 0;
+window_median_length_vector = 51:50:401;
 monteCarloLoops = 1000;
 
 GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignalsPower = pow_eval(GPSSignals);
     
-detection_res = zeros(monteCarloLoops, length(thresholdVector), length(window_median_length_vector));
+outputLength = floor((totalSamples - params.overlap)/(params.nperseg - params.overlap));
+detection_res = zeros(monteCarloLoops, length(thresholdVector), length(window_median_length_vector), outputLength);
+
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -67,12 +69,18 @@ for loopIndex = 1:monteCarloLoops
     
     for thresholdIndex = 1:length(thresholdVector)
         for window_median_length_index = 1:length(window_median_length_vector)
-            detection_res(loopIndex, thresholdIndex, window_median_length_index) = median(detection_eval(output, thresholdVector(thresholdIndex)));
+            detection_res(loopIndex, thresholdIndex, window_median_length_index, :) = detection_eval(output, thresholdVector(thresholdIndex), ...
+                window_median_length_vector(window_median_length_index));
         end
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results41.mat'], 'detection_res', '-v7.3');
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
+else
+end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])

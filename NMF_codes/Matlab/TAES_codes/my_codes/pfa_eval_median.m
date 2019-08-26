@@ -72,8 +72,12 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results53.mat'], 'detection_res', '-v7.3');
-
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
+else
+end
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '..' filesep  'signalsGeneration' filesep]);
