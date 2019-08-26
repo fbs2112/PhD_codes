@@ -13,8 +13,8 @@ random_state = 42;
 rng(random_state)
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 512;
-params.nperseg = 512;
+params.nfft = 64;
+params.nperseg = 64;
 params.overlap = params.nperseg-1;
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = 1;
@@ -29,15 +29,14 @@ SNR = -25;
 
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
-thresholdVector = 0.1:0.05:0.9;
+thresholdVector = 0:0.005:0.2;
 window_median_length_vector = 0;
-monteCarloLoops = 1000;
+monteCarloLoops = 1000 * 1365;
 
-outputLength = (totalSamples - params.nperseg + 1)/(params.nperseg - params.overlap);
 detection_res = zeros(monteCarloLoops, length(thresholdVector), length(window_median_length_vector));
 
 for loopIndex = 1:monteCarloLoops
-    loopIndex
+    
     noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
     noisePower = pow_eval(noise);
     
@@ -53,7 +52,6 @@ for loopIndex = 1:monteCarloLoops
     [W, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
     
     inputNMF = abs(PxxAux{1, 1}).^2;
-    
     inputNMF = inputNMF - mean(inputNMF);
     inputNMF = inputNMF.*sqrt(1./var(inputNMF));
     inputNMFAux = sqrt(sum(inputNMF.*inputNMF)) + eps;
@@ -69,9 +67,12 @@ for loopIndex = 1:monteCarloLoops
             detection_res(loopIndex, thresholdIndex, window_median_length_index) = median(detection_eval(output, thresholdVector(thresholdIndex)));
         end
     end
+    if ~mod(loopIndex, 100)
+        loopIndex
+    end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results10.mat'], 'detection_res', '-v7.3');
+save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results53.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
