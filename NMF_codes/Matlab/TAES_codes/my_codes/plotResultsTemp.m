@@ -167,7 +167,7 @@ rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep
 
 clear;
 clc;
-% close all;
+close all;
 
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
 set(groot, 'defaultLegendInterpreter','latex');
@@ -176,7 +176,7 @@ set(groot, 'defaulttextInterpreter','latex')
 addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
 addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
 
-load pfa_data_median_full_128;
+load pfa_data_median_full_64_lowT_2;
 
 linewidth = 1.5;
 fontname = 'Times';
@@ -184,12 +184,12 @@ fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 dataPath = ['..' filesep '..' filesep '.' filesep 'figs' filesep 'group_presentation' filesep];
 
-load results18
+load results50
 % end.mat;
 
 monteCarloLoops = 100;
 
-thresholdVector = 0.1:0.05:0.9;
+thresholdVector = 0:0.005:0.2;
 window_median_length_vector = 0;
 periodVector = 0;
 bandwidthVector = 0;
@@ -212,6 +212,15 @@ tpr = squeeze(tp./(tp+fn));
 
 averageTpr = mean(tpr, 3);
 stdTpr = std(tpr, [], 3);
+
+figure;
+semilogy(thresholdVector, averageTpr(6:10,:))
+
+ylabel('Probability of detection');
+xlabel('$\bar{\gamma}$');
+xlim([min(thresholdVector) max(thresholdVector)]);
+grid on;
+
 
 % for i = 1:size(averageTpr, 1)
 %     figure;
