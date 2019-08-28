@@ -274,18 +274,18 @@ set(groot, 'defaulttextInterpreter','latex')
 addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
 addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
 
-load pfa_data_median_full_128;
+load pfa_data_median_full_64_lowT.mat;
 
 linewidth = 1.5;
 fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-load results18.mat;
+load results48.mat;
 
 monteCarloLoops = 100;
 
-thresholdVector = 0.1:0.05:0.9;
+thresholdVector = -0.1:0.01:0.2;
 window_median_length_vector = 0;
 periodVector = 0;
 bandwidthVector = 0;
@@ -350,6 +350,6 @@ grid on;
 ylabel('C$_{\mathrm{min}}$');
 xlabel('JNR [dB]');
 ylim([0 1/sqrt(2)])
-
+xlim([min(JNRVector) max(JNRVector)]);
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
 rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']); 

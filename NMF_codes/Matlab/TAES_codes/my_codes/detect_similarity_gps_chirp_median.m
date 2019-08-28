@@ -9,11 +9,9 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 
 load sim_params_1.mat;
 
-random_state = 42;
-
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 256;
-params.nperseg = 128;
+params.nfft = 64;
+params.nperseg = 64;
 params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = 1;
@@ -28,8 +26,6 @@ params.JNRVector = -25:0;
 
 bandwidthVector = 10.72e6;
 periodVector = 8.62e-6;
-
-rng(random_state)
 
 initialFrequency = 2e6;
 numberOfRawSamples = 4096;
@@ -101,9 +97,14 @@ end
 
 if isunix
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'results_det_8.mat'], 'detection_res', '-v7.3');
 else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'results_det_8.mat'], 'detection_res', '-v7.3');
 end
+
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '..' filesep  'signalsGeneration' filesep]);

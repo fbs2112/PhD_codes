@@ -167,16 +167,30 @@ rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep
 
 clear;
 clc;
-close all;
+% close all;
 
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
 set(groot, 'defaultLegendInterpreter','latex');
 set(groot, 'defaulttextInterpreter','latex')
 
 addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']);  
+if isunix
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep]);
+    
+else
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep])
+    
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep]);
+end  
 
-load pfa_data_median_full_64_lowT_2;
+load results_det_14.mat;
+load resultspfa10.mat;
 
 linewidth = 1.5;
 fontname = 'Times';
@@ -184,12 +198,11 @@ fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 dataPath = ['..' filesep '..' filesep '.' filesep 'figs' filesep 'group_presentation' filesep];
 
-load results50
-% end.mat;
-
 monteCarloLoops = 100;
 
-thresholdVector = 0:0.005:0.2;
+% thresholdVector = 0:0.005:0.2;
+thresholdVector = 0.3:0.005:0.5;
+
 window_median_length_vector = 0;
 periodVector = 0;
 bandwidthVector = 0;
@@ -242,7 +255,20 @@ for i = 1:length(JNRVector)
 end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results']); 
+if isunix
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep]);
+    
+else
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep])
+    
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep]);
+end  
 
 
 %-------------------------------Pai's results------------------------------
@@ -300,7 +326,7 @@ stdTprPai = std(tprPai, [], 3);
 
 for i = 1:length(JNRVector)
     c = cfun(averageTprPai(i,:), averageFpr(1,:));
-    cMinPai(i) = min(c(:));
+    [cMinPai(i), idx(i)] = min(c(:));
 end
 
 

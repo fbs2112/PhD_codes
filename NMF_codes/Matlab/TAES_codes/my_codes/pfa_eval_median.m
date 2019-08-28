@@ -9,9 +9,6 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 
 load sim_params_1.mat;
 
-random_state = 42;
-rng(random_state)
-
 params.fs = paramsSignal.Freqsamp;
 params.nfft = 64;
 params.nperseg = 64;
@@ -31,12 +28,12 @@ numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0:0.005:0.2;
 window_median_length_vector = 0;
-monteCarloLoops = 1000 * 1365;
+monteCarloLoops = 1000;
 
 detection_res = zeros(monteCarloLoops, length(thresholdVector), length(window_median_length_vector));
 
 for loopIndex = 1:monteCarloLoops
-    
+    loopIndex
     noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
     noisePower = pow_eval(noise);
     
@@ -67,17 +64,18 @@ for loopIndex = 1:monteCarloLoops
             detection_res(loopIndex, thresholdIndex, window_median_length_index) = median(detection_eval(output, thresholdVector(thresholdIndex)));
         end
     end
-    if ~mod(loopIndex, 100)
-        loopIndex
-    end
 end
 
 if isunix
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
+        filesep 'pfa_results' filesep 'results8.mat'], 'detection_res', '-v7.3');
 else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep 'results8.mat'], 'detection_res', '-v7.3');
 end
+
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '..' filesep  'signalsGeneration' filesep]);

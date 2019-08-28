@@ -9,6 +9,9 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 
 load sim_params_1.mat;
 
+load WNoise.mat;
+WNoise = WNormalised;
+
 params.fs = paramsSignal.Freqsamp;
 params.nfft = 64;
 params.nperseg = 64;
@@ -69,7 +72,7 @@ for loopIndex = 1:monteCarloLoops
                 mixtureSignal(:,i) = mixtureGPS + interferenceSignalAux;
             end
             
-            [W, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
+            [~, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
             
             for JNRIndex = 1:length(params.JNRVector)
                 
@@ -79,10 +82,6 @@ for loopIndex = 1:monteCarloLoops
                 inputNMF = inputNMF.*sqrt(1./var(inputNMF));
                 inputNMFAux = sqrt(sum(inputNMF.*inputNMF)) + eps;
                 inputNMFNormalised = inputNMF./inputNMFAux;
-                
-                WNormalised = W{1, JNRIndex}(:,1) - mean(W{1, JNRIndex}(:,1));
-                WNormalised = WNormalised.*sqrt(1./var(WNormalised));
-                WNormalised = WNormalised ./ (norm(WNormalised) + eps);
                 
                 output = inputNMFNormalised.'*WNormalised;
                 for thresholdIndex = 1:length(thresholdVector)
@@ -100,12 +99,13 @@ end
 if isunix
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_10.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_9.mat'], 'detection_res', '-v7.3');
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_10.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_9.mat'], 'detection_res', '-v7.3');
 end
+
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep '..' filesep  'signalsGeneration' filesep]);

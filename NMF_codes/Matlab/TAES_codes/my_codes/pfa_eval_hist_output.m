@@ -8,6 +8,9 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep]);
 addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 
 load sim_params_1.mat;
+load WNoise.mat;
+
+WNoise = WNormalised;
 
 random_state = 42;
 rng(random_state)
@@ -58,9 +61,9 @@ for loopIndex = 1:monteCarloLoops
     inputNMFAux = sqrt(sum(inputNMF.*inputNMF)) + eps;
     inputNMFNormalised = inputNMF./inputNMFAux;
     
-    WNormalised = W{1, 1}(:,1) - mean(W{1, 1}(:,1));
-    WNormalised = WNormalised.*sqrt(1./var(WNormalised));
-    WNormalised = WNormalised ./ (norm(WNormalised) + eps);
+%     WNormalised = W{1, 1}(:,1) - mean(W{1, 1}(:,1));
+%     WNormalised = WNormalised.*sqrt(1./var(WNormalised));
+%     WNormalised = WNormalised ./ (norm(WNormalised) + eps);
     
     output = inputNMFNormalised.'*WNormalised;
     output_res(loopIndex) = median(output);

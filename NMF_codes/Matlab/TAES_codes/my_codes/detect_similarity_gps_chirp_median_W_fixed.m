@@ -8,14 +8,13 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep]);
 addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 
 load sim_params_1.mat;
-% load WNoise.mat;
-% 
-% WNoise = WNormalised;
-random_state = 42;
+load WNoise.mat;
+
+WNoise = WNormalised;
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 128;
-params.nperseg = 128;
+params.nfft = 64;
+params.nperseg = 64;
 params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.numberOfSources = 1;
@@ -27,17 +26,14 @@ params.tolError = 1e-6;
 params.repetitions = 1;
 SNR = -25;
 params.JNRVector = -25:0;
-params.JNRVector = -10;
 
 bandwidthVector = 10.72e6;
 periodVector = 8.62e-6;
 
-rng(random_state)
-
 initialFrequency = 2e6;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
-thresholdVector = -0.3:0.05:0.9;
+thresholdVector = 0:0.005:2;
 window_median_length_vector = 0;
 monteCarloLoops = 100;
 
@@ -74,13 +70,8 @@ for loopIndex = 1:monteCarloLoops
                 interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(params.JNRVector(i)/10)/interferenceSignalPower);
                 mixtureSignal(:,i) = mixtureGPS + interferenceSignalAux;
             end
-            if loopIndex == 1
-                [W, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
-                
-            else
-                [~, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
-            end
-            
+          
+            [~, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
             for JNRIndex = 1:length(params.JNRVector)
                 
                 inputNMF = abs(PxxAux{1, JNRIndex}).^2;
@@ -90,11 +81,7 @@ for loopIndex = 1:monteCarloLoops
                 inputNMFAux = sqrt(sum(inputNMF.*inputNMF)) + eps;
                 inputNMFNormalised = inputNMF./inputNMFAux;
                 
-                WNormalised = W{1, JNRIndex}(:,1) - mean(W{1, JNRIndex}(:,1));
-                WNormalised = WNormalised.*sqrt(1./var(WNormalised));
-                WNormalised = WNormalised ./ (norm(WNormalised) + eps);
-                
-                output = inputNMFNormalised.'*WNormalised;
+                output = inputNMFNormalised.'*WNoise;
                 
                 for thresholdIndex = 1:length(thresholdVector)
                     for window_median_length_index = 1:length(window_median_length_vector)
@@ -107,7 +94,15 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'my_results' filesep 'results36.mat'], 'detection_res', '-v7.3');
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'results_det_7.mat'], 'detection_res', '-v7.3');
+else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'results_det_7.mat'], 'detection_res', '-v7.3');
+end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
