@@ -9,14 +9,23 @@ set(groot, 'defaultLegendInterpreter','latex');
 set(groot, 'defaulttextInterpreter','latex')
 
 addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-addpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);  
+if isunix
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+            'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+            filesep 'pfa_results' filesep]);
+else
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'pfa_results' filesep])
+end
 
 linewidth = 1.5;
 fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-load results13.mat;
+matNumber = 1;
+load(['results' num2str(matNumber) '.mat']);
 
 WinLBlock = [3 19];
 PfaVector = logspace(-5, 0, 17);
@@ -24,13 +33,11 @@ monteCarloLoops = 1000;
 
 for k = 1:length(WinLBlock)
     x = squeeze(detection_res_cell{k, 1});
-    idx = randperm(size(x, 2), 1);
     fp = zeros(length(PfaVector), monteCarloLoops);
     tn = zeros(length(PfaVector), monteCarloLoops);
     for j = 1:length(PfaVector)
         for i = 1:monteCarloLoops
-%             idx = randperm(size(x, 2), 1);
-            fp(j,i) = sum(x(i,idx,j));
+            fp(j,i) = any(x(i,:,j));
             tn(j,i) = 1 - fp(j,i);
         end
     end
@@ -66,7 +73,23 @@ ylim([1e-5 1e-0]);
 legend('$L_{\mathrm{STFT}} = 3$', '$L_{\mathrm{STFT}} = 19$', 'Random guess');
 grid on;
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'pfa_data_2.mat'], 'averageFpr', 'stdFpr')
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+                'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+                filesep 'pfa_results' filesep 'resultspfa' num2str(matNumber) '.mat'], 'averageFpr', 'stdFpr')
+else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'pfa_results' filesep 'resultspfa' num2str(matNumber) '.mat'], 'averageFpr', 'stdFpr')
+end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results']);  
+if isunix
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+            'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+            filesep 'pfa_results' filesep]);
+else
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'pfa_results' filesep])
+end

@@ -16,7 +16,7 @@ numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
 WinLBlock = 3;
-JNRVector = -20:0;
+JNRVector = -25:0;
 
 SNR = -25;
 random_state = 42;
@@ -36,8 +36,10 @@ h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
 
 detection_res = zeros(length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
+pvalue = zeros(length(JNRVector), monteCarloLoops, MBlock);
 
 for JNRIndex = 1:length(JNRVector)
+    JNRIndex
     for bandwidthIndex = 1:length(bandwidthVector)
         for periodIndex = 1:length(periodVector)
             paramsSignal.Noneperiod = round(periodVector(periodIndex)*params.fs);                   % number of samples with a sweep time
@@ -60,14 +62,21 @@ for JNRIndex = 1:length(JNRVector)
                 mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
                 interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
                 mixtureSignal = mixtureGPS + interferenceSignalAux;
-                detection_res(JNRIndex, Emuindex, :, :) = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
+                [pvalue(JNRIndex, Emuindex, :), detection_res(JNRIndex, Emuindex, :, :)] = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
             end
         end
     end
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'results07.mat'], 'detection_res', '-v7.3');
-
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'results_det_1.mat'], 'detection_res', 'pvalue', '-v7.3');
+else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'results_det_1.mat'], 'detection_res', 'pvalue', '-v7.3');
+end
 warning('on','all')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])

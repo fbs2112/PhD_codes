@@ -16,7 +16,7 @@ numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
 WinLBlock = 19;
-JNRVector = 0;
+JNRVector = -25:0;
 SNR = -25;
 random_state = 42;
 
@@ -63,8 +63,15 @@ for JNRIndex = 1:length(JNRVector)
     
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'results05.mat'], 'detection_res', '-v7.3');
-
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'results_det_2.mat'], 'detection_res', 'pvalue', '-v7.3');
+else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'results_det_2.mat'], 'detection_res', 'pvalue', '-v7.3');
+end
 warning('on','all')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
