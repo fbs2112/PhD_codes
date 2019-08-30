@@ -33,6 +33,9 @@ switch similarity
     case 'corr'
         output =  sum(xcorr(x, y));
         
+    case 'kl'
+        output = sum(x .* log(x./y));
+        
         
     case 'polinomial'
         if nargin < 3
