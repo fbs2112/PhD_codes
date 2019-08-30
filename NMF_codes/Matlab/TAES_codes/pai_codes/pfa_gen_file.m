@@ -24,11 +24,11 @@ fontname = 'Times';
 fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 
-matNumber = 1;
+matNumber = 3;
 load(['results' num2str(matNumber) '.mat']);
 
 WinLBlock = [3 19];
-PfaVector = logspace(-5, 0, 17);
+PfaVector = logspace(-8, -2, 41);
 monteCarloLoops = 1000;
 
 for k = 1:length(WinLBlock)

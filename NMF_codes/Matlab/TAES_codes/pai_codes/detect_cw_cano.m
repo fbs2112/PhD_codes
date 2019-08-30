@@ -13,15 +13,11 @@ load sim_params_1.mat;
 
 params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
-
-silenceSamples = round(20e-6*params.fs);
-totalSamples = numberOfRawSamples + 2*silenceSamples;
+totalSamples = numberOfRawSamples;
 
 WinLBlock = 19;
-JNRVector = -20:0;
-
+JNRVector = -25:0;
 SNR = -25;
-random_state = 42;
 
 initialFrequency = params.fs*0.12;
 bandwidthVector = 0;
@@ -38,18 +34,15 @@ GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 interferenceSignal = interferenceGen(paramsSignal);
 interferenceSignal = interferenceSignal(1:numberOfRawSamples);
 
-GPSSignals = [zeros(silenceSamples, size(GPSSignals, 2)); GPSSignals; zeros(silenceSamples, size(GPSSignals, 2))];
-interferenceSignal = [zeros(silenceSamples, 1); interferenceSignal; zeros(silenceSamples, 1)];
-
 GPSSignalsPower = pow_eval(GPSSignals);
 interferenceSignalPower = pow_eval(interferenceSignal);
 
 monteCarloLoops = 100;
 PfaVector = logspace(-5, 0, 17);
 h = window('rectwin', WinLBlock);
-MBlock = fix(totalSamples./WinLBlock);
 
-detection_res = zeros(length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
+detection_res = zeros(length(JNRVector), monteCarloLoops, totalSamples, length(PfaVector));
+pvalue = zeros(length(JNRVector), monteCarloLoops, totalSamples);
 
 for JNRIndex = 1:length(JNRVector)
    
@@ -63,13 +56,20 @@ for JNRIndex = 1:length(JNRVector)
         mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
         interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
         mixtureSignal = mixtureGPS + interferenceSignalAux;
-        detection_res(JNRIndex, Emuindex, :, :) = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
+        [pvalue(JNRIndex, Emuindex, :), detection_res(JNRIndex, Emuindex, :, :)] = DeteCanoGoF_FBS(mixtureSignal, h, PfaVector);
     end
     
 end
 
-save(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep 'pai_results' filesep 'results06.mat'], 'detection_res', '-v7.3');
-
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'results_det_2.mat'], 'detection_res', 'pvalue', '-v7.3');
+else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep 'results_det_2.mat'], 'detection_res', 'pvalue', '-v7.3');
+end
 warning('on','all')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])

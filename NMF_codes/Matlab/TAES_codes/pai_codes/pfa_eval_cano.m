@@ -28,15 +28,14 @@ GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignalsPower = pow_eval(GPSSignals);
 
 monteCarloLoops = 1000;
-PfaVector = logspace(-12, -2, 41);
+PfaVector = logspace(-5, 0, 17);
 detection_res_cell = cell(length(WinLBlock), 1);
 pvalue_cell = cell(length(WinLBlock), 1);
 
 for windowLengthIndex = 1:length(WinLBlock)
     h = window('rectwin', WinLBlock(windowLengthIndex));
-    MBlock = fix(totalSamples./WinLBlock(windowLengthIndex));
-    detection_res = zeros(monteCarloLoops, MBlock, length(PfaVector));
-    pvalue = zeros(monteCarloLoops, MBlock);
+    detection_res = zeros(monteCarloLoops, totalSamples, length(PfaVector));
+    pvalue = zeros(monteCarloLoops, totalSamples);
     
     for Emuindex = 1:monteCarloLoops
         Emuindex
@@ -45,7 +44,7 @@ for windowLengthIndex = 1:length(WinLBlock)
         GPSSignalsAux = GPSSignals;
         GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
         mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
-        [pvalue(Emuindex, :), detection_res(Emuindex, :, :)] = DeteBlockGoF_FBS(mixtureGPS, h, MBlock, PfaVector);
+        [pvalue(Emuindex, :), detection_res(Emuindex, :, :)] = DeteCanoGoF_FBS(mixtureGPS, h, PfaVector);
     end
     
     detection_res_cell{windowLengthIndex} = detection_res;
@@ -55,11 +54,11 @@ end
 if isunix
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep 'results3.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
+        filesep 'pfa_results' filesep 'results2.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep 'results3.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
+        filesep 'pfa_results' filesep 'results2.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
 end
 warning('on','all')
 
