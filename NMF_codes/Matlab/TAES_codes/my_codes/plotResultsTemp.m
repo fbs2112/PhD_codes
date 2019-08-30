@@ -167,7 +167,7 @@ rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep
 
 clear;
 clc;
-close all;
+% close all;
 
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
 set(groot, 'defaultLegendInterpreter','latex');
@@ -189,8 +189,8 @@ else
         filesep]);
 end  
 
-load results_det_8.mat;
-load resultspfa8.mat;
+load results_det_18.mat;
+load resultspfa14.mat;
 
 linewidth = 1.5;
 fontname = 'Times';
@@ -251,7 +251,9 @@ cfun = @(tpr, fpr) sqrt(fpr.^2 + (1-tpr).^2);
 
 for i = 1:length(JNRVector)
     c = cfun(averageTpr(i,:), averageFpr);
-    cMin(i) = min(c(:));
+    [cMin(i), idx] = min(c(:));
+    tprMin(i) = averageTpr(i,idx);
+    fprMin(i) = averageFpr(idx);
 end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
@@ -289,14 +291,14 @@ else
         filesep]);
 end  
 
-load resultspfa1.mat;
-load results_det_1.mat;
+load resultspfa3.mat;
+load results_det_5.mat;
 
 averageFprPai = averageFpr;
 
 JNRVector = -25:0;
 
-PfaVector = logspace(-5, 0, 17);
+PfaVector = logspace(-8, -2, 41);
 
 for JNRIndex = 1:length(JNRVector)
     
@@ -327,6 +329,8 @@ stdTprPai = std(tprPai, [], 3);
 for i = 1:length(JNRVector)
     c = cfun(averageTprPai(i,:), averageFprPai(1,:));
     [cMinPai(i), idx(i)] = min(c(:));
+    tprMinPai(i) = averageTprPai(i,idx(i));
+    fprMinPai(i) = averageFprPai(1,idx(i));
 end
 
 
@@ -386,8 +390,8 @@ else
         filesep]);
 end  
 
-load results_det_10.mat;
-load resultspfa8.mat;
+load results_det_19.mat;
+load resultspfa14.mat;
 
 linewidth = 1.5;
 fontname = 'Times';
@@ -487,14 +491,14 @@ else
         filesep]);
 end  
 
-load resultspfa1.mat;
-load results_det_2.mat;
+load resultspfa3.mat;
+load results_det_6.mat;
 
 averageFprPai = averageFpr;
 
 JNRVector = -25:0;
 
-PfaVector = logspace(-5, 0, 17);
+PfaVector = logspace(-12, -2, 41);
 
 for JNRIndex = 1:length(JNRVector)
     
