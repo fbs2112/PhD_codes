@@ -21,7 +21,7 @@ SNR = -25;
 
 initialFrequency = 2e6;
 bandwidthVector = (2e6:3e6:14e6);
-periodVector = (8.62e-6:1.48e-6:18.97e-6);
+v = (8.62e-6:1.48e-6:18.97e-6);
 
 GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
@@ -32,8 +32,8 @@ PfaVector = logspace(-12, -2, 41);
 h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
 
-detection_res = zeros(length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
-pvalue = zeros(length(JNRVector), monteCarloLoops, MBlock);
+detection_res = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
+pvalue = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, MBlock);
 
 for Emuindex = 1:monteCarloLoops
     Emuindex
@@ -44,10 +44,10 @@ for Emuindex = 1:monteCarloLoops
     GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
     mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
     
-    for JNRIndex = 1:length(JNRVector)
-        JNRIndex
-        for bandwidthIndex = 1:length(bandwidthVector)
-            for periodIndex = 1:length(periodVector)
+    for bandwidthIndex = 1:length(bandwidthVector)
+        for periodIndex = 1:length(periodVector)
+            for JNRIndex = 1:length(JNRVector)
+                JNRIndex
                 paramsSignal.Noneperiod = round(periodVector(periodIndex)*params.fs);                   % number of samples with a sweep time
                 paramsSignal.IFmin = initialFrequency;                                     % start frequency
                 paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                   % end frequency
@@ -57,11 +57,12 @@ for Emuindex = 1:monteCarloLoops
                 interferenceSignal = interferenceGen(paramsSignal);
                 interferenceSignal = interferenceSignal(1:numberOfRawSamples);
                 interferenceSignalPower = pow_eval(interferenceSignal);
-            
+                
                 interferenceSignalAux = interferenceSignal;
                 interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
                 mixtureSignal = mixtureGPS + interferenceSignalAux;
-                [pvalue(JNRIndex, Emuindex, :), detection_res(JNRIndex, Emuindex, :, :)] = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
+                [pvalue(bandwidthIndex, periodIndex, JNRIndex, Emuindex, :), detection_res(bandwidthIndex, periodIndex, JNRIndex, Emuindex, :, :)] =...
+                    DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
             end
         end
     end
