@@ -21,7 +21,7 @@ SNR = -25;
 
 initialFrequency = 2e6;
 bandwidthVector = (2e6:3e6:14e6);
-v = (8.62e-6:1.48e-6:18.97e-6);
+periodVector = (8.62e-6:1.48e-6:18.97e-6);
 
 GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
