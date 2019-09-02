@@ -10,10 +10,11 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 load sim_params_1.mat;
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 64;
-params.nperseg = 64;
+params.nfft = 16;
+params.nperseg = 16;
 params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
+params.window = ones(params.nperseg, 1);
 params.numberOfSources = 1;
 params.init = 'random';
 params.betaDivergence = 'kullback-leibler';
@@ -24,13 +25,13 @@ params.repetitions = 1;
 SNR = -25;
 params.JNRVector = -25:0;
 
-bandwidthVector = 10.72e6;
-periodVector = 8.62e-6;
+bandwidthVector = (2e6:3e6:14e6);
+periodVector = (8.62e-6:1.48e-6:18.97e-6);
 
 initialFrequency = 2e6;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
-thresholdVector = 0:0.005:2;
+thresholdVector = 0:0.005:0.2;
 window_median_length_vector = 0;
 monteCarloLoops = 100;
 
@@ -98,11 +99,11 @@ end
 if isunix
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_8.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_23.mat'], 'detection_res', '-v7.3');
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_8.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_23.mat'], 'detection_res', '-v7.3');
 end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
