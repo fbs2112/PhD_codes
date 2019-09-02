@@ -167,7 +167,7 @@ rmpath(['..' filesep '..' filesep '.' filesep 'data' filesep 'TAES_data' filesep
 
 clear;
 clc;
-% close all;
+close all;
 
 set(groot, 'defaultAxesTickLabelInterpreter','latex');
 set(groot, 'defaultLegendInterpreter','latex');
@@ -292,13 +292,14 @@ else
 end  
 
 load resultspfa3.mat;
-load results_det_5.mat;
+load results_det_8.mat;
 
 averageFprPai = averageFpr;
 
 JNRVector = -25:0;
 
 PfaVector = logspace(-8, -2, 41);
+% PfaVector = logspace(-5, -0, 17);
 
 for JNRIndex = 1:length(JNRVector)
     
@@ -327,7 +328,7 @@ stdTprPai = std(tprPai, [], 3);
 % end
 
 for i = 1:length(JNRVector)
-    c = cfun(averageTprPai(i,:), averageFprPai(1,:));
+    c = cfun(averageTprPai(i,:), averageFprPai(2,:));
     [cMinPai(i), idx(i)] = min(c(:));
     tprMinPai(i) = averageTprPai(i,idx(i));
     fprMinPai(i) = averageFprPai(1,idx(i));
@@ -492,7 +493,7 @@ else
 end  
 
 load resultspfa3.mat;
-load results_det_6.mat;
+load results_det_7.mat;
 
 averageFprPai = averageFpr;
 
@@ -527,7 +528,7 @@ stdTprPai = std(tprPai, [], 3);
 % end
 
 for i = 1:length(JNRVector)
-    c = cfun(averageTprPai(i,:), averageFpr(2,:));
+    c = cfun(averageTprPai(i,:), averageFpr(1,:));
     [cMinPai(i), idx(i)] = min(c(:));
 end
 
@@ -558,5 +559,113 @@ else
     
     rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+        filesep]);
+end  
+
+%%
+%Plot results for chirp for different bandwidths and periods
+
+clear;
+clc;
+close all;
+
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaulttextInterpreter','latex')
+
+addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+if isunix
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep]);
+    
+else
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep])
+    
+    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep]);
+end  
+
+load results_det_23.mat;
+load resultspfa14.mat;
+
+linewidth = 1.5;
+fontname = 'Times';
+fontsize = 24;
+figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
+dataPath = ['..' filesep '..' filesep '.' filesep 'figs' filesep 'group_presentation' filesep];
+
+monteCarloLoops = 100;
+
+thresholdVector = 0:0.005:0.2;
+
+bandwidthVector = (2e6:3e6:14e6)/1e6;
+periodVector = (8.62e-6:1.48e-6:18.97e-6)*1e6;
+
+JNRVector = -25:0;
+
+for JNRIndex = 1:length(JNRVector)
+    for bandwidthIndex = 1:length(bandwidthVector)
+        for periodIndex = 1:length(periodVector)
+            for thresholdIndex = 1:length(thresholdVector)
+                x = squeeze(detection_res(:, bandwidthIndex, periodIndex, JNRIndex, thresholdIndex));
+                tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, :) = x;
+                fn(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, :) = ...
+                    size(x, 2) - tp(bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, :);
+            end
+        end
+    end
+end
+
+tpr = squeeze(tp./(tp+fn));
+
+averageTpr = mean(tpr, 5);
+stdTpr = std(tpr, [], 5);
+
+cfun = @(tpr, fpr) sqrt(fpr.^2 + (1-tpr).^2);
+
+for k = 1:length(bandwidthVector)
+    for j = 1:length(periodVector)
+        for i = 1:length(JNRVector)
+            c = cfun(squeeze(averageTpr(k,j,i,:)).', averageFpr);
+            [cMin(k,j,i), idx] = min(c(:));
+            tprMin(k,j,i) = averageTpr(k,j,i,idx);
+            fprMin(k,j,i) = averageFpr(idx);
+        end
+    end
+end
+
+for k = 1:length(bandwidthVector)
+    figure;
+    
+    for j = 1:length(periodVector)
+        plot(JNRVector, squeeze(cMin(k,j,:)));
+        title([num2str(bandwidthVector(k)) ' MHz'])
+        hold on;
+    end
+    ylabel('C$_{\mathrm{min}}$');
+    xlabel('JNR [dB]');
+    legend(['T = ' num2str(periodVector(1)) ' $\mu$s'], ['T = ' num2str(periodVector(2)) ' $\mu$s'], ['T = ' num2str(periodVector(3)) ' $\mu$s'],...
+        ['T = ' num2str(periodVector(4)) ' $\mu$s'], ['T = ' num2str(periodVector(5)) ' $\mu$s'], ['T = ' num2str(periodVector(6)) ' $\mu$s'],...
+        ['T = ' num2str(periodVector(7)) ' $\mu$s']);
+    grid on;
+end
+
+rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
+if isunix
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep]);
+    
+else
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+        filesep 'pfa_results' filesep])
+    
+    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
         filesep]);
 end  
