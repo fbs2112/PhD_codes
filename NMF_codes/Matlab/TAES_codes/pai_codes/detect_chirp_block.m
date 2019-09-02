@@ -20,8 +20,8 @@ JNRVector = -25:0;
 SNR = -25;
 
 initialFrequency = 2e6;
-bandwidthVector = 10.72e6;
-periodVector = 8.62e-6;
+bandwidthVector = (2e6:3e6:14e6);
+periodVector = (8.62e-6:1.48e-6:18.97e-6);
 
 GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
@@ -70,11 +70,11 @@ end
 if isunix
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'results_det_5.mat'], 'detection_res', 'pvalue', '-v7.3');
+        filesep 'results_det_9.mat'], 'detection_res', 'pvalue', '-v7.3');
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'results_det_5.mat'], 'detection_res', 'pvalue', '-v7.3');
+        filesep 'results_det_9.mat'], 'detection_res', 'pvalue', '-v7.3');
 end
 warning('on','all')
 
