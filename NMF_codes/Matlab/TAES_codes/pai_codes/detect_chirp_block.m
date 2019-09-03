@@ -32,7 +32,7 @@ PfaVector = logspace(-12, -2, 41);
 h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
 
-detection_res = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
+detection_res = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, length(PfaVector));
 pvalue = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, MBlock);
 
 for Emuindex = 1:monteCarloLoops
@@ -47,7 +47,6 @@ for Emuindex = 1:monteCarloLoops
     for bandwidthIndex = 1:length(bandwidthVector)
         for periodIndex = 1:length(periodVector)
             for JNRIndex = 1:length(JNRVector)
-                JNRIndex
                 paramsSignal.Noneperiod = round(periodVector(periodIndex)*params.fs);                   % number of samples with a sweep time
                 paramsSignal.IFmin = initialFrequency;                                     % start frequency
                 paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                   % end frequency
@@ -61,8 +60,9 @@ for Emuindex = 1:monteCarloLoops
                 interferenceSignalAux = interferenceSignal;
                 interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
                 mixtureSignal = mixtureGPS + interferenceSignalAux;
-                [pvalue(bandwidthIndex, periodIndex, JNRIndex, Emuindex, :), detection_res(bandwidthIndex, periodIndex, JNRIndex, Emuindex, :, :)] =...
+                [pvalue(bandwidthIndex, periodIndex, JNRIndex, Emuindex, :), aux] =...
                     DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
+                detection_res(bandwidthIndex, periodIndex, JNRIndex, Emuindex, :) = any(aux, 1);
             end
         end
     end
