@@ -13,12 +13,10 @@ load sim_params_1.mat;
 
 params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
-silenceSamples = round(20e-6*params.fs);
 totalSamples = numberOfRawSamples;
 
 WinLBlock = [3 19];
 SNR = -25;
-random_state = 42;
 
 bandwidthVector = 10.72e6;
 periodVector = 8.62e-6;
@@ -28,7 +26,7 @@ GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignalsPower = pow_eval(GPSSignals);
 
 monteCarloLoops = 1000;
-PfaVector = logspace(-5, 0, 17);
+PfaVector = logspace(-12, -2, 41);
 detection_res_cell = cell(length(WinLBlock), 1);
 pvalue_cell = cell(length(WinLBlock), 1);
 
