@@ -20,9 +20,9 @@ for i = 1:size(mixtureSignal, 2)
     data{1, i} = mixtureSignal(:,i);
     
     if isreal(data{1, i})
-        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs);
+        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, [], params.specType);
     else
-        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered');
+        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
     end    
     
     dataCell{1, i} = PxxAux;
