@@ -11,26 +11,16 @@ set(groot, 'defaultLegendInterpreter','latex');
 set(groot, 'defaulttextInterpreter','latex')
 
 addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-if isunix
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep]);
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
+addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep 'pfa_results' filesep]);
+addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep]);
     
-else
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep])
-    
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
-end  
 
-load results_det_24.mat;
-load resultspfa18.mat;
+load results_det_19.mat;
+load resultspfa14.mat;
 
 averageFprDot = averageFpr;
 
@@ -71,45 +61,26 @@ for i = 1:length(JNRVector)
     cMin(i) = min(c(:));
 end
 
-if isunix
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep]);
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
-    
-else
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep])
-    
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
-end  
+
+rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep 'pfa_results' filesep]);
+rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep]);
+
 
 
 %-------------------------------Pai's results------------------------------
 
-if isunix
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep]);
+addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+    filesep 'pfa_results' filesep]);
+
+addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+    filesep]);
     
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep]);
-    
-else
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep])
-    
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep]);
-end  
 load resultspfa3.mat;
 load results_det_7.mat;
 
@@ -157,16 +128,39 @@ for i = 1:length(JNRVector)
     [cMinPai2(i), idx2(i)] = min(c(:));
 end
 
+load resultspfa4.mat;
+load results_det_11.mat;
+
+for JNRIndex = 1:length(JNRVector)
+    
+    for i = 1:length(PfaVector)
+        tpRegion = squeeze(detection_res(JNRIndex,:,:,i));
+        tpPai3(JNRIndex,i,:) = any(tpRegion, 2);
+        fnPai3(JNRIndex,i,:) = 1 - tpPai3(JNRIndex,i,:);
+    end
+
+end
+
+tprPai3 = tpPai3./(tpPai3+fnPai3);
+averageTprPai3 = mean(tprPai3, 3);
+stdTprPai3 = std(tprPai3, [], 3);
+
+for i = 1:length(JNRVector)
+    c = cfun(averageTprPai3(i,:), averageFpr);
+    [cMinPai3(i), idx3(i)] = min(c(:));
+end
+
 figure;
 plot(JNRVector, cMin)
 hold on;
 plot(JNRVector, cMinPai1)
+plot(JNRVector, cMinPai3)
 plot(JNRVector, cMinPai2)
 ylim([0 1/sqrt(2)])
 grid on;
 ylabel('C$_{\mathrm{min}}$');
 xlabel('JNR [dB]');
-legend('Dot', 'Statistical, $L = 3$', 'Statistical, $L = 19$');
+legend('Dot', 'Statistical, $L = 3$', 'Statistical, $L = 11$', 'Statistical, $L = 19$');
 
 % formatFig(gcf, [dataPath  'cmin_cw'], 'en', figProp);
 
@@ -174,13 +168,14 @@ figure;
 plot(JNRVector, cMin)
 hold on;
 plot(JNRVector, cMinPai1)
+plot(JNRVector, cMinPai3)
 plot(JNRVector, cMinPai2)
 ylim([0 1/sqrt(2)])
 xlim([-17 -12]);
 grid on;
 ylabel('C$_{\mathrm{min}}$');
 xlabel('JNR [dB]');
-legend('Dot', 'Statistical, $L = 3$', 'Statistical, $L = 19$');
+legend('Dot', 'Statistical, $L = 3$', 'Statistical, $L = 11$', 'Statistical, $L = 19$');
 
 % formatFig(gcf, [dataPath  'cmin_cw_zoom'], 'en', figProp);
 
@@ -199,25 +194,14 @@ legend('Dot', 'Statistical, $L = 3$', 'Statistical, $L = 19$');
 end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-if isunix
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep]);
-    
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep]);
-    
-else
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep])
-    
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep]);
-end  
+rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+    filesep 'pfa_results' filesep]);
 
+rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+    filesep]);
+    
 %%
 %Plot results for chirp for different bandwidths and periods (my technique)
 
@@ -230,24 +214,12 @@ set(groot, 'defaultLegendInterpreter','latex');
 set(groot, 'defaulttextInterpreter','latex')
 
 addpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-if isunix
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep]);
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
-    
-else
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep])
-    
-    addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
-end  
-
+addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep 'pfa_results' filesep]);
+addpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep]);
 
 load results_det_25.mat;
 load resultspfa18.mat;
@@ -312,24 +284,12 @@ end
 save('chirp_dot.mat', 'averageTpr', 'stdTpr', 'averageFpr', 'stdFpr');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Misc'])
-if isunix
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep]);
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
-    
-else
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep])
-    
-    rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep]);
-end  
-
+rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep 'pfa_results' filesep]);
+rmpath(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+    filesep]);
 
 %%
 %Plot results for chirp for different bandwidths and periods (Pai's
