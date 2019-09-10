@@ -15,7 +15,7 @@ params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
-WinLBlock = 11;
+WinLBlock = 19;
 JNRVector = -25:0;
 SNR = -25;
 
@@ -33,7 +33,7 @@ h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
 
 detection_res = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, length(PfaVector));
-pvalue = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, MBlock);
+pvalue = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, WinLBlock);
 
 for Emuindex = 1:monteCarloLoops
     Emuindex
@@ -68,9 +68,9 @@ for Emuindex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
     'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-    filesep 'results_det_12.mat'], 'detection_res', 'pvalue', '-v7.3');
+    filesep 'results_det_15.mat'], 'detection_res', 'pvalue', '-v7.3');
 warning('on','all')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
