@@ -13,7 +13,7 @@ warning('off','all')
 
 params.fs = paramsSignal.Freqsamp;
 params.nfft = 32;
-params.nperseg = 4;
+params.nperseg = 32;
 params.overlap = 0;
 params.hop_size = params.nperseg - params.overlap;
 params.window = ones(params.nperseg, 1);
@@ -50,9 +50,9 @@ for loopIndex = 1:monteCarloLoops
     GPSSignalsAux = GPSSignals;
     GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
     mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
-    mixtureSignal = mixtureGPS ;
+    mixtureSignal = mixtureGPS;
     
-    [detection_res(loopIndex, :, :), pvalue(loopIndex, :), kvalue(loopIndex, :)] = ...
+    [detection_res(loopIndex, :, :), pvalue(loopIndex, :), ~] = ...
         deteTimeSlice(mixtureSignal, params, thresholdVector);
 end
 

@@ -12,7 +12,7 @@ warning('off','all')
 
 params.fs = paramsSignal.Freqsamp;
 params.nfft = 32;
-params.nperseg = 4;
+params.nperseg = 32;
 params.overlap = 0;
 params.hop_size = params.nperseg - params.overlap;
 params.window = ones(params.nperseg, 1);
@@ -25,7 +25,7 @@ params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
 SNR = -25;
-params.JNRVector = 0;
+params.JNRVector = -10;
 
 bandwidthVector = 2e6;
 periodVector = 8.62e-6;
