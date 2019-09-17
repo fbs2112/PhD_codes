@@ -12,9 +12,9 @@ load sim_params_1.mat;
 warning('off','all')
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 32;
-params.nperseg = 32;
-params.overlap = 0;
+params.nfft = 1024;
+params.nperseg = 1024;
+params.overlap = params.nperseg/2;
 params.hop_size = params.nperseg - params.overlap;
 params.window = ones(params.nperseg, 1);
 params.specType = 'power';
