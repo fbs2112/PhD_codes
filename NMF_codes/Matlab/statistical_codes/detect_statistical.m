@@ -11,8 +11,8 @@ load sim_params_1.mat;
 warning('off','all')
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 1024;
-params.nperseg = 1024;
+params.nfft = 2048;
+params.nperseg = 2048;
 params.overlap = params.nperseg/2;
 params.hop_size = params.nperseg - params.overlap;
 params.window = ones(params.nperseg, 1);
@@ -32,9 +32,9 @@ initialFrequency = 2e6;
 
 bandwidthVector = 3e6;
 periodVector = 8.62e-6;
-numberOfRawSamples = 4096;
+numberOfRawSamples = 4096*3;
 totalSamples = numberOfRawSamples;
-thresholdVector = 0:0.05:0.5;
+thresholdVector = 0:0.05:0.7;
 monteCarloLoops = 100;
 
 timeBins = floor((totalSamples - params.overlap)/(params.nperseg - params.overlap));
@@ -82,8 +82,13 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'statistical_data' filesep 'results_det_2.mat'], 'detection_res', '-v7.3');
+if isunix
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+            'Doctorate' filesep 'Research' filesep 'data' filesep 'statistical_data' filesep 'results_det_3.mat'], 'detection_res', '-v7.3');
+else
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+            'Doctorate' filesep 'Research' filesep 'data' filesep 'statistical_data' filesep 'results_det_3.mat'], 'detection_res', '-v7.3');
+end
 
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
