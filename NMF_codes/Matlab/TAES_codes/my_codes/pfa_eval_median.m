@@ -10,10 +10,11 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 load sim_params_1.mat;
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 64;
-params.nperseg = 64;
+params.nfft = 16;
+params.nperseg = 16;
 params.overlap = params.nperseg-1;
 params.hop_size = params.nperseg - params.overlap;
+params.window = ones(params.nperseg, 1);
 params.numberOfSources = 1;
 params.init = 'random';
 params.betaDivergence = 'kullback-leibler';
@@ -67,13 +68,13 @@ for loopIndex = 1:monteCarloLoops
 end
 
 if isunix
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep 'results8.mat'], 'detection_res', '-v7.3');
+        filesep 'pfa_results' filesep 'results18.mat'], 'detection_res', '-v7.3');
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'pfa_results' filesep 'results8.mat'], 'detection_res', '-v7.3');
+        filesep 'pfa_results' filesep 'results18.mat'], 'detection_res', '-v7.3');
 end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])

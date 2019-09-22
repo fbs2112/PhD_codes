@@ -19,58 +19,58 @@ dataPath = ['.' filesep 'figs' filesep '04-10' filesep];
 save_fig = false;
 
 threshold = 0.1:0.1:0.9;
-load results01.mat;
+% load results01.mat;
 
-figure;
-for i = 1:3
-    
-    tp = squeeze(tp_sim_window(:,:,i,1));
-    fp = squeeze(fp_sim_window(:,:,i,1));
-    fn = squeeze(fn_sim_window(:,:,i,1));
-    tn = squeeze(tn_sim_window(:,:,i,1));
-    
-    fp = fp/3;
-    tn = tn/3;
-    
-    tp = mean(tp, 1);
-    fp = mean(fp, 1);
-    fn = mean(fn, 1);
-    tn = mean(tn, 1);
-    
-    tpr = tp./(tp+fn);
-    
-    fpr = fp./(fp+tn);
-    
-    xAux = linspace(0, 1, numel(fpr));
-    yAux = linspace(0, 1, numel(tpr));
-    
-    plot(fpr, tpr)
-    hold on
-    
-    accuracy1(:,i) = (tp + tn)./(tp + fn + tn + fp);
-    [maxAccuracy(i), indexes(i)] = max(accuracy1(:,i), [], 1);
-
-    disp(['TPR: ' num2str(tpr(:, indexes(i))) ' FPR: ' num2str(fpr(:, indexes(i)))])
-    disp('------------------------------------')
-    disp(['Accuracy: ' num2str(accuracy1(indexes(i),i))])
-    disp('------------------------------------')
-    disp(['Threshold: ' num2str(threshold(indexes(i)))])
-    disp('------------------------------------')
-end
-
-
-plot(xAux, yAux, '--');
-box 'off'
-grid on
-xlabel('Probability of false alarm');
-ylabel('Probability of detection');
-legend('-10 dB', '-5 dB', '0 dB', 'Random guess', 'Location', 'southeast');
-if save_fig
-    formatFig(gcf, [dataPath expName '_' 'roc_'  '4'], 'en', figProp); %#ok<*UNRCH>
-end
-
-%-------------------------------------------------------
-
+% figure;
+% for i = 1:3
+%     
+%     tp = squeeze(tp_sim_window(:,:,i,1));
+%     fp = squeeze(fp_sim_window(:,:,i,1));
+%     fn = squeeze(fn_sim_window(:,:,i,1));
+%     tn = squeeze(tn_sim_window(:,:,i,1));
+%     
+%     fp = fp/3;
+%     tn = tn/3;
+%     
+%     tp = mean(tp, 1);
+%     fp = mean(fp, 1);
+%     fn = mean(fn, 1);
+%     tn = mean(tn, 1);
+%     
+%     tpr = tp./(tp+fn);
+%     
+%     fpr = fp./(fp+tn);
+%     
+%     xAux = linspace(0, 1, numel(fpr));
+%     yAux = linspace(0, 1, numel(tpr));
+%     
+%     plot(fpr, tpr)
+%     hold on
+%     
+%     accuracy1(:,i) = (tp + tn)./(tp + fn + tn + fp);
+%     [maxAccuracy(i), indexes(i)] = max(accuracy1(:,i), [], 1);
+% 
+%     disp(['TPR: ' num2str(tpr(:, indexes(i))) ' FPR: ' num2str(fpr(:, indexes(i)))])
+%     disp('------------------------------------')
+%     disp(['Accuracy: ' num2str(accuracy1(indexes(i),i))])
+%     disp('------------------------------------')
+%     disp(['Threshold: ' num2str(threshold(indexes(i)))])
+%     disp('------------------------------------')
+% end
+% 
+% 
+% plot(xAux, yAux, '--');
+% box 'off'
+% grid on
+% xlabel('Probability of false alarm');
+% ylabel('Probability of detection');
+% legend('-10 dB', '-5 dB', '0 dB', 'Random guess', 'Location', 'southeast');
+% if save_fig
+%     formatFig(gcf, [dataPath expName '_' 'roc_'  '4'], 'en', figProp); %#ok<*UNRCH>
+% end
+% 
+% %-------------------------------------------------------
+% 
 load results02.mat;
 
 figure;
@@ -225,6 +225,6 @@ if save_fig
     formatFig(gcf, [dataPath expName '_' 'roc_'  '1'], 'en', figProp); %#ok<*UNRCH>
 end
     
-    
-rmpath(['.' filesep 'Misc'])
+
 rmpath(['.' filesep 'data' filesep '04-10']);
+rmpath(['.' filesep 'Misc'])

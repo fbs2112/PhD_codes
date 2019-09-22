@@ -49,7 +49,6 @@ save_fig = false;
 
 N = 100;
 M = 5;
-
 window_coeffs = zeros(N-1, 1);
 window_coeffs(M:end) = 1;
 window_coeffs = 1/(2*(N-M))*[window_coeffs(end:-1:1);0;window_coeffs];

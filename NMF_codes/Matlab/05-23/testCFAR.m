@@ -27,7 +27,7 @@ rng(random_state);
 t = 0:1/fs:(secondsOfData - 1/fs);
 f = ((bandwidth/2)/secondsOfData)*t + f0;
 f1 = 1;
-numberOfTrials = 100;
+numberOfTrials = 1;
 
 signal1 = exp(1j*2*pi*f1);
 noise = 1/sqrt(2)*(randn(length(t), numberOfTrials) + 1j*randn(length(t), numberOfTrials));
@@ -45,10 +45,15 @@ data = abs(noise).^2;
  detector.Method = 'CA';
  detector.Rank = 5;
  
-[detection_res, ~] = detector(data, 1:length(data));
+[detection_res, thres] = detector(data, 1:length(data));
 
 idxsSignal = zeros(length(t), 1);
 idxsSignal(idxs) = 1;
+
+figure;
+plot(data);
+hold on;
+plot(thres);
 
 pd = mean(detection_res(idxs,:), 2);
 

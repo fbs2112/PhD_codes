@@ -46,7 +46,7 @@ params.JNRVector = [0 10];
 
 rng(random_state);
 
-save_fig = true;
+save_fig = false;
 
 %signal mixture definition---------
 t = 0:1/fs:(secondsOfData - 1/fs);

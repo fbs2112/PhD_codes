@@ -2,6 +2,7 @@ results 01: results for TK over similarity, and with peak detection algorithm
 results 02: results using similarity and median window
 results 03: results using vector H and median window
 results 04: results using gaussian kernel as similarity and median window
+results 06: results using CFAR without median window
 
 
 

@@ -15,6 +15,7 @@ params.nperseg = 16;
 params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.window = ones(params.nperseg, 1);
+params.specType = 'power';
 params.numberOfSources = 1;
 params.init = 'random';
 params.betaDivergence = 'kullback-leibler';
@@ -33,7 +34,7 @@ numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0:0.005:0.2;
 window_median_length_vector = 0;
-monteCarloLoops = 100;
+monteCarloLoops = 1000;
 
 detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
     length(params.JNRVector), length(thresholdVector), length(window_median_length_vector));
@@ -49,6 +50,7 @@ for loopIndex = 1:monteCarloLoops
     noisePower = pow_eval(noise);
     
     for bandwidthIndex = 1:length(bandwidthVector)
+        bandwidthIndex
         for periodIndex = 1:length(periodVector)
             paramsSignal.Noneperiod = round(periodVector(periodIndex)*params.fs);                   % number of samples with a sweep time
             paramsSignal.IFmin = initialFrequency;                                                  % start frequency
@@ -97,13 +99,13 @@ for loopIndex = 1:monteCarloLoops
 end
 
 if isunix
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_23.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_27.mat'], 'detection_res', '-v7.3');
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_23.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_27.mat'], 'detection_res', '-v7.3');
 end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])

@@ -1382,15 +1382,16 @@ fontsize = 24;
 figProp = struct( 'size' , fontsize , 'font' ,fontname , 'lineWidth' , linewidth, 'figDim', [1 1 800 600]);
 dataPath = ['..' filesep '.' filesep 'figs' filesep '07-24' filesep];
 
+load results06.mat;
+
 onset = 528;
 offset = 3911;
-window_length = 98;
 
 thresholdVector = 1;
-window_length_vector = 50:50:200;
-window_median_length_vector = 51:50:401;
+window_length_vector = 20:20:100;
+window_median_length_vector = 1;
 monteCarloLoops = 100;
-JNRVector = [-20 -15 -10 -5 0];
+JNRVector = [-10 -5 0];
 numberOfTrainingCellsVector = 200:100:800;
 numberOfGuardCellsVector = 10:10:30;
 stdVector = 1;
@@ -1414,7 +1415,7 @@ stdPrec = zeros(length(JNRVector), length(window_length_vector), length(numberOf
 
 for window_median_length_index = 1:length(window_median_length_vector)
     window_median_length_index
-    load(['results05_' num2str(window_median_length_index) '.mat'])
+%     load(['results05_' num2str(window_median_length_index) '.mat'])
     for JNRIndex = 1:length(JNRVector)
         for thresholdIndex = 1:length(thresholdVector)
             for window_length_index = 1:length(window_length_vector)
@@ -1425,18 +1426,18 @@ for window_median_length_index = 1:length(window_median_length_vector)
                         tp = zeros(monteCarloLoops, 1);
                         fn = zeros(monteCarloLoops, 1);
                         tn = zeros(monteCarloLoops, 1);
-                        detection_res = squeeze(aux(:, JNRIndex, 1, window_length_index, numberOfTrainingCellsIndex, numberOfGuardCellsIndex, 1, :));
+                        detection_resAux = squeeze(detection_res(:, JNRIndex, 1, window_length_index, numberOfTrainingCellsIndex, numberOfGuardCellsIndex, 1, :));
                         
                         for loopIndex = 1:monteCarloLoops
-                            [~, locs] = findpeaks(detection_res(loopIndex, :));
-                            auxRegion = zeros(size(detection_res, 2), 1);
+                            [~, locs] = findpeaks(detection_resAux(loopIndex, :));
+                            auxRegion = zeros(size(detection_resAux, 2), 1);
                             auxRegion(locs) = 1;
                             
-                            fpRegion1 = auxRegion(1:onset);
-                            tpRegion1 = auxRegion(onset+1:onset + round(5*window_length_vector(window_length_index)/2));
-                            tpRegion2 = auxRegion(offset - round(5*window_length_vector(window_length_index)/2):offset + round(5*window_length_vector(window_length_index)/2));
-                            fpRegion2 = auxRegion(onset + round(5*window_length_vector(window_length_index)/2) + 1:offset - round(5*window_length_vector(window_length_index)/2)-1);
-                            fpRegion3 = auxRegion(offset + round(5*window_length_vector(window_length_index)/2)+1:end);
+                            fpRegion1 = auxRegion(1:onset - round(3*window_length_vector(window_length_index)/2));
+                            tpRegion1 = auxRegion(onset - round(3*window_length_vector(window_length_index)/2)+1:onset + round(7*window_length_vector(window_length_index)/2));
+                            tpRegion2 = auxRegion(offset - round(3*window_length_vector(window_length_index)/2):offset + round(10*window_length_vector(window_length_index)/2));
+                            fpRegion2 = auxRegion(onset + round(7*window_length_vector(window_length_index)/2) + 1:offset - round(3*window_length_vector(window_length_index)/2)-1);
+                            fpRegion3 = auxRegion(offset + round(10*window_length_vector(window_length_index)/2)+1:end);
                             
                             if any(fpRegion1)
                                 fp(loopIndex) = fp(loopIndex) + 1;

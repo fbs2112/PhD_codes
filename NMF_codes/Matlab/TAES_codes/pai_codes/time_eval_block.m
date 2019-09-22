@@ -15,7 +15,7 @@ params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
-WinLBlock = 19;
+WinLBlock = 11;
 JNRVector = -10;
 SNR = -25;
 
@@ -38,7 +38,7 @@ detection_res = zeros(length(bandwidthVector), length(periodVector), length(JNRV
 pvalue = zeros(length(bandwidthVector), length(periodVector), length(JNRVector), monteCarloLoops, MBlock);
 elapsedTime = zeros(monteCarloLoops, 1);
 
-matNumber = 2;
+matNumber = 3;
 
 for Emuindex = 1:monteCarloLoops
     Emuindex
@@ -76,9 +76,7 @@ for Emuindex = 1:monteCarloLoops
 end
 
 if isunix
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-                'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-                filesep 'time_results' filesep 'resultsTime' num2str(matNumber) '.mat'], 'elapsedTime')
+    save(['/home/felipe/Dropbox/Doctorate/Research/data/TAES_data/new_data/pai_results/time_results/resultsTime' num2str(matNumber) '.mat'], 'elapsedTime')
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...

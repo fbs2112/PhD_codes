@@ -10,10 +10,12 @@ addpath(['..' filesep '..' filesep  'signalsGeneration' filesep 'sim_params']);
 load sim_params_1.mat;
 
 params.fs = paramsSignal.Freqsamp;
-params.nfft = 64;
-params.nperseg = 64;
-params.overlap = params.nperseg-1;
+params.nfft = 16;
+params.nperseg = 16;
+params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
+params.window = ones(params.nperseg, 1);
+params.specType = 'power';
 params.numberOfSources = 1;
 params.init = 'random';
 params.betaDivergence = 'kullback-leibler';
@@ -25,14 +27,14 @@ SNR = -25;
 params.JNRVector = -25:0;
 
 bandwidthVector = 0;
-periodVector = 8.72e-6;
+periodVector = 8.62e-6;
 
 initialFrequency = params.fs*0.12;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0:0.005:2;
 window_median_length_vector = 0;
-monteCarloLoops = 100;
+monteCarloLoops = 1000;
 
 outputLength = (totalSamples - params.nperseg + 1)/(params.nperseg - params.overlap);
 detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
@@ -98,13 +100,13 @@ for loopIndex = 1:monteCarloLoops
 end
 
 if isunix
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_10.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_26.mat'], 'detection_res', '-v7.3');
 else
     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_10.mat'], 'detection_res', '-v7.3');
+        filesep 'results_det_26.mat'], 'detection_res', '-v7.3');
 end
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
