@@ -167,13 +167,19 @@ for i = 1:length(JNRVector)
 end
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 load resultspfa4.mat;
 load results_det_11.mat;
 =======
+=======
+>>>>>>> Stashed changes
 
 load results_det_11.mat;
 load resultspfa4.mat;
 averageFprPai3 = averageFpr;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 for JNRIndex = 1:length(JNRVector)
@@ -192,17 +198,23 @@ stdTprPai3 = std(tprPai3, [], 3);
 
 for i = 1:length(JNRVector)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     c = cfun(averageTprPai3(i,:), averageFpr);
     [cMinPai3(i), idx3(i)] = min(c(:));
 end
 
 =======
+=======
+>>>>>>> Stashed changes
     c = cfun(averageTprPai3(i,:), averageFprPai3);
     [cMinPai3(i), idx3(i)] = min(c(:));
 end
 
 
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 figure;
 plot(JNRVector, cMin)
