@@ -15,7 +15,7 @@ params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
-WinLBlock = 19;
+WinLBlock = 3;
 JNRVector = -25:0;
 SNR = -25;
 
@@ -37,13 +37,13 @@ interferenceSignal = interferenceSignal(1:numberOfRawSamples);
 GPSSignalsPower = pow_eval(GPSSignals);
 interferenceSignalPower = pow_eval(interferenceSignal);
 
-monteCarloLoops = 100;
+monteCarloLoops = 1000;
 PfaVector = logspace(-12, -2, 41);
 h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
 
-detection_res = zeros(length(JNRVector), monteCarloLoops, WinLBlock, length(PfaVector));
-pvalue = zeros(length(JNRVector), monteCarloLoops, WinLBlock);
+detection_res = zeros(length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
+pvalue = zeros(length(JNRVector), monteCarloLoops, MBlock);
 
 for Emuindex = 1:monteCarloLoops
     Emuindex
@@ -65,7 +65,7 @@ end
 
 save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
     'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-    filesep 'results_det_18.mat'], 'detection_res', 'pvalue', '-v7.3');
+    filesep 'results_det_19.mat'], 'detection_res', 'pvalue', '-v7.3');
 warning('on','all')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
