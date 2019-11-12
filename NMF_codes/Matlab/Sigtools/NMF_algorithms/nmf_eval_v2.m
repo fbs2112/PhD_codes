@@ -5,6 +5,10 @@ function [W2, H2, reconstructError2, dataCell, f, t, data] = nmf_eval_v2(mixture
 
 dataCellLength = 1;
 
+if ~isfield(params, 'transform')
+    params.transform = true;
+end
+
 if nargin > 2 && varargin{1}
     dataCellLength = 2;
 end
