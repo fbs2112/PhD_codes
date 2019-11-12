@@ -21,16 +21,19 @@ switch init
         H0 = abs(H0);
         W0 = abs(W0);
     case 'custom'
-        if nargin > 2 && strcmp(init, 'custom')
-            W0 = varargin{1};
-            H0 = varargin{2};
-            flag = checkMatrices(W0, H0);
-            if flag
-                error('Input matrices have nonnegative elements');
-            end
+        W0 = params.W0;
+        if params.transform
+            H0 = params.H0;
         else
-            error('Input initial matrices');
+            avg = sqrt(mean(X(:)) / numberOfSources);
+            H0 = avg * randn(numberOfSources, n_features);
+            H0 = abs(H0);
         end
+        flag = checkMatrices(W0, H0);
+        if flag
+            error('Input matrices have negative elements');
+        end
+        
         if size(W0, 2) ~= numberOfSources || size(H0, 1) ~= numberOfSources
             error('Input matrices sizes are incorrect');
         end
@@ -40,8 +43,10 @@ switch init
 end
 
 reconstructError = zeros(numberOfIterations, 1);
+reconstructError0 = beta_divergence(X, W0, H0, betaDivergence, true);
+reconstructError(1) = reconstructError0;
 
-for i = 1:numberOfIterations
+for i = 2:numberOfIterations
     
     if betaDivergenceAux == 2
         numW = X*H0';
@@ -49,13 +54,16 @@ for i = 1:numberOfIterations
         numH = W'*X;
         H = max(0, H0 .* (numH ./ ((W'*W)*H0 + eps(numH))));
         
-        
     elseif betaDivergenceAux == 1
-        numW = (X./(W0*H0 + eps(X)))*H0.';
-        denW = (ones(size(W0, 1), size(H0, 2))*H0.') + eps(numW);
-        
-        W = W0 .* (numW ./ denW); 
-        
+        if params.transform
+            numW = (X./(W0*H0 + eps(X)))*H0.';
+            denW = (ones(size(W0, 1), size(H0, 2))*H0.') + eps(numW);
+
+            W = W0 .* (numW ./ denW); 
+        else
+            W = W0;
+        end
+       
         numH = W.'*(X./(W*H0 + eps(X)));
         denH = W.'*ones(size(W, 1), size(H0, 2)) + eps(numH);
         
@@ -67,19 +75,16 @@ for i = 1:numberOfIterations
     dh = max(max(abs(H - H0) / (sqrteps + max(max(abs(H0))))));
     delta = max(dw, dh);
     
-    if i > 1
-        if delta <= tolChange
-            break;
-        elseif (reconstructError0 - reconstructError(i)) <= (tolError*max(1, reconstructError0))
-            break;
-        elseif i == numberOfIterations
-            disp('Max iterations reached. Increase this number for better convergence.')
-            break
-        end
+    if delta <= tolChange
+        break;
+    elseif (reconstructError0 - reconstructError(i)) <= (tolError*max(1, reconstructError0))
+        break;
+    elseif i == numberOfIterations
+        disp('Max iterations reached. Increase this number for better convergence.')
+        break
     end
     
     reconstructError0 = reconstructError(i);
     W0 = W;
     H0 = H;
 end
-
