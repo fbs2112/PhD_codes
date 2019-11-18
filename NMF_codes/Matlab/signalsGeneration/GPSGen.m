@@ -1,5 +1,5 @@
 function  GPSSignals = GPSGen(params)
-
+params.numberOfGPSSignals = 1;
 code = codeGen(params.numberOfGPSSignals, params.codeLength);
 
 Endtimelastloop = -1;
@@ -19,4 +19,4 @@ end
 
 % GPS signals
 GPSSignals = (Codesample.*(ones(params.numberOfGPSSignals, 1)*Carrier)).';
-
+% GPSSignals = Codesample; 
