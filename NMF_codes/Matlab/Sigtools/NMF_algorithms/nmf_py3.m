@@ -35,11 +35,11 @@ switch init
         end
         
         if size(W0, 2) ~= numberOfSources || size(H0, 1) ~= numberOfSources
-            error('Input matrices sizes are incorrect');
+            error('Input matrices dimensions do not match');
         end
         
     otherwise
-        error('Initialization method not supported');
+        error('Initialisation method not supported');
 end
 
 reconstructError = zeros(numberOfIterations, 1);
@@ -59,7 +59,7 @@ for i = 2:numberOfIterations
             numW = (X./(W0*H0 + eps(X)))*H0.';
             denW = (ones(size(W0, 1), size(H0, 2))*H0.') + eps(numW);
 
-            W = W0 .* (numW ./ denW); 
+            W = W0 .* (numW ./ denW);
         else
             W = W0;
         end
