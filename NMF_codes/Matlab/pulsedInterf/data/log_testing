@@ -1,0 +1,11 @@
+nmf_testing_04: testing using coherence time of 500 mus
+nmf_testing_05: testing using coherence time of 100 mus
+nmf_testing_06: testing using coherence time of 100 mus and interference signal with larger pulses
+nmf_testing_06: same as 04. This simulation is to confirm the results found in 04
+nmf_testing_07: testing using coherence time of 500 mus and quantisation of 2 bits
+nmf_testing_08: testing using coherence time of 500 mus with GPS signal delay fixed
+nmf_testing_09: testing using coherence time of 500 mus with GPS signal delay fixed and using 2, 4, 8, 16 bits for quantisation
+
+
+
+    

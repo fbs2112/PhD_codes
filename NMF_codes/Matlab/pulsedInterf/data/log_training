@@ -1,0 +1,8 @@
+nmf_training_01: training using coherence time of 500 mus;
+nmf_training_02: training using coherence time of 100 mus;
+nmf_training_03: training using coherence time of 100 mus and interference signal with larger pulses;
+nmf_training_04: same as 01. This simulation is to confirm the results found in 01;
+nmf_training_05: training using coherence time of 500 mus and quantisation using 2 bits;
+nmf_training_06: training using coherence time of 500 mus and quantisation using 2, 4, 8, 16 bits;
+
+    
