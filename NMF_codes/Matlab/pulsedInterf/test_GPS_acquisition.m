@@ -28,14 +28,14 @@ fs = paramsSignal.Freqsamp;
 Nd = 81;
 DopStep = 125; %(Hz)
 
-nbits = [2 4 8 16];
+trueDelay = 10e-6;
+trueDoppler = 1.5e3;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %          Generate the local code and resample it                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+nbits = [2 4 8 16];
 nbitsIndex = 1;
-locBipolar = codeGen(1, paramsSignal.codeLength); %my GPS gen code
 
 fc = 1.023e6;   % Code rate of the code
 Tc = paramsSignal.Intetime;     % Coherent integration time in ms
@@ -74,11 +74,6 @@ for JNRIndex = 1:length(JNRVector)
         end
         
         signalPower = GPSSignals(i,:)*GPSSignals(i,:)'/length(GPSSignals(i,:));
-        gpsSignalPowerHat = mean(abs(real(GPSSignals(i,:))))^2;
-        
-        CN0_SNV(JNRIndex,i) = (gpsSignalPowerHat/(signalPower - gpsSignalPowerHat))/Tc;
-        M4 = mean(abs(GPSSignals(i,:)).^4);
-        CN0_MM(JNRIndex,i) = (sqrt(2*(signalPower^2) - M4)/(signalPower - gpsSignalPowerHat))/Tc;
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %                               Plot results                                     %
@@ -111,14 +106,14 @@ for JNRIndex = 1:length(JNRVector)
         end
                         
         [maxVal, DopInd] = max(max(sspace.'));
-        peakRatio(JNRIndex,i) = 2*length(GPSSignals(i,:))*maxVal/signalPower;
+        peakRatio(JNRIndex,i) = maxVal/signalPower;
         [peakVector, idx] = sort(sspace(DopInd,:), 'descend');
         idxAux = idx(2:end);
         minPeakDistance = round(fs*1e-6);
         secondPeakIndexAux = find(abs(idxAux - idx(1)) > minPeakDistance, 1, 'first');
-        peakRationBorre(JNRIndex,i) = maxVal/sspace(DopInd,idxAux(secondPeakIndexAux));
+        peakRatioBorre(JNRIndex,i) = maxVal/sspace(DopInd,idxAux(secondPeakIndexAux));
 
-        DopFreq(JNRIndex, i) = Freq(DopInd);
+        DopFreq(JNRIndex,i) = Freq(DopInd);
 %         figure;
 %         plot( codeDl*1e6, sspace(DopInd, :) / maxVal )
 %         hold on;
@@ -145,6 +140,28 @@ for JNRIndex = 1:length(JNRVector)
 %         xlabel('Doppler Frequency (Hz)')
 %         ylabel('Normalized Correlation')
         % formatFig(gcf, [dataPath  'acq_corr_doppler'], 'en', figProp);
+        
+        
+        
+        Carrphase = mod(2*pi*(trueDoppler)*codeDl,2*pi);
+        Carrier = exp(1i*Carrphase).';
+        GPSSignalNoDoppler = (GPSSignals(i,:).').*conj(Carrier);
+        locCDelayed = [locC(end - round(trueDelay*fs)+1:end) locC(1:end - round(trueDelay*fs))]; % Introducing artificial code delay
+        navSignalHat = GPSSignalNoDoppler.*(locCDelayed).';
+        
+        signalPower = navSignalHat'*navSignalHat/length(navSignalHat);
+        gpsSignalPowerHat = mean(abs(real(navSignalHat)))^2;
+        CN0_SNV(JNRIndex,i) = pow2db((gpsSignalPowerHat/(signalPower - gpsSignalPowerHat))/Tc);
+        
+        Carrphase = mod(2*pi*(DopFreq(JNRIndex,i))*codeDl,2*pi);
+        Carrier = exp(1i*Carrphase).';
+        GPSSignalNoDoppler = (GPSSignals(i,:).').*conj(Carrier);
+        locCDelayed = [locC(end - round(delay(JNRIndex,i)*fs/1e6)+1:end) locC(1:end - round(delay(JNRIndex,i)*fs/1e6))]; % Introducing artificial code delay
+        navSignalHat = GPSSignalNoDoppler.*(locCDelayed).';
+        
+        signalPower = navSignalHat'*navSignalHat/length(navSignalHat);
+        gpsSignalPowerHat = mean(abs(real(navSignalHat)))^2;
+        CN0_SNV2(JNRIndex,i) = pow2db((gpsSignalPowerHat/(signalPower - gpsSignalPowerHat))/Tc);
     end
 end
 
@@ -152,10 +169,8 @@ sspace = 0;
 
 signalPower = locC*locC'/length(locC); 
 gpsSignalPowerHat = mean(abs(real(signalPower)))^2;
-CN0_SNV(JNRIndex + 1,i + 1) = (gpsSignalPowerHat/(signalPower - gpsSignalPowerHat))/Tc;
+CN0_SNV(JNRIndex + 1,i + 1) = pow2db(gpsSignalPowerHat/(signalPower - gpsSignalPowerHat))/Tc;
 
-M4 = mean(abs(GPSSignals(i,:)).^4);
-CN0_MM(JNRIndex+1,i+1) = (sqrt(2*signalPower^2 - M4)/(signalPower - gpsSignalPowerHat))/Tc;
 for ii = 1:K
     y = locC((ii - 1) * Nc + (1:Nc) );   % use just 1 period of code at the time
     % Compute the search space for a single coherent integration epoch
