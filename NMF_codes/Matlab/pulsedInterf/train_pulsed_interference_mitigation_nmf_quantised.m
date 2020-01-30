@@ -74,7 +74,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'nmf_training_06.mat'], 'W0', 'HInterf', 'HSignal', 'errorInterfTrain', 'errorSignalTrain',...
+save(['.' filesep 'data' filesep 'nmf_training_07.mat'], 'W0', 'HInterf', 'HSignal', 'errorInterfTrain', 'errorSignalTrain',...
     'PxxInterf', 'PxxSignal');
 
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])

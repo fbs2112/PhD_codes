@@ -8,7 +8,7 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_06.mat;
+load nmf_training_07.mat;
 load sim_params_2.mat;
 
 monteCarloLoops = 1;
@@ -83,7 +83,7 @@ for loopIndex = 1:monteCarloLoops
             mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
             interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(params.JNRVector(JNRIndex)/10)/interferenceSignalPower);
             mixtureSignal(:,JNRIndex,nbitsIndex) = mixtureGPS + interferenceSignalAux;
-            mixtureSignal(:,JNRIndex,nbitsIndex) = quantise_gps(mixtureSignal(:,JNRIndex), nbits(nbitsIndex));
+            mixtureSignal(:,JNRIndex,nbitsIndex) = quantise_gps(mixtureSignal(:,JNRIndex,nbitsIndex), nbits(nbitsIndex));
         end
         
         [WTest, HTest, errorTest, PxxTest, f, t] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex), params);
@@ -101,7 +101,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'nmf_testing_09.mat'], 'xHat', 'mixtureSignal', 'WTest', 'HTest', 'errorTest', 'PxxTest', 'mixtureSignal');
+save(['.' filesep 'data' filesep 'nmf_testing_11.mat'], 'xHat', 'mixtureSignal', 'WTest', 'HTest', 'errorTest', 'PxxTest', 'mixtureSignal');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
