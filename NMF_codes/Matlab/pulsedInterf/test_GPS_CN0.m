@@ -10,35 +10,47 @@ load sim_params_2.mat;
 
 SNR = -25;
 Tc = paramsSignal.Intetime;
-
+monteCarloLoops = 100;
 paramsSignal.numberOfGPSSignals = 1;
 [GPSSignals, PRN] = GPSGen(paramsSignal);
 GPSSignalsPower = pow_eval(GPSSignals);
 
-noise = randn(length(GPSSignals), 1) + 1j*randn(length(GPSSignals), 1);
-noisePower = pow_eval(noise);
+for i = 1:monteCarloLoops
+    noise = randn(length(GPSSignals), 1) + 1j*randn(length(GPSSignals), 1);
+    noisePower = pow_eval(noise);
 
-GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
-mixtureGPS = sum(GPSSignals.*GPSMultiplier, 2) + noise;
+    GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
+    mixtureGPS = sum(GPSSignals.*GPSMultiplier, 2) + noise;
 
-totalSamples = length(mixtureGPS);
-Timeofthisloop = 0:totalSamples-1;
-Carrphase = mod(2*pi*(paramsSignal.FreqDopp)*Timeofthisloop/paramsSignal.Freqsamp,2*pi);
-Carrier = exp(1i*Carrphase).';
+    trueCN0(i) = pow2db((pow_eval((PRN.*PRN).')/noisePower)/Tc);
 
-mixtureGPSNoDoppler = (mixtureGPS.*conj(Carrier));
+    totalSamples = length(mixtureGPS);
+    Timeofthisloop = 0:totalSamples-1;
+    Carrphase = mod(2*pi*(paramsSignal.FreqDopp)*Timeofthisloop/paramsSignal.Freqsamp,2*pi);
+    Carrier = exp(1i*Carrphase).';
 
-mixtureGPSNav = mixtureGPSNoDoppler.*PRN.';
+    mixtureGPSNoDoppler = (mixtureGPS.*conj(Carrier));
 
-signalPower = mixtureGPSNav'*mixtureGPSNav/length(mixtureGPSNav);
-gpsSignalPowerHat = mean(abs(real(mixtureGPSNav)))^2;
+    mixtureGPSNav = mixtureGPSNoDoppler.*PRN.';
+    signalPower = mixtureGPSNav'*mixtureGPSNav/length(mixtureGPSNav);
+    gpsSignalPowerHat = mean(abs(real(mixtureGPSNav)))^2;
 
-CN0_SNV = pow2db((gpsSignalPowerHat/(signalPower - gpsSignalPowerHat))/Tc);
-% M4 = mean(abs(mixtureGPSNav).^4);
-% Pd = sqrt(2*(signalPower^2) - M4);
-% CN0_MM = pow2db((Pd/(signalPower - Pd))/Tc);
+    CN0_SNV(i) = pow2db((gpsSignalPowerHat/(signalPower - gpsSignalPowerHat))/Tc);
 
-trueCN0 = pow2db((pow_eval((PRN.*PRN).')/noisePower)/Tc);
+    Ta = Tc;
+    M = length(mixtureGPS);
+
+    Pn = sum(real(mixtureGPSNav))^2 + sum(imag(mixtureGPSNav))^2;
+    Pw = sum(real(mixtureGPSNav).^2 + imag(mixtureGPSNav).^2);
+
+    CN0_NWPR(i) = pow2db((M*(Pn/Pw) - 1) / (Ta * (M - (Pn/Pw))));
+    % M4 = mean(abs(mixtureGPSNav).^4);
+    % Pd = sqrt(2*(signalPower^2) - M4);
+    % CN0_MM = pow2db((Pd/(signalPower - Pd))/Tc);
+end
+CN0_SNV_av = mean(CN0_SNV);
+CN0_NWPR_av = mean(CN0_NWPR);
+trueCN0_av = mean(trueCN0); 
 
 rmpath(['..' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);
