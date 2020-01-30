@@ -18,7 +18,7 @@ dataPath = ['..' filesep 'figs' filesep '11-12' filesep];
 
 load sim_params_2.mat;
 
-load(['.' filesep 'data' filesep 'nmf_testing_08.mat']);
+load(['.' filesep 'data' filesep 'nmf_testing_11.mat']);
 
 varN = 2;
 Pfa = 0.15;
@@ -35,7 +35,7 @@ trueDoppler = 1.5e3;
 %          Generate the local code and resample it                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 nbits = [2 4 8 16];
-nbitsIndex = 1;
+nbitsIndex = 3;
 
 fc = 1.023e6;   % Code rate of the code
 Tc = paramsSignal.Intetime;     % Coherent integration time in ms
@@ -43,7 +43,7 @@ Nc = floor(Tc * fs);
 paramsSignal.numberOfGPSSignals = 1;
 
 [~, locC] = GPSGen(paramsSignal);   % Resample the code at data sampling frequency
-locC = quantise_gps(locC, nbits(nbitsIndex));
+% locC = quantise_gps(locC, nbits(nbitsIndex));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %           Main acquisition loop - evaluation of the search space         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
