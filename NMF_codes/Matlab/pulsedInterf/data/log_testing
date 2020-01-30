@@ -6,6 +6,7 @@ nmf_testing_07: testing using coherence time of 500 mus and quantisation of 2 bi
 nmf_testing_08: testing using coherence time of 500 mus with GPS signal delay fixed
 nmf_testing_09: testing using coherence time of 500 mus with GPS signal delay fixed and using 2, 4, 8, 16 bits for quantisation
 nmf_testing_10: testing using coherence time of 500 mus with GPS signal delay fixed and without interference signal
+nmf_testing_11: testing using coherence time of 500 mus with GPS signal delay fixed and using 2, 4, 8, 16 bits for quantisation (quantisation function fixed)
 
 
 
