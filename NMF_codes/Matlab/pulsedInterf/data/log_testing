@@ -7,6 +7,8 @@ nmf_testing_08: testing using coherence time of 500 mus with GPS signal delay fi
 nmf_testing_09: testing using coherence time of 500 mus with GPS signal delay fixed and using 2, 4, 8, 16 bits for quantisation
 nmf_testing_10: testing using coherence time of 500 mus with GPS signal delay fixed and without interference signal
 nmf_testing_11: testing using coherence time of 500 mus with GPS signal delay fixed and using 2, 4, 8, 16 bits for quantisation (quantisation function fixed)
+nmf_testing_12: testing using coherence time of 500 mus and only noise in the received signal (probability of false alarm evaluation)
+nmf_testing_13: testing using coherence time of 500 mus with GPS signal delay fixed and 100 MonteCarlo loops (probability of detection evaluation)
 
 
 
