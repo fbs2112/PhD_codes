@@ -35,7 +35,7 @@ paramsSignal.numberOfGPSSignals = 1;
 [~, locC] = GPSGen(paramsSignal);   % Resample the code at data sampling frequency
 
 JNRVector = [-15 -10 -5 10 30 50];
-% JNRVector = [0];
+JNRVector = [0];
 
 Tc = paramsSignal.Intetime;     % Coherent integration time in ms
 Nc = floor(Tc * fs);
@@ -69,7 +69,7 @@ for nbitsIndex = 1:1
             end           
             
             figure
-            surf( codeDl*1e6, ((1:Nd) - ceil(Nd/2))*DopStep, sspace./max(sspace(:)), 'EdgeColor', 'none');
+            surf( codeDl*1e6, ((1:Nd) - ceil(Nd/2))*DopStep, sspace, 'EdgeColor', 'none');
             axis tight
             xlabel('Delay [$\mu$s]')
             ylabel('Doppler Frequency (Hz)')
