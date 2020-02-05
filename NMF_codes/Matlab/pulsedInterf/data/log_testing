@@ -11,6 +11,7 @@ nmf_testing_12: testing using coherence time of 500 mus and only noise in the re
 nmf_testing_13: testing using coherence time of 500 mus with GPS signal delay fixed and 100 MonteCarlo loops (probability of detection evaluation) (JNR = 10 dB)
 nmf_testing_14: testing using coherence time of 500 mus with GPS signal delay fixed and 100 MonteCarlo loops (probability of detection evaluation) (JNR = [-5 30 50] dB)
 nmf_testing_15: testing using coherence time of 500 mus with GPS signal delay fixed and 100 MonteCarlo loops (probability of detection evaluation) (JNR = [-5 10 30 50] dB) 78 MonteCarlo loops
+nmf_testing_16: testing using coherence time of 500 mus with GPS signal delay fixed and 100 MonteCarlo loops (probability of detection evaluation) (JNR = [-5 10 30 50] dB) 100 MonteCarlo loops
 
 
 
