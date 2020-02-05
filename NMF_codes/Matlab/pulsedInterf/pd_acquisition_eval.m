@@ -10,7 +10,7 @@ clc;
 close all;
     
 load sim_params_2.mat;
-load(['.' filesep 'data' filesep 'nmf_testing_15.mat']);
+load(['.' filesep 'data' filesep 'nmf_testing_16.mat']);
 
 varN = 2;
 Pfa = 0.05;
@@ -109,8 +109,8 @@ end
 for JNRIndex = 1:length(JNR)
     for i = 1:3
         
-        SNRHat(i,JNRIndex) = SNResti_pai(squeeze(navSignalHat(i,JNRIndex,:)));
-        SNRHat_SNV(i,JNRIndex) = SNResti_SNV(squeeze(navSignalHat(i,JNRIndex,:)));
+%         SNRHat(i,JNRIndex) = SNResti_pai(squeeze(navSignalHat(i,JNRIndex,:)));
+%         SNRHat_SNV(i,JNRIndex) = SNResti_SNV(squeeze(navSignalHat(i,JNRIndex,:)));
 %         figure;
 %         histogram(peakRatio(i,JNRIndex,:), 10);
 %         figure;
@@ -120,7 +120,9 @@ for JNRIndex = 1:length(JNR)
     end
 end
 
-save(['.' filesep 'data' filesep '.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', 'SNRHat', 'SNRHat_SNV');
+% save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', 'SNRHat', 'SNRHat_SNV');
+save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR');
+
 
 
 %%
@@ -155,6 +157,10 @@ K = 1;  % Number of non-coherent integrations
 codeDl = (0:(Nc - 1)) / fs; % Code delays
 
 monteCarloLoops = size(mixtureSignal, 2);
+
+thresPeakRatio = linspace(1e5, 9e5, 50);
+thresPeakRatioBorre = linspace(1, 10, 50);
+thresPAPR = linspace(5, 80, 50);
 
 % for nbitsIndex = 1:length(nbits)
 for loopIndex = 1:monteCarloLoops
@@ -204,26 +210,34 @@ stdPapr = std(papr, 0, 3);
 
 for i = 1:length(thresPeakRatio)
     fpPR(:,:,:,i) = peakRatio > thresPeakRatio(i);
-    tnPR(:,:,:,i) = not(tpPR(:,:,:,i));
+    tnPR(:,:,:,i) = not(fpPR(:,:,:,i));
     
     fpPRB(:,:,:,i) = peakRatioBorre > thresPeakRatioBorre(i);
-    tnPRB(:,:,:,i) = not(tpPRB(:,:,:,i));
+    tnPRB(:,:,:,i) = not(fpPRB(:,:,:,i));
     
     fpPAPR(:,:,:,i) = papr > thresPAPR(i);
-    tnPAPR(:,:,:,i) = not(tpPAPR(:,:,:,i));
+    tnPAPR(:,:,:,i) = not(fpPAPR(:,:,:,i));
 end
 
 
-for JNRIndex = 1:length(JNR)
-    for i = 1:3
-        figure;
-        histogram(peakRatio(i,JNRIndex,:), 10);
-        figure;
-        histogram(peakRatioBorre(i,JNRIndex,:), 10);
-        figure;
-        histogram(papr(i,JNRIndex,:), 10);
-    end
-end
+% for JNRIndex = 1:length(JNR)
+%     for i = 1:3
+%         figure;
+%         histogram(peakRatio(i,JNRIndex,:), 10);
+%         figure;
+%         histogram(peakRatioBorre(i,JNRIndex,:), 10);
+%         figure;
+%         histogram(papr(i,JNRIndex,:), 10);
+%     end
+% end
+
+
+load(['.' filesep 'data' filesep 'detection01.mat']);
+% save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', ...
+%     'fpPR', 'tnPR', 'fpPRB', 'tnPRB', 'fpPAPR', 'tnPAPR', 'SNRHat', 'SNRHat_SNV');
+save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', ...
+    'fpPR', 'tnPR', 'fpPRB', 'tnPRB', 'fpPAPR', 'tnPAPR');
+
 
 %%
 
