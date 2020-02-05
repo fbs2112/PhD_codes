@@ -96,17 +96,14 @@ stdPapr = std(papr, 0, 3);
 
 
 for i = 1:length(thresPeakRatio)
-    aux = peakRatio > thresPeakRatio(i);
-    tpPR(:,:,i) = mean(aux, 3);
-    fnPR(:,:,i) = mean(not(aux),3);
+    tpPR(:,:,:,i) = peakRatio > thresPeakRatio(i);
+    fnPR(:,:,:,i) = not(tpPR(:,:,:,i));
     
-    aux = peakRatioBorre > thresPeakRatioBorre(i);
-    tpPRB(:,:,i) = mean(aux, 3);
-    fnPRB(:,:,i) = mean(not(aux),3);
+    tpPRB(:,:,:,i) = peakRatioBorre > thresPeakRatioBorre(i);
+    fnPRB(:,:,:,i) = not(tpPRB(:,:,:,i));
     
-    aux = papr > thresPAPR(i);
-    tpPAPR(:,:,i) = mean(aux, 3);
-    fnPAPR(:,:,i) = mean(not(aux),3);
+    tpPAPR(:,:,:,i) = papr > thresPAPR(i);
+    fnPAPR(:,:,:,i) = not(tpPAPR(:,:,:,i));
 end
 
 for JNRIndex = 1:length(JNR)
@@ -122,6 +119,8 @@ for JNRIndex = 1:length(JNR)
 %         histogram(papr(i,JNRIndex,:), 10);
     end
 end
+
+save(['.' filesep 'data' filesep '.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', 'SNRHat', 'SNRHat_SNV');
 
 
 %%
@@ -203,8 +202,20 @@ stdPeakRatioBorre = std(peakRatioBorre, 0, 3);
 stdPapr = std(papr, 0, 3);
 
 
+for i = 1:length(thresPeakRatio)
+    fpPR(:,:,:,i) = peakRatio > thresPeakRatio(i);
+    tnPR(:,:,:,i) = not(tpPR(:,:,:,i));
+    
+    fpPRB(:,:,:,i) = peakRatioBorre > thresPeakRatioBorre(i);
+    tnPRB(:,:,:,i) = not(tpPRB(:,:,:,i));
+    
+    fpPAPR(:,:,:,i) = papr > thresPAPR(i);
+    tnPAPR(:,:,:,i) = not(tpPAPR(:,:,:,i));
+end
+
+
 for JNRIndex = 1:length(JNR)
-    for i = 2:2
+    for i = 1:3
         figure;
         histogram(peakRatio(i,JNRIndex,:), 10);
         figure;
