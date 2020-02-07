@@ -1,7 +1,12 @@
 clear;
 clc;
-close all
+close all;
 
+set(groot, 'defaultAxesTickLabelInterpreter','latex');
+set(groot, 'defaultLegendInterpreter','latex');
+set(groot, 'defaulttextInterpreter','latex');
+
+addpath(['..' filesep '.' filesep 'Misc'])
 
 load(['.' filesep 'data' filesep 'detection01.mat']);
 
@@ -14,20 +19,27 @@ fpr = tnPR./(fpPR + tnPR);
 averageFpr = squeeze(mean(fpr, 3));
 stdFpr = std(fpr, [], 3);
 
-JNRVector = [-5 30 50];
+JNRVector = [-5 10 30 50];
 
 for JNRIndex = 1:length(JNRVector)
+    figure;
+
     for i = 1:3
-        figure;
-        plot(averageFpr(i,:), squeeze(averageTpr(i,JNRIndex,:)));
+%         plot(averageFpr(i,:), squeeze(averageTpr(i,JNRIndex,:)));
+        loglog(averageFpr(i,:), squeeze(averageTpr(i,JNRIndex,:)));
+
         hold on;
-        plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
-        ylabel('Probability of detection');
-        xlabel('Probability of false alarm');
-        grid on;
-        title(['JNR = ' num2str(JNRVector(JNRIndex))]);
     end
+%     plot(linspace(0, 1, size(averageFpr, 2)), linspace(0, 1, size(averageFpr, 2)));
+%     loglog(logspace(0, 1, size(averageFpr, 2)), logspace(0, 1, size(averageFpr, 2)));
+
+    ylabel('Probability of detection');
+    xlabel('Probability of false alarm');
+    grid on;
+    title(['JNR = ' num2str(JNRVector(JNRIndex))]);
+    legend('NMF-Based', 'Pulse Blanking', 'No mitigation', 'Random guess');
 end
+
 %--------------------------------------------------------------------------
 
 tpr = tpPRB./(tpPRB+fnPRB);
@@ -39,11 +51,12 @@ fpr = tnPRB./(fpPRB + tnPRB);
 averageFpr = squeeze(mean(fpr, 3));
 stdFpr = std(fpr, [], 3);
 
-JNRVector = [-5 30 50];
+JNRVector = [-5 10 30 50];
 
 for JNRIndex = 1:length(JNRVector)
+    figure;
+
     for i = 1:3
-        figure;
         plot(averageFpr(i,:), squeeze(averageTpr(i,JNRIndex,:)));
         hold on;
         plot(linspace(0, 1, numel(averageFpr)), linspace(0, 1, numel(averageFpr)));
@@ -53,8 +66,6 @@ for JNRIndex = 1:length(JNRVector)
         title(['JNR = ' num2str(JNRVector(JNRIndex))]);
     end
 end
-
-
 %--------------------------------------------------------------------------
 
 tpr = tpPAPR./(tpPAPR+fnPAPR);
@@ -66,7 +77,7 @@ fpr = tnPAPR./(fpPAPR + tnPAPR);
 averageFpr = squeeze(mean(fpr, 3));
 stdFpr = std(fpr, [], 3);
 
-JNRVector = [-5 30 50];
+JNRVector = [-5 10 30 50];
 
 for JNRIndex = 1:length(JNRVector)
     for i = 1:3
@@ -80,3 +91,5 @@ for JNRIndex = 1:length(JNRVector)
         title(['JNR = ' num2str(JNRVector(JNRIndex))]);
     end
 end
+
+rmpath(['..' filesep '.' filesep 'Misc']);

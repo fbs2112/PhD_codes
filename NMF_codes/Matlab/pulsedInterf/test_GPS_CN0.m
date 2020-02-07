@@ -21,7 +21,7 @@ for i = 1:monteCarloLoops
 
     GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
     mixtureGPS = sum(GPSSignals.*GPSMultiplier, 2) + noise;
-    nav(i,1) = (PRN.*GPSMultiplier)*(PRN.*GPSMultiplier).';
+    nav(i,1) = (PRN.*GPSMultiplier)*(PRN).';
 
     totalSamples = length(mixtureGPS);
     Timeofthisloop = 0:totalSamples-1;
@@ -33,7 +33,7 @@ for i = 1:monteCarloLoops
     mixtureGPSNav(i,1) = mixtureGPSNoDoppler.'*PRN.';
    
 end
-trueSNR = pow2db(pow_eval(nav) / (noisePower*monteCarloLoops));
+trueSNR = pow2db(pow_eval(nav) / (noisePower*monteCarloLoops.^2));
 
 signalPower = mixtureGPSNav'*mixtureGPSNav/length(mixtureGPSNav);
 gpsSignalPowerHat = mean(abs(real(mixtureGPSNav)))^2;
@@ -41,16 +41,24 @@ gpsSignalPowerHat = mean(abs(real(mixtureGPSNav)))^2;
 SNR_SNV = pow2db((gpsSignalPowerHat/(signalPower - gpsSignalPowerHat)));
 
 Ta = Tc;
-M = length(mixtureGPS);
+M = 20;
 
-Pn = sum(real(mixtureGPSNav))^2 + sum(imag(mixtureGPSNav))^2;
-Pw = sum(real(mixtureGPSNav).^2 + imag(mixtureGPSNav).^2);
+mixtureGPSNavBuff = buffer(mixtureGPSNav, M);
 
-SNR_NWPR = pow2db((M*(Pn/Pw) - 1) / ((M - (Pn/Pw))));
+for i = 1:size(mixtureGPSNavBuff, 2)
+    Pn(i) = sum(real(mixtureGPSNavBuff(:,i)))^2 + sum(imag(mixtureGPSNavBuff(:,i)))^2;
+    Pw(i) = sum(real(mixtureGPSNavBuff(:,i)).^2 + imag(mixtureGPSNavBuff(:,i)).^2);
+end
+averagePn = mean(Pn);
+averagePw = mean(Pw);
+
+SNR_NWPR = pow2db((M*(averagePn/averagePw) - 1) / ((M - (averagePn/averagePw))));
 
 M4 = mean(abs(mixtureGPSNav).^4);
 Pd = sqrt(2*(signalPower^2) - M4);
 SNR_MM = pow2db((Pd/(signalPower - Pd)));
+
+SNR_pai = SNResti_pai(mixtureGPSNav);
 
 rmpath(['..' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);

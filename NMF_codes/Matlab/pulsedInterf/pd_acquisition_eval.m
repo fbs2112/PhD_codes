@@ -78,7 +78,7 @@ for loopIndex = 1:monteCarloLoops
             
             GPSSignalNoDoppler = (GPSSignals(i,:).').*conj(Carrier);
             locCDelayed = [locC(end - round(trueDelay*fs)+1:end) locC(1:end - round(trueDelay*fs))]; % Introducing artificial code delay
-            navSignalHat(i,JNRIndex,loopIndex) = GPSSignalNoDoppler.'*(locCDelayed).';
+            navSignalHat(i,JNRIndex,loopIndex) = (GPSSignalNoDoppler.'*(locCDelayed).');
             
         end
     end
@@ -109,8 +109,10 @@ end
 for JNRIndex = 1:length(JNR)
     for i = 1:3
         
-%         SNRHat(i,JNRIndex) = SNResti_pai(squeeze(navSignalHat(i,JNRIndex,:)));
-%         SNRHat_SNV(i,JNRIndex) = SNResti_SNV(squeeze(navSignalHat(i,JNRIndex,:)));
+        SNRHat(i,JNRIndex) = SNResti_pai(squeeze(navSignalHat(i,JNRIndex,:)));
+        SNRHat_SNV(i,JNRIndex) = SNResti_SNV(squeeze(navSignalHat(i,JNRIndex,:)));
+        SNRHat_MM(i,JNRIndex) = SNResti_MM(squeeze(navSignalHat(i,JNRIndex,:)));
+        SNRHat_NWPR(i,JNRIndex) = SNResti_NWPR(squeeze(navSignalHat(i,JNRIndex,:)), 20);
 %         figure;
 %         histogram(peakRatio(i,JNRIndex,:), 10);
 %         figure;
@@ -120,8 +122,8 @@ for JNRIndex = 1:length(JNR)
     end
 end
 
-% save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', 'SNRHat', 'SNRHat_SNV');
-save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR');
+save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', 'SNRHat', 'SNRHat_SNV');
+% save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR');
 
 
 
@@ -233,10 +235,10 @@ end
 
 
 load(['.' filesep 'data' filesep 'detection01.mat']);
-% save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', ...
-%     'fpPR', 'tnPR', 'fpPRB', 'tnPRB', 'fpPAPR', 'tnPAPR', 'SNRHat', 'SNRHat_SNV');
 save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', ...
-    'fpPR', 'tnPR', 'fpPRB', 'tnPRB', 'fpPAPR', 'tnPAPR');
+    'fpPR', 'tnPR', 'fpPRB', 'tnPRB', 'fpPAPR', 'tnPAPR', 'SNRHat', 'SNRHat_SNV');
+% save(['.' filesep 'data' filesep 'detection01.mat'], 'tpPR', 'fnPR', 'tpPRB', 'fnPRB', 'tpPAPR', 'fnPAPR', ...
+%     'fpPR', 'tnPR', 'fpPRB', 'tnPRB', 'fpPAPR', 'tnPAPR');
 
 
 %%
