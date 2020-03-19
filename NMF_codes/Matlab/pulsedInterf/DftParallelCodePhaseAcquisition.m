@@ -1,4 +1,4 @@
-function sspace = DftParallelCodePhaseAcquisition(sig, locC, N, Nd, DopStep, fs, fi)
+function [searchSpaceAbsVal, searchSpace] = DftParallelCodePhaseAcquisition(sig, locC, N, Nd, DopStep, fs, fi)
 % Purpose.
 % Evaluate the search space for the code acquisition using the time domain FFT technique   
 %
@@ -32,17 +32,17 @@ function sspace = DftParallelCodePhaseAcquisition(sig, locC, N, Nd, DopStep, fs,
 fif = fi/fs;    % normalized intermediate frequency
 deltaf = DopStep/fs;    % normalized Doppler step
 
-sspace = zeros(Nd, N);
+searchSpace = zeros(Nd, N);
 
 F_CA = conj(fft(locC));% /N;
 t = 0:(N - 1);  % time index
+L = length(sig);
 
-for ff = 1:Nd,  
+for ff = 1:Nd   
     fc = fif + (ff - ceil(Nd/2))*deltaf;        
-    IQ_comp = exp(-2*j*pi*fc.*t).*sig;
+    IQ_comp = exp(-2*1j*pi*fc.*t).*sig;
     X = fft(IQ_comp);
-    sspace(ff,:) = ifft(X.*F_CA);
+    searchSpace(ff,:) = ifft(X.*F_CA);%/(L^2);
 end
 
-sspace = real(sspace.*conj(sspace));
-
+searchSpaceAbsVal = real(searchSpace.*conj(searchSpace));
