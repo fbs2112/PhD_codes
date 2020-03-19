@@ -5,5 +5,8 @@ nmf_training_04: same as 01. This simulation is to confirm the results found in 
 nmf_training_05: training using coherence time of 500 mus and quantisation using 2 bits;
 nmf_training_06: training using coherence time of 500 mus and quantisation using 2, 4, 8, 16 bits;
 nmf_training_07: training using coherence time of 500 mus and quantisation using 2, 4, 8, 16 bits (quantisation function fixed);
+nmf_training_08: training using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500;
+nmf_training_09: training using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500, quantisation bits = [2 4];
+nmf_training_10: training using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500, quantisation bits = [2 4] (quantisation function now saturating and using threshold according to noise variance)
 
     
