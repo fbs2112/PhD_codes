@@ -47,6 +47,11 @@ reconstructError0 = beta_divergence(X, W0, H0, betaDivergence, true);
 reconstructError(1) = reconstructError0;
 
 for i = 2:numberOfIterations
+    if params.verbose
+        if ~mod(i, 10)
+            fprintf('Iteration %i\n', i);
+        end
+    end
     
     if betaDivergenceAux == 2
         numW = X*H0';
