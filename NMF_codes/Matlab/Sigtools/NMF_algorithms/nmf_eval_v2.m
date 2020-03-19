@@ -9,6 +9,10 @@ if ~isfield(params, 'transform')
     params.transform = true;
 end
 
+if ~isfield(params, 'verbose')
+    params.verbose = false;
+end
+
 if nargin > 2 && varargin{1}
     dataCellLength = 2;
 end
@@ -23,11 +27,7 @@ for i = 1:size(mixtureSignal, 2)
     
     data{1, i} = mixtureSignal(:,i);
     
-    if isreal(data{1, i})
-        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, [], params.specType);
-    else
-        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
-    end    
+    [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
     
     dataCell{1, i} = PxxAux;
 
