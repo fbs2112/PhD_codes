@@ -11,12 +11,11 @@ addpath(['.' filesep 'data']);
 load nmf_training_17.mat;
 load sim_params_3.mat;
 
-monteCarloLoops = 1 ;
+monteCarloLoops = 100;
 SNR = -25;
-nbits = [2 4];
+nbits = 0;
 
-% params.JNRVector = [-5 0 10 30 50];
-params.JNRVector = [20];
+params.JNRVector = [-5 0 10 30 50];
 
 JNRVector = params.JNRVector; 
 params.fs = paramsSignal.Freqsamp;
@@ -33,7 +32,7 @@ params.numberOfIterations = 500;
 params.tolChange = 1e-3;
 params.tolError = 1e-3;
 params.repetitions = 1;
-params.verbose = true;
+params.verbose = false;
 
 numberOfRawSamples = floor(paramsSignal.Freqsamp*paramsSignal.Intetime);
 delay = 10e-6;
