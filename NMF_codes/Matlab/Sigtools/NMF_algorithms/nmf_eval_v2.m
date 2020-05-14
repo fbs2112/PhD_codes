@@ -9,6 +9,10 @@ if ~isfield(params, 'transform')
     params.transform = true;
 end
 
+if ~isfield(params, 'semi')
+    params.semi = false;
+end
+
 if ~isfield(params, 'verbose')
     params.verbose = false;
 end
@@ -58,7 +62,14 @@ for i = 1:size(mixtureSignal, 2)
         reconstructErrorAux = zeros(params.numberOfIterations, params.repetitions);
         
         minReconstructErrorPast = inf;
+        
+        if params.semi
+            wAux = params.W0;
+            params.W0 = params.W0(:,(i-1) * params.numberOfSources + 1:i * params.numberOfSources);
+        end
+        
         for k = 1:params.repetitions
+            
             [W, H, reconstructError] = nmf_py3(inputNMF, params);
             WAux{k} = W;
             HAux{k} = H;
@@ -74,6 +85,9 @@ for i = 1:size(mixtureSignal, 2)
         H2{j, i} = HAux{minIdx, 1};
         reconstructError2{j, i} = reconstructErrorAux(:,minIdx);
         
+        if params.semi
+            params.W0 = wAux;
+        end
     end
         
 end
