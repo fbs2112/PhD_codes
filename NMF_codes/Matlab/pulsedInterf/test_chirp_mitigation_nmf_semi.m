@@ -8,7 +8,7 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_17.mat;
+load nmf_training_18.mat;
 load sim_params_3.mat;
 
 monteCarloLoops = 100;
@@ -96,21 +96,26 @@ for loopIndex = 1:monteCarloLoops
         end
         params.init = 'random';
         params.transform = true;
+        params.semi = false;
+
         [WTestAux, ~, ~, ~, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), params);
         
         params.numberOfSources = params.numberOfSources*2;
         params.init = 'custom';
         params.transform = false;
-        
+        params.semi = true;
         %--------Semi supervised NMF
-        WOSemi = [WTestAux{1,1} W0(:,params.numberOfSources/2+1:end,nbitsIndex)];
+        for idx = 1:length(params.JNRVector)
+            WOSemi(:,(idx-1) * params.numberOfSources + 1:idx * params.numberOfSources) = [WTestAux{1,idx} W0(:,params.numberOfSources/2+1:end,nbitsIndex)];
+        end
         params.W0 = WOSemi;
         [~, HTest, ~, Pxx, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), params);
         
         for JNRIndex = 1:length(params.JNRVector)
+            wAux = WOSemi(:,(JNRIndex-1) * params.numberOfSources + 1:JNRIndex * params.numberOfSources);
             for i = 1:2
-                S = (WOSemi(:,(i*params.numberOfSources/2) - (params.numberOfSources/2 -1):(i*params.numberOfSources/2),nbitsIndex) * ...
-                    HTest{1,JNRIndex}((i*params.numberOfSources/2) - (params.numberOfSources/2 -1):(i*params.numberOfSources/2),:)./ (WOSemi(:,:,nbitsIndex)*HTest{1,JNRIndex})).*Pxx{1,JNRIndex};
+                S = (wAux(:,(i-1)*params.numberOfSources/2 +1:(i*params.numberOfSources/2),nbitsIndex) * ...
+                    HTest{1,JNRIndex}((i-1)*params.numberOfSources/2 +1:(i*params.numberOfSources/2),:) ./ (wAux(:,:,nbitsIndex)*HTest{1,JNRIndex})).*Pxx{1,JNRIndex};
                 
                 xHat(:,i,JNRIndex, nbitsIndex,loopIndex) = istft(S, params.fs, 'Window', params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft);
             end
