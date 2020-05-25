@@ -8,7 +8,7 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_18.mat;
+load nmf_training_19.mat;
 load sim_params_3.mat;
 
 monteCarloLoops = 100;
@@ -16,6 +16,7 @@ SNR = -25;
 nbits = 0;
 
 params.JNRVector = [-5 0 10 30 50];
+% params.JNRVector = [30 50];
 
 JNRVector = params.JNRVector; 
 params.fs = paramsSignal.Freqsamp;
@@ -25,7 +26,7 @@ params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.window = ones(params.nperseg, 1);
 params.specType = 'power';
-params.numberOfSources = 5;
+params.numberOfSources = 10;
 params.init = 'random';
 params.betaDivergence = 'kullback-leibler';
 params.numberOfIterations = 500;
@@ -109,7 +110,7 @@ for loopIndex = 1:monteCarloLoops
             WOSemi(:,(idx-1) * params.numberOfSources + 1:idx * params.numberOfSources) = [WTestAux{1,idx} W0(:,params.numberOfSources/2+1:end,nbitsIndex)];
         end
         params.W0 = WOSemi;
-        [~, HTest, ~, Pxx, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), params);
+        [~, HTest, error, Pxx, f, t] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), params);
         
         for JNRIndex = 1:length(params.JNRVector)
             wAux = WOSemi(:,(JNRIndex-1) * params.numberOfSources + 1:JNRIndex * params.numberOfSources);
