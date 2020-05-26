@@ -8,7 +8,7 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_19.mat;
+load nmf_training_18.mat;
 load sim_params_3.mat;
 
 monteCarloLoops = 100;
@@ -16,8 +16,8 @@ SNR = -25;
 nbits = 0;
 
 paramsNMF1.JNRVector = [-5 0 10 30 50];
-% params.JNRVector = [30 50];
-JNRVector = paramsNMF1.JNRVector; 
+
+JNRVector = paramsNMF1.JNRVector;
 paramsNMF1.fs = paramsSignal.Freqsamp;
 paramsNMF1.nfft = 256;
 paramsNMF1.nperseg = 256;
@@ -41,30 +41,21 @@ delay = 10e-6;
 totalSamples = numberOfRawSamples;
 
 initialFrequency = 2e6;
-bandwidthVector = 2e6;
+bandwidthVector = (2:3:14)*1e6;
 periodVector = 8.62e-6;
 
 paramsSignal.Noneperiod = round(periodVector*paramsNMF1.fs);                   % number of samples with a sweep time
 paramsSignal.IFmin = initialFrequency;                                                  % start frequency
-paramsSignal.IFmax = bandwidthVector + initialFrequency;                    % end frequency
-paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
 paramsSignal.Initphase = 0;
-
-interferenceSignal = interferenceGen(paramsSignal);
-interferenceSignal = interferenceSignal(1:numberOfRawSamples);
 
 Timeofthisloop = 0:totalSamples-1;
 Carrphase = mod(2*pi*(paramsSignal.FreqDopp)*Timeofthisloop/paramsSignal.Freqsamp,2*pi);
 Carrier = exp(1i*Carrphase).';
 
-interferenceSignal = interferenceSignal.*Carrier;
-interferenceSignalPower = pow_eval(interferenceSignal);
-  
 mixtureSignal = zeros(totalSamples, length(paramsNMF1.JNRVector), length(nbits), monteCarloLoops);
-xHat = zeros(totalSamples, 2, length(paramsNMF1.JNRVector), length(nbits), monteCarloLoops);
-xHatSemi = zeros(totalSamples, 2, length(paramsNMF1.JNRVector), length(nbits), monteCarloLoops);
+xHat = zeros(totalSamples, 2, length(paramsNMF1.JNRVector), length(nbits), length(bandwidthVector), monteCarloLoops);
 
-paramsSignal.FreqDopp = 1.2e3;
+paramsSignal.FreqDopp = 1e3;
 paramsSignal.numberOfGPSSignals = 1;
 
 GPSSignals = GPSGen(paramsSignal);
@@ -89,43 +80,51 @@ for loopIndex = 1:monteCarloLoops
         noiseVar = 1;
     end
     noisePower = pow_eval(noise);
-
-    for nbitsIndex = 1:length(nbits)
-        nbitsIndex
+    
+    for bandwidthIndex = 1:length(bandwidthVector)
+        bandwidthIndex
+        paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                    % end frequency
+        paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
         
-        for JNRIndex = 1:length(paramsNMF1.JNRVector)
-            GPSSignalsAux = GPSSignals;
-            interferenceSignalAux = interferenceSignal;
-            GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
-            mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
-            interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(paramsNMF1.JNRVector(JNRIndex)/10)/interferenceSignalPower);
-            mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex) = mixtureGPS + interferenceSignalAux;
-%             mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex) = quantise_gps(mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex), nbits(nbitsIndex), noiseVar);
-        end
+        [interferenceSignal, ~] = interferenceGen(paramsSignal);
+        interferenceSignal = interferenceSignal(1:numberOfRawSamples);
+        interferenceSignal = interferenceSignal.*Carrier;
+        interferenceSignalPower = pow_eval(interferenceSignal);
         
-        [WTestAux, ~, ~, ~, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF1);
-        
-        %--------Semi supervised NMF
-        for idx = 1:length(paramsNMF1.JNRVector)
-            WOSemi(:,(idx-1) * paramsNMF2.numberOfSources + 1:idx * paramsNMF2.numberOfSources) = [WTestAux{1,idx} W0(:,paramsNMF2.numberOfSources/2+1:end,nbitsIndex)];
-        end
-        paramsNMF2.W0 = WOSemi;
-        [~, HTest, error, Pxx, f, t] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF2);
-        
-        for JNRIndex = 1:length(paramsNMF1.JNRVector)
-            wAux = WOSemi(:,(JNRIndex-1) * paramsNMF2.numberOfSources + 1:JNRIndex * paramsNMF2.numberOfSources);
-            for i = 1:2
-                S = (wAux(:,(i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),nbitsIndex) * ...
-                    HTest{1,JNRIndex}((i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),:) ./ (wAux(:,:,nbitsIndex)*HTest{1,JNRIndex})).*Pxx{1,JNRIndex};
-                
-                xHat(:,i,JNRIndex,nbitsIndex,loopIndex) = istft(S, paramsNMF1.fs, 'Window', paramsNMF1.window, 'OverlapLength', paramsNMF1.overlap, 'FFTLength', paramsNMF1.nfft);
+        for nbitsIndex = 1:length(nbits)
+            
+            for JNRIndex = 1:length(paramsNMF1.JNRVector)
+                GPSSignalsAux = GPSSignals;
+                interferenceSignalAux = interferenceSignal;
+                GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
+                mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
+                interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(paramsNMF1.JNRVector(JNRIndex)/10)/interferenceSignalPower);
+                mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex) = mixtureGPS + interferenceSignalAux;
+            end
+            
+            [WTestAux, ~, ~, ~, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF1);
+            
+            %--------Semi supervised NMF
+            for idx = 1:length(paramsNMF1.JNRVector)
+                WOSemi(:,(idx-1) * paramsNMF2.numberOfSources + 1:idx * paramsNMF2.numberOfSources) = [WTestAux{1,idx} W0(:,paramsNMF2.numberOfSources/2+1:end,nbitsIndex)];
+            end
+            paramsNMF2.W0 = WOSemi;
+            [~, HTest, error, Pxx, f, t] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF2);
+            
+            for JNRIndex = 1:length(paramsNMF1.JNRVector)
+                wAux = WOSemi(:,(JNRIndex-1) * paramsNMF2.numberOfSources + 1:JNRIndex * paramsNMF2.numberOfSources);
+                for i = 1:2
+                    S = (wAux(:,(i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),nbitsIndex) * ...
+                        HTest{1,JNRIndex}((i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),:) ./ (wAux(:,:,nbitsIndex)*HTest{1,JNRIndex})).*Pxx{1,JNRIndex};
+                    
+                    xHat(:,i,JNRIndex,nbitsIndex, bandwidthIndex, loopIndex) = istft(S, paramsNMF1.fs, 'Window', paramsNMF1.window, 'OverlapLength', paramsNMF1.overlap, 'FFTLength', paramsNMF1.nfft);
+                end
             end
         end
-
     end
 end
 
-save(['.' filesep 'data' filesep 'nmf_testing_31.mat'], 'xHat', 'mixtureSignal', 'nbits', 'JNRVector');
+save(['.' filesep 'data' filesep 'nmf_testing_32.mat'], 'xHat', 'nbits', 'JNRVector');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
