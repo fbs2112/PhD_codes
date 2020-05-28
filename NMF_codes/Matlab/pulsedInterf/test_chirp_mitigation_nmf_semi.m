@@ -124,7 +124,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'nmf_testing_32.mat'], 'xHat', 'nbits', 'JNRVector');
+save(['.' filesep 'data' filesep 'nmf_testing_32.mat'], 'xHat', 'nbits', 'JNRVector', '-v7.3');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
