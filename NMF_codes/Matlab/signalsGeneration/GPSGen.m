@@ -1,4 +1,4 @@
-function [GPSSignals, Codesample] = GPSGen(params)
+function [GPSSignals, Codesample] = GPSGen(params, varargin)
 code = codeGen(params.numberOfGPSSignals, params.codeLength);
 
 Endtimelastloop = -1;
@@ -14,6 +14,10 @@ Codesample = zeros(params.numberOfGPSSignals, params.Intenumb);
 
 for Chanindex = 1:params.numberOfGPSSignals
     Codesample(Chanindex,:) = code(Chanindex, Codeadderinte(Chanindex,:)); 
+end
+
+if nargin == 2 && strcmp(varargin{1}, 'hilbert')
+    Codesample = hilbert(Codesample);
 end
 
 % GPS signals
