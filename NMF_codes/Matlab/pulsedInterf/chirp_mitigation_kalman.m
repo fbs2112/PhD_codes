@@ -38,7 +38,7 @@ Carrphase = mod(2*pi*(paramsSignal.FreqDopp)*Timeofthisloop/paramsSignal.Freqsam
 Carrier = exp(1i*Carrphase).';
 
 paramsSignal.numberOfGPSSignals = 1;
-GPSSignals = GPSGen(paramsSignal, 'hilbert');
+GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignals = [GPSSignals(end - round(delay*params.fs)+1:end,:);GPSSignals(1:end - round(delay*params.fs),:)]; % Introducing artificial code delay
 GPSSignalsPower = pow_eval(GPSSignals);

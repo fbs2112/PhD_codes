@@ -37,4 +37,4 @@ for m = 1:Intenumb
     intesti(m) = Xesti(1);
 end
 
-xHat = real(signal-intesti);
+xHat = (signal-intesti);
