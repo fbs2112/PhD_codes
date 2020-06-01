@@ -1,4 +1,4 @@
-function interferenceSignal = interferenceGen(params)
+function [interferenceSignal, iflaw]  = interferenceGen(params)
 
 Endtimelastloop = -1;
 Timeofthisloop = Endtimelastloop + (1:params.Intenumb);        
