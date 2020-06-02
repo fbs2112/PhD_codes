@@ -13,11 +13,13 @@ function [iflawestiTF, IFrate, linearflag] = IFEstimator_pai(signal, iflaw, Perf
 % global IFrate;
 % global iflawestiend;
 
-Segnumb = 1024;
+Segnumb = 32;
 W = 24;
 Nonesegment = 1024;
 Intenumb = length(signal);
 Krate = 10; 
+lagwinlen = 41;
+
 % IF estimation
 if PerfIFflag == 1
     iflawestiTF = iflaw;
