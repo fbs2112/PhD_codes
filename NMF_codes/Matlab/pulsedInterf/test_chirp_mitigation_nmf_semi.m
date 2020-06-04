@@ -8,10 +8,10 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_18.mat;
+load nmf_training_20.mat;
 load sim_params_3.mat;
 
-monteCarloLoops = 100;
+monteCarloLoops = 1;
 SNR = -25;
 nbits = 0;
 
@@ -42,6 +42,7 @@ totalSamples = numberOfRawSamples;
 
 initialFrequency = 2e6;
 bandwidthVector = (2:3:14)*1e6;
+
 periodVector = 8.62e-6;
 
 paramsSignal.Noneperiod = round(periodVector*paramsNMF1.fs);                   % number of samples with a sweep time
@@ -102,7 +103,7 @@ for loopIndex = 1:monteCarloLoops
                 mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex) = mixtureGPS + interferenceSignalAux;
             end
             
-            [WTestAux, ~, ~, ~, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF1);
+            [WTestAux, ~, errorTrain, ~, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF1);
             
             %--------Semi supervised NMF
             for idx = 1:length(paramsNMF1.JNRVector)
@@ -124,7 +125,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'nmf_testing_32.mat'], 'xHat', 'nbits', 'JNRVector', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_33.mat'], 'xHat', 'nbits', 'JNRVector', '-v7.3');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
