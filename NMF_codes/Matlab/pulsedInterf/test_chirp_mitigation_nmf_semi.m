@@ -11,7 +11,7 @@ addpath(['.' filesep 'data']);
 load nmf_training_20.mat;
 load sim_params_3.mat;
 
-monteCarloLoops = 1;
+monteCarloLoops = 100;
 SNR = -25;
 nbits = 0;
 
@@ -103,7 +103,7 @@ for loopIndex = 1:monteCarloLoops
                 mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex) = mixtureGPS + interferenceSignalAux;
             end
             
-            [WTestAux, ~, errorTrain, ~, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF1);
+            [WTestAux, H, errorTrain, ~, ~, ~] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF1);
             
             %--------Semi supervised NMF
             for idx = 1:length(paramsNMF1.JNRVector)
