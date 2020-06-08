@@ -15,7 +15,7 @@ monteCarloLoops = 100;
 SNR = -25;
 nbits = 0;
 
-params.JNRVector = [-5 0 10 30 50];
+paramsNMF1.JNRVector = [-5 0 10 30 50];
 JNRVector = paramsNMF1.JNRVector;
 paramsNMF1.fs = paramsSignal.Freqsamp;
 paramsNMF1.nfft = 256;
