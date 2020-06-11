@@ -9,6 +9,10 @@ if ~isfield(params, 'transform')
     params.transform = true;
 end
 
+if ~isfield(params, 'alg')
+    params.alg = 'vanilla';
+end
+
 if ~isfield(params, 'semi')
     params.semi = false;
 end
@@ -32,7 +36,6 @@ for i = 1:size(mixtureSignal, 2)
     data{1, i} = mixtureSignal(:,i);
     
     [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
-    
     dataCell{1, i} = PxxAux;
 
     if nargin == 3 
@@ -70,7 +73,14 @@ for i = 1:size(mixtureSignal, 2)
         
         for k = 1:params.repetitions
             
-            [W, H, reconstructError] = nmf_py3(inputNMF, params);
+            switch params.alg
+                case 'vanilla'
+                    [W, H, reconstructError] = nmf_vanilla(inputNMF, params);
+                case 'snmf'
+                    [W, H, reconstructError] = nmf_sparse_well_done(inputNMF, params);
+                otherwise
+                    error('NMF algorithm not supported');
+            end
             WAux{k} = W;
             HAux{k} = H;
             reconstructErrorAux(:,k) = reconstructError;
