@@ -1,5 +1,4 @@
-function [W, H, reconstructError] = nmf_py3(X, params, varargin)
-
+function [W, H, reconstructError] = nmf_vanilla(X, params, varargin)
 
 numberOfSources = params.numberOfSources;
 init = params.init;
@@ -43,7 +42,7 @@ switch init
 end
 
 reconstructError = zeros(numberOfIterations, 1);
-reconstructError0 = beta_divergence(X, W0, H0, betaDivergence, true);
+reconstructError0 = KL_divergence(X, W0, H0);
 reconstructError(1) = reconstructError0;
 
 for i = 2:numberOfIterations
@@ -75,7 +74,7 @@ for i = 2:numberOfIterations
         H = H0 .* (numH ./ denH);
     end
     
-    reconstructError(i) = beta_divergence(X, W, H, betaDivergence, true);
+    reconstructError(i) = KL_divergence(X, W, H);
     dw = max(max(abs(W - W0) / (sqrteps + max(max(abs(W0))))));
     dh = max(max(abs(H - H0) / (sqrteps + max(max(abs(H0))))));
     delta = max(dw, dh);
