@@ -8,14 +8,15 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_20.mat;
+load nmf_training_18.mat;
 load sim_params_3.mat;
 
-monteCarloLoops = 100;
+monteCarloLoops = 1;
 SNR = -25;
 nbits = 0;
 
 paramsNMF1.JNRVector = [-5 0 10 30 50];
+paramsNMF1.JNRVector = [10];
 
 JNRVector = paramsNMF1.JNRVector;
 paramsNMF1.fs = paramsSignal.Freqsamp;
@@ -32,9 +33,10 @@ paramsNMF1.numberOfIterations = 500;
 paramsNMF1.tolChange = 1e-3;
 paramsNMF1.tolError = 1e-3;
 paramsNMF1.repetitions = 1;
-paramsNMF1.verbose = false;
+paramsNMF1.verbose = true;
 paramsNMF1.transform = true;
 paramsNMF1.semi = false;
+paramsNMF1.alg = 'vanilla';
 
 numberOfRawSamples = floor(paramsSignal.Freqsamp*paramsSignal.Intetime);
 delay = 10e-6;
@@ -118,14 +120,14 @@ for loopIndex = 1:monteCarloLoops
                     S = (wAux(:,(i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),nbitsIndex) * ...
                         HTest{1,JNRIndex}((i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),:) ./ (wAux(:,:,nbitsIndex)*HTest{1,JNRIndex})).*Pxx{1,JNRIndex};
                     
-                    xHat(:,i,JNRIndex,nbitsIndex, bandwidthIndex, loopIndex) = istft(S, paramsNMF1.fs, 'Window', paramsNMF1.window, 'OverlapLength', paramsNMF1.overlap, 'FFTLength', paramsNMF1.nfft);
+                    xHat(:,i,JNRIndex,nbitsIndex, bandwidthIndex, loopIndex) = mixtureSignal(:,:,nbitsIndex,loopIndex) - istft(S, paramsNMF1.fs, 'Window', paramsNMF1.window, 'OverlapLength', paramsNMF1.overlap, 'FFTLength', paramsNMF1.nfft);
                 end
             end
         end
     end
 end
 
-save(['.' filesep 'data' filesep 'nmf_testing_33.mat'], 'xHat', 'nbits', 'JNRVector', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_33_1.mat'], 'xHat', 'nbits', 'JNRVector', '-v7.3');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])

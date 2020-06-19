@@ -8,14 +8,16 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_21.mat;
+load nmf_training_26.mat;
 load sim_params_3.mat;
 
-monteCarloLoops = 100;
+monteCarloLoops = 1;
 SNR = -25;
 nbits = 0;
 
 paramsNMF1.JNRVector = [-5 0 10 30 50];
+paramsNMF1.JNRVector = 10;
+
 JNRVector = paramsNMF1.JNRVector;
 paramsNMF1.fs = paramsSignal.Freqsamp;
 paramsNMF1.nfft = 256;
@@ -28,8 +30,8 @@ paramsNMF1.numberOfSources = 5;
 paramsNMF1.init = 'random';
 paramsNMF1.betaDivergence = 'kullback-leibler';
 paramsNMF1.numberOfIterations = 500;
-paramsNMF1.tolChange = 1e-3;
-paramsNMF1.tolError = 1e-3;
+paramsNMF1.tolChange = 1e-6;
+paramsNMF1.tolError = 1e-6;
 paramsNMF1.repetitions = 1;
 paramsNMF1.verbose = false;
 paramsNMF1.transform = true;
@@ -39,12 +41,11 @@ numberOfRawSamples = floor(paramsSignal.Freqsamp*paramsSignal.Intetime);
 delay = 10e-6;
 totalSamples = numberOfRawSamples;
 
-initialFrequency = 2e6;
 bandwidthVector = (2:3:14)*1e6;
+
 periodVector = 8.62e-6;
 
 paramsSignal.Noneperiod = round(periodVector*paramsNMF1.fs);                   % number of samples with a sweep time
-paramsSignal.IFmin = initialFrequency;                                                  % start frequency
 paramsSignal.Initphase = 0;
 
 Timeofthisloop = 0:totalSamples-1;
@@ -68,6 +69,8 @@ paramsNMF2.init = 'custom';
 paramsNMF2.transform = false;
 paramsNMF2.semi = false;
 
+[PxxGPS, f, t] = spectrogram(GPSSignals, paramsNMF1.window, paramsNMF1.overlap, paramsNMF1.nfft, paramsNMF1.fs, 'centered', paramsNMF1.specType);
+
 for loopIndex = 1:monteCarloLoops
     loopIndex
     
@@ -80,9 +83,10 @@ for loopIndex = 1:monteCarloLoops
     end
     noisePower = pow_eval(noise);
     
-    for bandwidthIndex = 1:length(bandwidthVector)
+    for bandwidthIndex = 1:1%length(bandwidthVector)
         bandwidthIndex
-        paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                    % end frequency
+        paramsSignal.IFmin = -bandwidthVector(bandwidthIndex)/2;                                                  % start frequency
+        paramsSignal.IFmax = bandwidthVector(bandwidthIndex)/2;                    % end frequency
         paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
         
         [interferenceSignal, ~] = interferenceGen(paramsSignal);
@@ -108,6 +112,8 @@ for loopIndex = 1:monteCarloLoops
                     S = (paramsNMF2.W0(:,(i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),nbitsIndex) * ...
                         HTest{1,JNRIndex}((i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),:) ./ (paramsNMF2.W0(:,:,nbitsIndex)*HTest{1,JNRIndex})).*Pxx{1,JNRIndex};
                     
+                    V = paramsNMF2.W0(:,(i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),nbitsIndex) * ...
+                        HTest{1,JNRIndex}((i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),:) .* exp(1j*(angle(PxxGPS)+1*randn(size(PxxGPS))));
                     xHat(:,i,JNRIndex,nbitsIndex, bandwidthIndex, loopIndex) = istft(S, paramsNMF1.fs, 'Window', paramsNMF1.window, 'OverlapLength', paramsNMF1.overlap, 'FFTLength', paramsNMF1.nfft);
                 end
             end
@@ -115,7 +121,9 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'nmf_testing_34.mat'], 'xHat', 'nbits', 'JNRVector', '-v7.3');
+v = angle(PxxGPS);
+
+save(['.' filesep 'data' filesep 'nmf_testing_33_1.mat'], 'xHat', 'nbits', 'JNRVector', 'v', '-v7.3');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
