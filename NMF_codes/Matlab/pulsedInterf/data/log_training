@@ -8,5 +8,19 @@ nmf_training_07: training using coherence time of 500 mus and quantisation using
 nmf_training_08: training using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500;
 nmf_training_09: training using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500, quantisation bits = [2 4];
 nmf_training_10: training using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500, quantisation bits = [2 4] (quantisation function now saturating and using threshold according to noise variance)
-
-    
+nmf_training_11: same as 10 but with doppler effect (complex input signal)
+nmf_training_12: same as 10 but with doppler effect (complex input signal) for the interference signal as well
+nmf_training_13: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, quantisation bits = [2 4] (quantisation function now saturating and using threshold according to noise variance)
+nmf_training_14: same as 12 but with noise variance for the quantisation function fixed
+nmf_training_15: repeating 14
+nmf_training_16: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500. Also, the noise variance has been fixed
+nmf_training_17: same as 16 but using wider interference signal
+nmf_training_18: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation
+nmf_training_19: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 10;
+nmf_training_20: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise
+nmf_training_21: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, using chirp signals (assuming interference signal knowledge)
+nmf_training_22: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, using chirp signals + noise
+nmf_training_23: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, using SNMF
+nmf_training_24: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, nfft = 1024
+nmf_training_25: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, nfft = 256, JNR adjusted
+nmf_training_26: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, nfft = 256, JNR adjusted, chirp bandwidth fixed

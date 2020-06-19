@@ -15,6 +15,21 @@ nmf_testing_16: testing using coherence time of 500 mus with GPS signal delay fi
 nmf_testing_17: testing using coherence time of 500 mus, JNR = [-5 30 50] dB, nbits = [2 4], 100 MonteCarlo loops
 nmf_testing_18: testing using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500;
 nmf_testing_19: testing using coherence time of 500 mus, error thresholds of 1e-3 and max it = 500 (quantisation function now saturating and using threshold according to noise variance);
+nmf_testing_20: same as 19 but considering Doppler effect (complex signal)
+nmf_testing_21: same as 19 but considering Doppler effect (complex signal) for interference signal as well
+nmf_testing_22: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, quantisation bits = [2 4] (quantisation function now saturating and using threshold according to noise variance)
+nmf_testing_23: same as 21 but with noise variance for the quantisation function fixed
+nmf_testing_24: repeating 23
+nmf_testing_25: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, quantisation bits = [2 4]. Also, the noise variance has been fixed.
+nmf_testing_26: same as 25 but using wider interference signal
+nmf_testing_27: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation. Testing semi supervised idea.
+nmf_testing_28: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, 2 bit quantisation Testing semi supervised idea.
+nmf_testing_29: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, 2 bit quantisation Testing semi supervised idea; interference signal: chirp
+nmf_testing_30: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, [2 4] bit quantisation 2 pair of pulses per received signal buffer     
+nmf_testing_31: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp
+nmf_testing_32: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp for various bandwidth values
+nmf_testing_33: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp for various bandwidth values using clean GPS signals during the training
+nmf_testing_34: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp for various bandwidth values using clean GPS signals during the training and assuming knowledge about the interference
 
 
 
