@@ -45,8 +45,8 @@ for i = 1:size(mixtureSignal, 2)
     end
     
     for j = 1:size(dataCell, 1)
-        inputNMF = abs(dataCell{j, i}).^2;
-        
+        inputNMF = abs(dataCell{j, i});
+        inputNMF = inputNMF + eps;
         if nargin > 3 && strcmp(varargin{2}, 'filt')
             inputNMF_TPSW = zeros(size(inputNMF));
             for timeIdx = 1:size(inputNMF, 1)
