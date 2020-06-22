@@ -26,7 +26,7 @@ params.repetitions = 1;
 SNR = -25;
 params.JNRVector = -25:0;
 
-bandwidthVector = (2e6:3e6:14e6);
+bandwidthVector = (2e6:5e6:14e6);
 periodVector = (8.62e-6:1.48e-6:18.97e-6);
 
 initialFrequency = 2e6;
@@ -53,8 +53,8 @@ for loopIndex = 1:monteCarloLoops
         bandwidthIndex
         for periodIndex = 1:length(periodVector)
             paramsSignal.Noneperiod = round(periodVector(periodIndex)*params.fs);                   % number of samples with a sweep time
-            paramsSignal.IFmin = initialFrequency;                                                  % start frequency
-            paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                    % end frequency
+            paramsSignal.IFmin = -bandwidthVector(bandwidthIndex)/2;                                                  % start frequency
+            paramsSignal.IFmax = bandwidthVector(bandwidthIndex)/2;                    % end frequency
             paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
             paramsSignal.Initphase = 0;
            
@@ -71,7 +71,7 @@ for loopIndex = 1:monteCarloLoops
                 mixtureSignal(:,i) = mixtureGPS + interferenceSignalAux;
             end
             
-            [W, ~, ~, PxxAux, ~, ~] = nmf_eval_v2(mixtureSignal, params);
+            [W, ~, ~, PxxAux, f, t] = nmf_eval_v2(mixtureSignal, params);
             
             for JNRIndex = 1:length(params.JNRVector)
                 
@@ -98,15 +98,17 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-if isunix
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_27.mat'], 'detection_res', '-v7.3');
-else
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
-        filesep 'results_det_27.mat'], 'detection_res', '-v7.3');
-end
+
+save(['results_det_28.mat'], 'detection_res', '-v7.3');
+% if isunix
+%     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+%         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+%         filesep 'results_det_28.mat'], 'detection_res', '-v7.3');
+% else
+%     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+%         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
+%         filesep 'results_det_28.mat'], 'detection_res', '-v7.3');
+% end
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
