@@ -15,7 +15,7 @@ params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
-WinLBlock = 3;
+WinLBlock = 19;
 JNRVector = -25:0;
 SNR = -25;
 
@@ -68,7 +68,7 @@ for Emuindex = 1:monteCarloLoops
     end
 end
 
-save(['results_det_25.mat'], 'detection_res', 'pvalue', '-v7.3');
+save(['results_det_26.mat'], 'detection_res', 'pvalue', '-v7.3');
 
 % save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
 %     'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
