@@ -29,7 +29,6 @@ periodVector = 8.62e-6;
 
 paramsSignal.Initphase = 0;
 paramsSignal.Noneperiod = round(periodVector*params.fs);                   % number of samples with a sweep time
-paramsSignal.IFmin = initialFrequency;                                                  % start frequency
 
 paramsSignal.FreqDopp = 1e3;
 
@@ -44,7 +43,7 @@ GPSSignals = [GPSSignals(end - round(delay*params.fs)+1:end,:);GPSSignals(1:end 
 GPSSignalsPower = pow_eval(GPSSignals);
 
 xHatPai = zeros(totalSamples, length(params.JNRVector), length(nbits), length(bandwidthVector), monteCarloLoops);
-IFEstimationFlag = false;
+IFEstimationFlag = true;
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -61,7 +60,8 @@ for loopIndex = 1:monteCarloLoops
     
     for bandwidthIndex = 1:length(bandwidthVector)
         bandwidthIndex
-        paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                    % end frequency
+        paramsSignal.IFmin = -bandwidthVector(bandwidthIndex)/2;                                                  % start frequency
+        paramsSignal.IFmax = bandwidthVector(bandwidthIndex)/2;                    % end frequency
         paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
         
         [interferenceSignal, iflaw(:,bandwidthIndex)] = interferenceGen(paramsSignal);
@@ -87,7 +87,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'resultsPai03.mat'], 'xHatPai', 'nbits', 'JNRVector');
+save(['.' filesep 'data' filesep 'resultsPai04.mat'], 'xHatPai', 'nbits', 'JNRVector');
 
 rmpath(['.' filesep 'pai_fun']);
 rmpath(['.' filesep 'data']);
