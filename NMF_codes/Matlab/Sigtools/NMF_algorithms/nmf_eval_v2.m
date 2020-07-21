@@ -21,6 +21,10 @@ if ~isfield(params, 'verbose')
     params.verbose = false;
 end
 
+if ~isfield(params, 'reassigned')
+    params.reassigned = false;
+end
+
 if nargin > 2 && varargin{1}
     dataCellLength = 2;
 end
@@ -35,7 +39,11 @@ for i = 1:size(mixtureSignal, 2)
     
     data{1, i} = mixtureSignal(:,i);
     
-    [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
+    if params.reassigned
+        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType, 'reassigned');
+    else
+        [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
+    end
     dataCell{1, i} = PxxAux;
 
     if nargin == 3 
