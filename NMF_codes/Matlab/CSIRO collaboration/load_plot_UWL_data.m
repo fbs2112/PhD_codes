@@ -1,3 +1,7 @@
+clear;
+clc;
+close all;
+
 addpath(['.' filesep 'data']);
 
 Fs = 128e6;
@@ -35,8 +39,10 @@ rmpath(['.' filesep 'data']);
 %%
 %save data
 
-dataLength = round(100e-6*Fs);
-parksSignal = buffer(tmp, dataLength, 0, 'nodelay');
-% parksSignal = tmp(1:dataLength);
+dataLength = round(10e-3*Fs);
+parksSignalAux = buffer(tmp, dataLength, 0, 'nodelay');
 
-save(['.' filesep 'data' filesep 'dataParks.mat'], 'parksSignal', 'Fs');
+for i = 1:size(parksSignalAux, 2)
+    parksSignal = parksSignalAux(:,i);
+    save(['.' filesep 'data' filesep 'dataParks_' num2str(i) '.mat'], 'parksSignal', 'Fs');
+end
