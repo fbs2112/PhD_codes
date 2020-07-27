@@ -23,7 +23,6 @@ addpath(['.' filesep 'data']);
 load nmf_training_ADSB_01.mat;                                                  %reading training file
 load ADSB_label.mat;
 
-monteCarloLoops = 1;
 params.JNRVector = 10;                                                     %defining the jammer-to-noise ratio
 
 params.fs = 128e6;
@@ -53,13 +52,14 @@ trueLabels = find(interferenceDetFlag);
 falseLabels = find(~interferenceDetFlag);
 
 numberOfSignalFrames = 10;
+monteCarloLoops = numberOfSignalFrames;
 
 interferenceFrames = zeros(1280000, numberOfSignalFrames);
 nonInterferenceFrames = zeros(1280000, numberOfSignalFrames);
 
 for i = 1:numberOfSignalFrames
     load(['.' filesep 'data' filesep 'dataParks_' num2str(trueLabels(i + numberOfSignalFrames)) '.mat']);
-    interferenceFrames(:,i) = parksSignalAux;
+    interferenceFrames(:,i) = parksSignal;
 end
 
 xHat = zeros(size(interferenceFrames, 1), 2, length(params.JNRVector), monteCarloLoops);

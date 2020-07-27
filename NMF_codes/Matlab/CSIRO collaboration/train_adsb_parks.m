@@ -52,15 +52,15 @@ freqVector = linspace(-64, -56, params.nfft)*1e6;
 
 for i = 1:numberOfSignalFrames
     load(['.' filesep 'data' filesep 'dataParks_' num2str(trueLabels(i)) '.mat']);
-    interferenceFrames(:,i) = parksSignalAux;
+    interferenceFrames(:,i) = parksSignal;
     
-%     [Pxx, f, t] = spectrogram(parksSignalAux, params.window, params.overlap, freqVector, params.fs, params.specType);
+%     [Pxx, f, t] = spectrogram(parksSignal, params.window, params.overlap, params.nfft, params.fs, params.specType);
 %     figure;
 %     surf(t*1e3, f/1e6, 10*log10(abs(Pxx)), 'EdgeColor', 'none');
 %     axis xy;
 %     view(0, 90);
 %     xlim([min(t) max(t)]*1e3);
-%     ylim([min(f)/1e6 -56]);
+% %     ylim([min(f)/1e6 -56]);
 %     xlabel('Time [ms]');
 %     ylabel('Frequency [MHz]');
 %     ax = gca;
@@ -68,9 +68,9 @@ for i = 1:numberOfSignalFrames
 %     c = colorbar;
 %     c.Label.String = '[dB]';
 %     c.TickLabelInterpreter = 'latex';
-%     
+    
     load(['.' filesep 'data' filesep 'dataParks_' num2str(falseLabels(i)) '.mat']);
-    nonInterferenceFrames(:,i) = parksSignalAux;
+    nonInterferenceFrames(:,i) = parksSignal;
     
 %     [Pxx, f, t] = spectrogram(parksSignalAux, params.window, params.overlap, freqVector, params.fs, params.specType);
 %     figure;
