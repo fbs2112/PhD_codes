@@ -20,7 +20,7 @@ addpath(['..' filesep 'signalsGeneration' filesep]);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_ADSB_01.mat;                                                  %reading training file
+load nmf_training_ADSB_02.mat;                                                  %reading training file
 load ADSB_label.mat;
 
 params.JNRVector = 10;                                                     %defining the jammer-to-noise ratio
@@ -58,30 +58,40 @@ interferenceFrames = zeros(1280000, numberOfSignalFrames);
 nonInterferenceFrames = zeros(1280000, numberOfSignalFrames);
 
 for i = 1:numberOfSignalFrames
-    load(['.' filesep 'data' filesep 'dataParks_' num2str(trueLabels(i + numberOfSignalFrames)) '.mat']);
-    interferenceFrames(:,i) = parksSignal;
+    load(['.' filesep 'data' filesep 'dataParkes_' num2str(trueLabels(i + numberOfSignalFrames)) '.mat']);
+    interferenceFrames(:,i) = parkesSignal;
 end
 
 xHat = zeros(size(interferenceFrames, 1), 2, length(params.JNRVector), monteCarloLoops);
+W = cell(1,monteCarloLoops);
+H = cell(1,monteCarloLoops);
 
 for loopIndex = 1:monteCarloLoops
         
     [WTest, HTest, errorTest, PxxTest, f, t] = nmf_eval_v2(interferenceFrames(:,loopIndex), params);  %NMF mitigation
     S = zeros([size(PxxTest{1,1}) 2]);
+    W{1,loopIndex} = WTest;
+    H{1,loopIndex} = HTest;
     
+    S(:,:,1) = (W0(:,1) * ...
+                HTest{1,1}(1,:)./ (W0*HTest{1,1})).*PxxTest{1,1};
+    S(:,:,i) = (W0(:,((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2)) * ...
+                HTest{1,1}(((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2),:)./ (W0*HTest{1,1})).*PxxTest{1,1}; %finish this
         for i = 1:2
             %------Wiener solution to reconstruct the complex spectrograms
-            S(:,:,i) = (W0(:,(i*params.numberOfSources/2) - (params.numberOfSources/2 -1):(i*params.numberOfSources/2)) * ...
-                HTest{1,1}((i*params.numberOfSources/2) - (params.numberOfSources/2 -1):(i*params.numberOfSources/2),:)./ (W0*HTest{1,1})).*PxxTest{1,1};
+%             S(:,:,i) = (W0(:,((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2)) * ...
+%                 HTest{1,1}(((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2),:)./ (W0*HTest{1,1})).*PxxTest{1,1};
+            
+            
             %--------------------------------------------------------------
             %Time domain reconstruction via iSTFT--------------------------
-            xHat(:,i,1,loopIndex) = istft(S(:,:,i), params.fs, 'Window', params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft);
+            xHat(:,i,1,loopIndex) = istft(S(:,:,i), params.fs, 'Window', params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft, 'centered', false);
             %--------------------------------------------------------------
         end
     
 end
 
-save(['.' filesep 'data' filesep 'nmf_testing_ADSB_01.mat'], 'xHat');
+save(['.' filesep 'data' filesep 'nmf_testing_ADSB_02.mat'], 'xHat', 'W', 'H');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])

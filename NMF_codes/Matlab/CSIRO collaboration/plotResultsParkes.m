@@ -5,7 +5,7 @@ close all;
 addpath(['.' filesep 'data']);
 
 load ADSB_label.mat;
-load nmf_testing_ADSB_01.mat;
+load nmf_testing_ADSB_02.mat;
 
 trueLabels = find(interferenceDetFlag);
 falseLabels = find(~interferenceDetFlag);
@@ -25,9 +25,9 @@ interferenceFrames = zeros(1280000, numberOfSignalFrames);
 nonInterferenceFrames = zeros(1280000, numberOfSignalFrames);
 
 for i = 1:numberOfSignalFrames
-    load(['.' filesep 'data' filesep 'dataParks_' num2str(trueLabels(i + numberOfSignalFrames)) '.mat']);
+    load(['.' filesep 'data' filesep 'dataParkes_' num2str(trueLabels(i + numberOfSignalFrames)) '.mat']);
     
-    [Pxx, f, t] = spectrogram(parksSignal, params.window, params.overlap, params.nfft, params.fs, params.specType);
+    [Pxx, f, t] = spectrogram(parkesSignal, params.window, params.overlap, params.nfft, params.fs, params.specType, 'centered');
     figure;
     surf(t*1e3, f/1e6, 10*log10(abs(Pxx)), 'EdgeColor', 'none');
     axis xy;
@@ -42,7 +42,7 @@ for i = 1:numberOfSignalFrames
     c.Label.String = '[dB]';
     c.TickLabelInterpreter = 'latex';
     
-    [Pxx, f, t] = spectrogram(xHat(:,1,1,i), params.window, params.overlap, params.nfft, params.fs, params.specType);
+    [Pxx, f, t] = spectrogram(xHat(:,1,1,i), params.window, params.overlap, params.nfft, params.fs, params.specType, 'centered');
     figure;
     surf(t*1e3, f/1e6, 10*log10(abs(Pxx)), 'EdgeColor', 'none');
     axis xy;
@@ -57,7 +57,7 @@ for i = 1:numberOfSignalFrames
     c.Label.String = '[dB]';
     c.TickLabelInterpreter = 'latex';
     
-    [Pxx, f, t] = spectrogram(xHat(:,2,1,i), params.window, params.overlap, params.nfft, params.fs, params.specType);
+    [Pxx, f, t] = spectrogram(xHat(:,2,1,i), params.window, params.overlap, params.nfft, params.fs, params.specType, 'centered');
     figure;
     surf(t*1e3, f/1e6, 10*log10(abs(Pxx)), 'EdgeColor', 'none');
     axis xy;
@@ -71,6 +71,9 @@ for i = 1:numberOfSignalFrames
     c = colorbar;
     c.Label.String = '[dB]';
     c.TickLabelInterpreter = 'latex';
+    
+    figure;
+    plot(abs(xHat(:,2,1,i)));
     close all;
 end
 

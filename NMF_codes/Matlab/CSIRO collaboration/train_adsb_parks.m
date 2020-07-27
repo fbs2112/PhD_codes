@@ -51,8 +51,8 @@ JNR = 20;
 freqVector = linspace(-64, -56, params.nfft)*1e6;
 
 for i = 1:numberOfSignalFrames
-    load(['.' filesep 'data' filesep 'dataParks_' num2str(trueLabels(i)) '.mat']);
-    interferenceFrames(:,i) = parksSignal;
+    load(['.' filesep 'data' filesep 'dataParkes_' num2str(trueLabels(i)) '.mat']);
+    interferenceFrames(:,i) = parkesSignal;
     
 %     [Pxx, f, t] = spectrogram(parksSignal, params.window, params.overlap, params.nfft, params.fs, params.specType);
 %     figure;
@@ -69,8 +69,8 @@ for i = 1:numberOfSignalFrames
 %     c.Label.String = '[dB]';
 %     c.TickLabelInterpreter = 'latex';
     
-    load(['.' filesep 'data' filesep 'dataParks_' num2str(falseLabels(i)) '.mat']);
-    nonInterferenceFrames(:,i) = parksSignal;
+    load(['.' filesep 'data' filesep 'dataParkes_' num2str(falseLabels(i)) '.mat']);
+    nonInterferenceFrames(:,i) = parkesSignal;
     
 %     [Pxx, f, t] = spectrogram(parksSignalAux, params.window, params.overlap, freqVector, params.fs, params.specType);
 %     figure;
@@ -94,12 +94,12 @@ nonInterferenceFrames = nonInterferenceFrames(:);
 for loopIndex = 1:monteCarloLoops
    
     [WInterf, HInterf, errorInterfTrain, PxxInterf, ~, ~] = nmf_eval_v2(interferenceFrames, params);                %ADS-B frequency content evaluation
-    [WSignal, HSignal, errorSignalTrain, PxxSignal, ~, ~] = nmf_eval_v2(nonInterferenceFrames, params);  %CW frequency content evaluation
+    [WSignal, HSignal, errorSignalTrain, PxxSignal, ~, ~] = nmf_eval_v2(nonInterferenceFrames, params);  
     
     W0 = [WInterf{1,1} WSignal{1,1}];
 end
 
-save(['.' filesep 'data' filesep 'nmf_training_ADSB_01.mat'], 'W0');             %saving trained matrix W
+save(['.' filesep 'data' filesep 'nmf_training_ADSB_02.mat'], 'W0');             %saving trained matrix W
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms']);
