@@ -18,7 +18,7 @@ params.specType = 'power';
 params.numberOfSources = 2;
 params.init = 'random';
 params.betaDivergence = 'kullback-leibler';
-params.numberOfIterations = 10000;
+params.numberOfIterations = 500;
 params.tolChange = 1e-6;
 params.tolError = 1e-6;
 params.repetitions = 1;
@@ -56,14 +56,16 @@ for loopIndex = 1:monteCarloLoops
         output2 = ((inputNMFNormalised.'*WNormalised2));
         for thresholdIndex = 1:length(thresholdVector)
             for window_median_length_index = 1:length(window_median_length_vector)
-                detection_res(loopIndex, thresholdIndex, window_median_length_index) = ...
-                    (detection_eval_2(output, thresholdVector(thresholdIndex)));
+                detection_resAux1 = detection_eval_2(output1, thresholdVector(thresholdIndex));
+                detection_resAux2 = detection_eval_2(output2, thresholdVector(thresholdIndex));
+                detection_res(loopIndex, thresholdIndex, window_median_length_index) = or(detection_resAux1, detection_resAux2);
+                    
             end
         end
     end    
 end
 
-% save(['.' filesep 'data' filesep 'results_det_2.mat'], 'detection_res', '-v7.3');
+save(['.' filesep 'data' filesep 'results_det_4.mat'], 'detection_res', '-v7.3');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep '.' filesep 'Sigtools' filesep])
