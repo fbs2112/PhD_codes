@@ -12,38 +12,33 @@ addpath(['.' filesep 'pai_fun']);
 load sim_params_3.mat;
 
 monteCarloLoops = 100;
-SNR = -25;
+SNR = -20;
 nbits = 0;
 
 params.fs = paramsSignal.Freqsamp;
-params.JNRVector = [-5 0 10 30 50];
+params.JNRVector = (0:5:30);
 JNRVector = params.JNRVector;
 
 numberOfRawSamples = floor(paramsSignal.Freqsamp*paramsSignal.Intetime);
 delay = 10e-6;
 totalSamples = numberOfRawSamples;
 
-initialFrequency = 2e6;
-bandwidthVector = (2:3:14)*1e6;
+bandwidthVector = (2:6:14)*1e6;
 periodVector = 8.62e-6;
 
 paramsSignal.Initphase = 0;
 paramsSignal.Noneperiod = round(periodVector*params.fs);                   % number of samples with a sweep time
 
-paramsSignal.FreqDopp = 1e3;
-
-Timeofthisloop = 0:totalSamples-1;
-Carrphase = mod(2*pi*(paramsSignal.FreqDopp)*Timeofthisloop/paramsSignal.Freqsamp,2*pi);
-Carrier = exp(1i*Carrphase).';
-
-paramsSignal.numberOfGPSSignals = 1;
 GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignals = [GPSSignals(end - round(delay*params.fs)+1:end,:);GPSSignals(1:end - round(delay*params.fs),:)]; % Introducing artificial code delay
 GPSSignalsPower = pow_eval(GPSSignals);
 
-xHatPai = zeros(totalSamples, length(params.JNRVector), length(nbits), length(bandwidthVector), monteCarloLoops);
-IFEstimationFlag = true;
+xHatPaiPerf = zeros(totalSamples, length(params.JNRVector), length(nbits), length(bandwidthVector), monteCarloLoops);
+xHatPaiIFest = zeros(totalSamples, length(params.JNRVector), length(nbits), length(bandwidthVector), monteCarloLoops);
+
+IFEstimationFlag = true; %perfect IF estimation
+IFEstimationFlag2 = false; %IF estimation
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -66,7 +61,6 @@ for loopIndex = 1:monteCarloLoops
         
         [interferenceSignal, iflaw(:,bandwidthIndex)] = interferenceGen(paramsSignal);
         interferenceSignal = interferenceSignal(1:numberOfRawSamples);
-        interferenceSignal = interferenceSignal.*Carrier;
         interferenceSignalPower = pow_eval(interferenceSignal);
         
         for nbitsIndex = 1:length(nbits)
@@ -78,16 +72,19 @@ for loopIndex = 1:monteCarloLoops
                 mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
                 interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(params.JNRVector(JNRIndex)/10)/interferenceSignalPower);
                 mixtureSignal = mixtureGPS + interferenceSignalAux;
-                
+
                 [iflawestiTF, IFrate, linearflag] = IFEstimator_pai(mixtureSignal, iflaw(:,bandwidthIndex), IFEstimationFlag);
-                xHatPai(:,JNRIndex,nbitsIndex,bandwidthIndex,loopIndex) = KF_pai(mixtureSignal, IFEstimationFlag, iflawestiTF, IFrate, linearflag);
+                xHatPaiPerf(:,JNRIndex,nbitsIndex,bandwidthIndex,loopIndex) = KF_pai(mixtureSignal, IFEstimationFlag, iflawestiTF, IFrate, linearflag);
+                
+                [iflawestiTF, IFrate, linearflag] = IFEstimator_pai(mixtureSignal, iflaw(:,bandwidthIndex), IFEstimationFlag2);
+                xHatPaiIFest(:,JNRIndex,nbitsIndex,bandwidthIndex,loopIndex) = KF_pai(mixtureSignal, IFEstimationFlag2, iflawestiTF, IFrate, linearflag);
             end
             
         end
     end
 end
 
-save(['.' filesep 'data' filesep 'resultsPai04.mat'], 'xHatPai', 'nbits', 'JNRVector');
+save(['.' filesep 'data' filesep 'resultsPai06.mat'], 'xHatPaiPerf', 'xHatPaiIFest', 'nbits', 'JNRVector');
 
 rmpath(['.' filesep 'pai_fun']);
 rmpath(['.' filesep 'data']);
