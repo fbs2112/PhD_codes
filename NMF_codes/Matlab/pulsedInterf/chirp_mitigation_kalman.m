@@ -89,7 +89,7 @@ end
 xHatPaiPerf = single(xHatPaiPerf);
 xHatPaiIFest = single(xHatPaiIFest);
 
-save(['.' filesep 'data' filesep 'resultsPai07.mat'], 'xHatPaiPerf', 'xHatPaiIFest', 'nbits', 'JNRVector');
+save(['.' filesep 'data' filesep 'resultsPai07.mat'], 'xHatPaiPerf', 'xHatPaiIFest', 'nbits', 'JNRVector', '-v7.3');
 
 rmpath(['.' filesep 'pai_fun']);
 rmpath(['.' filesep 'data']);
