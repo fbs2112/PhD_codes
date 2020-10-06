@@ -1,3 +1,28 @@
+    %This function performs the vanilla NMF decomposition
+%Inputs:
+%X: input spectrogram signal (it must be real)
+%params: struct with the following mandatory fields:
+%        numberOfSources: defines the decomposition rank
+%        init: 'random' or 'custom'
+%        betaDivergence: either 'kullback-leibler' or 'euclidean'
+%        numberOfIterations: max number of iterations
+%        tolChange: tolerance parameter that defines convergence
+%        tolError: error parameter that defines convergence
+% 
+%Outputs:
+%W: W matrix
+%H: H matrix
+%ReconstructError: reconstruction error at each iteration
+%
+%This code was created by Felipe Barboza da Silva
+% Copyright (c) School of Engineering. Macquarie University - Australia.
+% All rights reserved. 2020.
+% DISCLAIMER:
+%     This code is strictly private, confidential and personal to its recipients
+%     and should not be copied, distributed or reproduced in whole or in part,
+%     nor passed to any third party.
+% ** Do not duplicate or distribute without written permission from the owners. **
+
 function [W, H, reconstructError] = nmf_vanilla(X, params, varargin)
 
 numberOfSources = params.numberOfSources;
@@ -12,6 +37,8 @@ sqrteps = sqrt(eps);
 betaDivergenceAux = beta_loss_to_float(betaDivergence);
 [n_samples, n_features] = size(X);
 
+onesMtx = ones(size(X));
+
 switch init
     case 'random'
         avg = sqrt(mean(X(:)) / numberOfSources);
@@ -20,14 +47,21 @@ switch init
         H0 = abs(H0);
         W0 = abs(W0);
     case 'custom'
-        W0 = params.W0;
-        if params.transform
+        if params.transpose && ~params.transform
             H0 = params.H0;
-        else
+            avg = sqrt(mean(X(:)) / numberOfSources);
+            W0 = avg * randn(n_samples, numberOfSources);
+            W0 = abs(W0);
+        elseif ~params.transpose && ~params.transform
+            W0 = params.W0;
             avg = sqrt(mean(X(:)) / numberOfSources);
             H0 = avg * randn(numberOfSources, n_features);
             H0 = abs(H0);
+        else
+            H0 = params.H0;
+            W0 = params.W0;
         end
+        
         flag = checkMatrices(W0, H0);
         if flag
             error('Input matrices have negative elements');
@@ -42,7 +76,12 @@ switch init
 end
 
 reconstructError = zeros(numberOfIterations, 1);
-reconstructError0 = KL_divergence(X, W0, H0);
+
+if betaDivergenceAux == 2
+   reconstructError0 =  norm(X - W0*H0, 'fro') / 2;
+elseif betaDivergenceAux == 1
+    reconstructError0 = KL_divergence(X, W0, H0, params.mu);
+end
 reconstructError(1) = reconstructError0;
 
 for i = 2:numberOfIterations
@@ -57,24 +96,41 @@ for i = 2:numberOfIterations
         W = max(0, W0 .* (numW ./ (W0*(H0*H0') + eps(numW))));
         numH = W'*X;
         H = max(0, H0 .* (numH ./ ((W'*W)*H0 + eps(numH))));
-        
+        reconstructError(i) = norm(X - W*H, 'fro') / 2;
+       
     elseif betaDivergenceAux == 1
-        if params.transform
-            numW = (X./(W0*H0 + eps(X)))*H0.';
-            denW = (ones(size(W0, 1), size(H0, 2))*H0.') + eps(numW);
+        
+        if ~(params.transpose)
+            if params.transform
+                numW = (X./(W0*H0 + eps(X)))*H0.';
+                denW = (onesMtx*H0.') + eps(numW) + params.mu(1);
 
-            W = W0 .* (numW ./ denW);
+                W = W0 .* (numW ./ denW);
+            else
+                W = W0;
+            end
+            numH = W.'*(X./(W*H0 + eps(X)));
+            denH = W.'*onesMtx + eps(numH) + params.mu(2);
+            
+            H = H0 .* (numH ./ denH);
         else
-            W = W0;
+            if params.transform
+                numH = W0.'*(X./(W0*H0 + eps(X)));
+                denH = W0.'*onesMtx + eps(numH) + params.mu(2);
+
+                H = H0 .* (numH ./ denH);
+            else
+                H = H0;
+            end
+            numW = (X./(W0*H + eps(X)))*H.';
+            denW = (onesMtx*H.') + eps(numW) + params.mu(1);
+            
+            W = W0 .* (numW ./ denW);
         end
        
-        numH = W.'*(X./(W*H0 + eps(X)));
-        denH = W.'*ones(size(W, 1), size(H0, 2)) + eps(numH);
-        
-        H = H0 .* (numH ./ denH);
+        reconstructError(i) = KL_divergence(X, W, H, params.mu);
     end
-    
-    reconstructError(i) = KL_divergence(X, W, H);
+   
     dw = max(max(abs(W - W0) / (sqrteps + max(max(abs(W0))))));
     dh = max(max(abs(H - H0) / (sqrteps + max(max(abs(H0))))));
     delta = max(dw, dh);
