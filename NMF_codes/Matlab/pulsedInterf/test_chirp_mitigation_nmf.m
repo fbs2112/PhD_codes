@@ -8,74 +8,48 @@ addpath(['..' filesep 'signalsGeneration' filesep 'sim_params']);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 addpath(['.' filesep 'data']);
 
-load nmf_training_26.mat;
+load nmf_training_30.mat;
 load sim_params_3.mat;
 
-monteCarloLoops = 1;
-SNR = -25;
+monteCarloLoops = 100;
+SNR = -20;
 nbits = 0;
+numberOfSources = 2;
 
-paramsNMF1.JNRVector = [-5 0 10 30 50];
-paramsNMF1.JNRVector = 10;
+params.JNRVector = 0:5:30;
 
-JNRVector = paramsNMF1.JNRVector;
-paramsNMF1.fs = paramsSignal.Freqsamp;
-paramsNMF1.nfft = 256;
-paramsNMF1.nperseg = 256;
-paramsNMF1.overlap = paramsNMF1.nperseg - 1;
-paramsNMF1.hop_size = paramsNMF1.nperseg - paramsNMF1.overlap;
-paramsNMF1.window = ones(paramsNMF1.nperseg, 1);
-paramsNMF1.specType = 'power';
-paramsNMF1.numberOfSources = 5;
-paramsNMF1.init = 'random';
-paramsNMF1.betaDivergence = 'kullback-leibler';
-paramsNMF1.numberOfIterations = 500;
-paramsNMF1.tolChange = 1e-6;
-paramsNMF1.tolError = 1e-6;
-paramsNMF1.repetitions = 1;
-paramsNMF1.verbose = false;
-paramsNMF1.transform = true;
-paramsNMF1.semi = false;
+JNRVector = params.JNRVector;
+paramsNMF = params;
+paramsNMF.numberOfSources = paramsNMF.numberOfSources*numberOfSources;
+paramsNMF.init = 'custom';
+paramsNMF.transform = false;
+
+numberOfZerosVector = params.fs*(1e-3)*[0 0.25 0.5];
 
 numberOfRawSamples = floor(paramsSignal.Freqsamp*paramsSignal.Intetime);
 delay = 10e-6;
 totalSamples = numberOfRawSamples;
 
-bandwidthVector = (2:3:14)*1e6;
-
+bandwidthVector = (2:6:14)*1e6;
 periodVector = 8.62e-6;
 
-paramsSignal.Noneperiod = round(periodVector*paramsNMF1.fs);                   % number of samples with a sweep time
+paramsSignal.Noneperiod = round(periodVector*paramsNMF.fs);                   % number of samples with a sweep time
 paramsSignal.Initphase = 0;
-
-Timeofthisloop = 0:totalSamples-1;
-Carrphase = mod(2*pi*(paramsSignal.FreqDopp)*Timeofthisloop/paramsSignal.Freqsamp,2*pi);
-Carrier = exp(1i*Carrphase).';
-
-mixtureSignal = zeros(totalSamples, length(paramsNMF1.JNRVector), length(nbits), monteCarloLoops);
-xHat = zeros(totalSamples, 2, length(paramsNMF1.JNRVector), length(nbits), length(bandwidthVector), monteCarloLoops);
-
 paramsSignal.FreqDopp = 1e3;
-paramsSignal.numberOfGPSSignals = 1;
 
 GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
-GPSSignals = [GPSSignals(end - round(delay*paramsNMF1.fs)+1:end,:);GPSSignals(1:end - round(delay*paramsNMF1.fs),:)]; % Introducing artificial code delay
+GPSSignals = [GPSSignals(end - round(delay*paramsNMF.fs)+1:end,:);GPSSignals(1:end - round(delay*paramsNMF.fs),:)]; % Introducing artificial code delay
 GPSSignalsPower = pow_eval(GPSSignals);
 
-paramsNMF2 = paramsNMF1;
-paramsNMF2.numberOfSources = paramsNMF1.numberOfSources*2;
-paramsNMF2.init = 'custom';
-paramsNMF2.transform = false;
-paramsNMF2.semi = false;
-
-[PxxGPS, f, t] = spectrogram(GPSSignals, paramsNMF1.window, paramsNMF1.overlap, paramsNMF1.nfft, paramsNMF1.fs, 'centered', paramsNMF1.specType);
+mixtureSignal = zeros(totalSamples, length(paramsNMF.JNRVector), length(nbits), monteCarloLoops);
+xHat = zeros(totalSamples, numberOfSources, length(paramsNMF.JNRVector), length(numberOfZerosVector), length(nbits), length(bandwidthVector), monteCarloLoops);
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
     
     if paramsSignal.FreqDopp ~= 0
-        noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
+        noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1)/20;
         noiseVar = 2;
     else
         noise = randn(totalSamples, 1);
@@ -83,7 +57,7 @@ for loopIndex = 1:monteCarloLoops
     end
     noisePower = pow_eval(noise);
     
-    for bandwidthIndex = 1:1%length(bandwidthVector)
+    for bandwidthIndex = 1:length(bandwidthVector)
         bandwidthIndex
         paramsSignal.IFmin = -bandwidthVector(bandwidthIndex)/2;                                                  % start frequency
         paramsSignal.IFmax = bandwidthVector(bandwidthIndex)/2;                    % end frequency
@@ -91,39 +65,45 @@ for loopIndex = 1:monteCarloLoops
         
         [interferenceSignal, ~] = interferenceGen(paramsSignal);
         interferenceSignal = interferenceSignal(1:numberOfRawSamples);
-        interferenceSignal = interferenceSignal.*Carrier;
         interferenceSignalPower = pow_eval(interferenceSignal);
         
         for nbitsIndex = 1:length(nbits)
-            
-            for JNRIndex = 1:length(paramsNMF1.JNRVector)
-                GPSSignalsAux = GPSSignals;
-                interferenceSignalAux = interferenceSignal;
-                GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
-                mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
-                interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(paramsNMF1.JNRVector(JNRIndex)/10)/interferenceSignalPower);
-                mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex) = mixtureGPS + interferenceSignalAux;
-            end
-           paramsNMF2.W0 = W0{1,bandwidthIndex};
-           [~, HTest, error, Pxx, f, t] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF2);
-            
-            for JNRIndex = 1:length(paramsNMF1.JNRVector)
-                for i = 1:2
-                    S = (paramsNMF2.W0(:,(i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),nbitsIndex) * ...
-                        HTest{1,JNRIndex}((i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),:) ./ (paramsNMF2.W0(:,:,nbitsIndex)*HTest{1,JNRIndex})).*Pxx{1,JNRIndex};
+            for numberOfZerosIndex = 1:length(numberOfZerosVector)
+                for JNRIndex = 1:length(paramsNMF.JNRVector)
+                    GPSSignalsAux = GPSSignals;
+                    interferenceSignalAux = interferenceSignal;
+                    interferenceSignalAux(1:numberOfZerosVector(numberOfZerosIndex)) = 0;
                     
-                    V = paramsNMF2.W0(:,(i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),nbitsIndex) * ...
-                        HTest{1,JNRIndex}((i-1)*paramsNMF2.numberOfSources/2 +1:(i*paramsNMF2.numberOfSources/2),:) .* exp(1j*(angle(PxxGPS)+1*randn(size(PxxGPS))));
-                    xHat(:,i,JNRIndex,nbitsIndex, bandwidthIndex, loopIndex) = istft(S, paramsNMF1.fs, 'Window', paramsNMF1.window, 'OverlapLength', paramsNMF1.overlap, 'FFTLength', paramsNMF1.nfft);
+                    GPSMultiplier = sqrt(noisePower*10.^(SNR/10)./GPSSignalsPower);
+                    mixtureGPS = sum(GPSSignalsAux.*GPSMultiplier, 2) + noise;
+                    interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(paramsNMF.JNRVector(JNRIndex)/10)/interferenceSignalPower);
+                    mixtureSignal(:,JNRIndex,nbitsIndex,loopIndex) = mixtureGPS + interferenceSignalAux;
+                end
+                paramsNMF.W0 = W0{1,bandwidthIndex}(:,1:params.numberOfSources*numberOfSources);
+                                
+                [W, H, error, Pxx, f, t] = nmf_eval_v2(mixtureSignal(:,:,nbitsIndex,loopIndex), paramsNMF);
+                
+                for JNRIndex = 1:length(paramsNMF.JNRVector)
+                    for i = 1:numberOfSources
+                        S = (W{1,JNRIndex}(:,(i-1)*paramsNMF.numberOfSources/numberOfSources +1:(i*paramsNMF.numberOfSources/numberOfSources),nbitsIndex) * ...
+                            H{1,JNRIndex}((i-1)*paramsNMF.numberOfSources/numberOfSources +1:(i*paramsNMF.numberOfSources/numberOfSources),:) ./ (W{1,JNRIndex}*H{1,JNRIndex})).*Pxx{1,JNRIndex};
+                        
+                        if paramsNMF.transpose
+                            S = S.';
+                        end
+                        
+                        xHat(:,i,JNRIndex,numberOfZerosIndex,nbitsIndex,bandwidthIndex,loopIndex) = istft(S, paramsNMF.fs, 'Window', paramsNMF.window, 'OverlapLength', paramsNMF.overlap, 'FFTLength', paramsNMF.nfft);
+                        
+                    end
                 end
             end
         end
     end
 end
 
-v = angle(PxxGPS);
+xHat = single(xHat);
 
-save(['.' filesep 'data' filesep 'nmf_testing_33_1.mat'], 'xHat', 'nbits', 'JNRVector', 'v', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_35.mat'], 'xHat', 'nbits', 'JNRVector', '-v7.3');
 
 rmpath(['.' filesep 'data']);
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
