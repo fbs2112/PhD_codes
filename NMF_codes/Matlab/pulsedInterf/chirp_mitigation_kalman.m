@@ -17,7 +17,6 @@ nbits = 0;
 
 params.fs = paramsSignal.Freqsamp;
 params.JNRVector = (0:5:30);
-params.JNRVector = 20;
 JNRVector = params.JNRVector;
 
 numberOfRawSamples = floor(paramsSignal.Freqsamp*paramsSignal.Intetime);
