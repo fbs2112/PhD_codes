@@ -13,12 +13,10 @@ load sim_params_1.mat;
 
 params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
-silenceSamples = round(20e-6*params.fs);
 totalSamples = numberOfRawSamples;
 
 WinLBlock = [3 19];
 SNR = -25;
-random_state = 42;
 
 bandwidthVector = 10.72e6;
 periodVector = 8.62e-6;
@@ -52,15 +50,18 @@ for windowLengthIndex = 1:length(WinLBlock)
     pvalue_cell{windowLengthIndex} = pvalue;
 end
 
-if isunix
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep 'results3.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
-else
-    save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-        'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-        filesep 'pfa_results' filesep 'results3.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
-end
+save(['.' filesep 'data' filesep 'results_det_pai_03.mat'], 'detection_res', '-v7.3');
+
+
+% if isunix
+%     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+%         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+%         filesep 'pfa_results' filesep 'results8.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
+% else
+%     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+%         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+%         filesep 'pfa_results' filesep 'results8.mat'], 'detection_res_cell', 'pvalue_cell', '-v7.3');
+% end
 warning('on','all')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
