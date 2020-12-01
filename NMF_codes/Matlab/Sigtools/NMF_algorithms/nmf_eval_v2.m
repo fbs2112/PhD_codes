@@ -72,6 +72,10 @@ if nargin > 2 && varargin{1}
     dataCellLength = 2;
 end
 
+if ~isfield(params, 'type')
+    params.type = 'mag';
+end
+
 dataCell = cell(dataCellLength, length(params.JNRVector));
 W2 = cell(dataCellLength, length(params.JNRVector));
 H2 = cell(dataCellLength, length(params.JNRVector));
@@ -97,7 +101,6 @@ for i = 1:size(mixtureSignal, 2)
     end
     
     dataCell{1, i} = PxxAux;
-    
     if params.transpose
         dataCell{1, i} = dataCell{1, i}.';
     end
@@ -109,7 +112,11 @@ for i = 1:size(mixtureSignal, 2)
     end
     
     for j = 1:size(dataCell, 1)
-        inputNMF = abs(dataCell{j, i});
+        if strcmp(params.type, 'mag')
+            inputNMF = abs(dataCell{j, i});
+        elseif strcmp(params.type, 'power')
+            inputNMF = abs(dataCell{j, i}).^2;
+        end
         inputNMF = inputNMF + eps;
         if nargin > 3 && strcmp(varargin{2}, 'filt')
             inputNMF_TPSW = zeros(size(inputNMF));
