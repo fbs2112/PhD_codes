@@ -16,6 +16,7 @@ params.overlap = params.nperseg - 1;
 params.hop_size = params.nperseg - params.overlap;
 params.window = ones(params.nperseg, 1);
 params.specType = 'power';
+params.type = 'power';
 params.numberOfSources = 1;
 params.init = 'random';
 params.betaDivergence = 'kullback-leibler';
@@ -26,15 +27,15 @@ params.repetitions = 1;
 SNR = -25;
 params.JNRVector = -25:0;
 
-bandwidthVector = (2e6:5e6:14e6);
-periodVector = (8.62e-6:1.48e-6:18.97e-6);
+bandwidthVector = (2e6:6e6:14e6);
+periodVector = (8.62e-6:1.48e-6*2:18.97e-6);
 
 initialFrequency = 2e6;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 thresholdVector = 0:0.005:0.2;
 window_median_length_vector = 0;
-monteCarloLoops = 1000;
+monteCarloLoops = 1;
 
 detection_res = zeros(monteCarloLoops, length(bandwidthVector), length(periodVector), ...
     length(params.JNRVector), length(thresholdVector), length(window_median_length_vector));
@@ -53,8 +54,8 @@ for loopIndex = 1:monteCarloLoops
         bandwidthIndex
         for periodIndex = 1:length(periodVector)
             paramsSignal.Noneperiod = round(periodVector(periodIndex)*params.fs);                   % number of samples with a sweep time
-            paramsSignal.IFmin = -bandwidthVector(bandwidthIndex)/2;                                                  % start frequency
-            paramsSignal.IFmax = bandwidthVector(bandwidthIndex)/2;                    % end frequency
+            paramsSignal.IFmin = initialFrequency;                                                  % start frequency
+            paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                    % end frequency
             paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
             paramsSignal.Initphase = 0;
            
@@ -86,7 +87,7 @@ for loopIndex = 1:monteCarloLoops
                 WNormalised = WNormalised.*sqrt(1./var(WNormalised));
                 WNormalised = WNormalised ./ (norm(WNormalised) + eps);
                 
-                output = inputNMFNormalised.'*WNormalised;
+                output = ((inputNMFNormalised.'*WNormalised));
                 for thresholdIndex = 1:length(thresholdVector)
                     for window_median_length_index = 1:length(window_median_length_vector)
                         detection_res(loopIndex, bandwidthIndex, periodIndex, JNRIndex, thresholdIndex, window_median_length_index) = ...
@@ -99,7 +100,7 @@ for loopIndex = 1:monteCarloLoops
 end
 
 
-save(['results_det_28.mat'], 'detection_res', '-v7.3');
+save(['.' filesep 'data' filesep 'results_det_02.mat'], 'detection_res', '-v7.3');
 % if isunix
 %     save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
 %         'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'my_results' ...
