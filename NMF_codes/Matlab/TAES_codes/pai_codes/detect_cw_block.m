@@ -15,7 +15,7 @@ params.fs = paramsSignal.Freqsamp;
 numberOfRawSamples = 4096;
 totalSamples = numberOfRawSamples;
 
-WinLBlock = 3;
+WinLBlock = 19;
 JNRVector = -25:0;
 SNR = -25;
 
@@ -63,9 +63,12 @@ for Emuindex = 1:monteCarloLoops
     
 end
 
-save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-    'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-    filesep 'results_det_19.mat'], 'detection_res', 'pvalue', '-v7.3');
+save(['.' filesep 'data' filesep 'results_det_pai_01.mat'], 'detection_res', '-v7.3');
+
+
+% save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
+%     'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
+%     filesep 'results_det_19.mat'], 'detection_res', 'pvalue', '-v7.3');
 warning('on','all')
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
