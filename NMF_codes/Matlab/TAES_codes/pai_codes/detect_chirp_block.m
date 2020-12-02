@@ -20,7 +20,7 @@ JNRVector = -25:0;
 SNR = -25;
 
 initialFrequency = 2e6;
-bandwidthVector = (2e6:5e6:14e6);
+bandwidthVector = (2e6:6e6:14e6);
 periodVector = (8.62e-6:1.48e-6*2:18.97e-6);
 
 GPSSignals = GPSGen(paramsSignal);
