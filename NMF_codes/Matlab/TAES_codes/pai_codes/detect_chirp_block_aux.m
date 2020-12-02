@@ -21,13 +21,13 @@ SNR = -25;
 
 initialFrequency = 2e6;
 bandwidthVector = (2e6:5e6:14e6);
-periodVector = (8.62e-6:1.48e-6:18.97e-6);
+periodVector = (8.62e-6:1.48e-6*2:18.97e-6);
 
 GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignalsPower = pow_eval(GPSSignals);
 
-monteCarloLoops = 100;
+monteCarloLoops = 1000;
 PfaVector = logspace(-12, -2, 41);
 h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
@@ -48,8 +48,8 @@ for Emuindex = 1:monteCarloLoops
         for periodIndex = 1:length(periodVector)
             for JNRIndex = 1:length(JNRVector)
                 paramsSignal.Noneperiod = round(periodVector(periodIndex)*params.fs);                   % number of samples with a sweep time
-                paramsSignal.IFmin = -bandwidthVector(bandwidthIndex)/2;                                     % start frequency
-                paramsSignal.IFmax = bandwidthVector(bandwidthIndex);                   % end frequency
+                paramsSignal.IFmin = initialFrequency;                                                  % start frequency
+                paramsSignal.IFmax = bandwidthVector(bandwidthIndex) + initialFrequency;                    % end frequency
                 paramsSignal.foneperiod(1:paramsSignal.Noneperiod) = linspace(paramsSignal.IFmin, paramsSignal.IFmax, paramsSignal.Noneperiod);
                 paramsSignal.Initphase = 0;
                 
@@ -68,7 +68,7 @@ for Emuindex = 1:monteCarloLoops
     end
 end
 
-save(['results_det_26.mat'], 'detection_res', 'pvalue', '-v7.3');
+save(['.' filesep 'data' filesep 'results_det_pai_05.mat'], 'detection_res', '-v7.3');
 
 % save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
 %     'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
