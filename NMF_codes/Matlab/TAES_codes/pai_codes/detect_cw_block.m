@@ -42,7 +42,7 @@ PfaVector = logspace(-12, -2, 41);
 h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
 
-detection_res = zeros(length(JNRVector), monteCarloLoops, MBlock, length(PfaVector));
+detection_res = zeros(length(JNRVector), monteCarloLoops, length(PfaVector));
 pvalue = zeros(length(JNRVector), monteCarloLoops, MBlock);
 
 for Emuindex = 1:monteCarloLoops
@@ -58,7 +58,8 @@ for Emuindex = 1:monteCarloLoops
         interferenceSignalAux = interferenceSignal;
         interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
         mixtureSignal = mixtureGPS + interferenceSignalAux;
-        [pvalue(JNRIndex, Emuindex, :), detection_res(JNRIndex, Emuindex, :, :)] = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
+        [pvalue(JNRIndex, Emuindex, :), aux] = DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
+        detection_res(JNRIndex, Emuindex, :) = any(aux, 1);
     end
     
 end
