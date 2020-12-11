@@ -25,7 +25,7 @@ GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignalsPower = pow_eval(GPSSignals);
 
-monteCarloLoops = 1000;
+monteCarloLoops = 10000;
 PfaVector = logspace(-12, -2, 41);
 detection_res_cell = cell(length(WinLBlock), 1);
 pvalue_cell = cell(length(WinLBlock), 1);
@@ -50,7 +50,7 @@ for windowLengthIndex = 1:length(WinLBlock)
     pvalue_cell{windowLengthIndex} = pvalue;
 end
 
-save(['.' filesep 'data' filesep 'results_det_pai_03.mat'], 'detection_res', '-v7.3');
+save(['.' filesep 'data' filesep 'results_det_pai_06.mat'], 'detection_res_cell', '-v7.3');
 
 
 % if isunix
