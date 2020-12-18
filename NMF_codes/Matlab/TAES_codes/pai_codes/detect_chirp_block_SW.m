@@ -61,7 +61,7 @@ for Emuindex = 1:monteCarloLoops
             interferenceSignalAux = interferenceSignal;
             interferenceSignalAux = interferenceSignalAux*sqrt(noisePower*10^(JNRVector(JNRIndex)/10)/interferenceSignalPower);
             mixtureSignal = mixtureGPS + interferenceSignalAux;
-            [pvalue(bandwidthIndex, periodIndex, JNRIndex, Emuindex, :), aux] =...
+            [pvalue(SWIndex, JNRIndex, Emuindex, :), aux] =...
                 DeteBlockGoF_FBS(mixtureSignal, h, MBlock, PfaVector);
             detection_res(SWIndex, JNRIndex, Emuindex, :) = any(aux, 1);
             
