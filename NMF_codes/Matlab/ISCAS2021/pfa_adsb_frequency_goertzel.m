@@ -2,7 +2,7 @@ clear;
 clc;
 close all;
 
-warning off;
+% warning off;
 
 frequency = '1152';
 fileName = '2018-09-01-09_52_55_0000000000000000.000000'; %test
@@ -99,7 +99,7 @@ for loopIndex = 1:monteCarloLoops
                 v(m) = quantize(q0,coef*v(m-1)-v(m-2)+parkesSignalBufferA_Q(m,l));
             end
             if m==params.nfft
-                dft_data_1090_quant(l,loopIndex) = quantize(q0,abs(-(v(params.nfft)-(out_coef*v(params.nfft-1)))));
+                dft_data_1090_quant(l,loopIndex) = quantize(q0,abs(-(v(params.nfft)-(out_coef*v(params.nfft-1)))).^2);
             end
         end
     end
@@ -174,7 +174,7 @@ for loopIndex = 1:monteCarloLoops
     %
     %
     %
-        output_1090(loopIndex,:) = cfar(dft_data_1090_quant, 1:length(dft_data_1090_quant));
+        output_1090(loopIndex,:) = cfar(dft_data_1090_quant(:,loopIndex), 1:length(dft_data_1090_quant(:,loopIndex)));
     %     output_1089(loopIndex,:) = cfar(dft_data,1:length(dft_data_1089_quant));
     %     output_1091(loopIndex,:) = cfar(dft_data,1:length(dft_data_1091_quant));
     
