@@ -28,7 +28,7 @@ GPSSignals = GPSGen(paramsSignal);
 GPSSignals = GPSSignals(1:numberOfRawSamples,:);
 GPSSignalsPower = pow_eval(GPSSignals);
 
-monteCarloLoops = 500;
+monteCarloLoops = 10000;
 PfaVector = logspace(-12, -2, 41);
 h = window('rectwin', WinLBlock);
 MBlock = fix(totalSamples./WinLBlock);
@@ -69,17 +69,7 @@ for Emuindex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'results_det_pai_7.mat'], 'detection_res', '-v7.3');
-
-% save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-%     'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-%     filesep 'results_det_15.mat'], 'detection_res', 'pvalue', '-v7.3');
-% warning('on','all')
-%
-% save(['..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep '..' filesep 'Dropbox' filesep ...
-%     'Doctorate' filesep 'Research' filesep 'data' filesep 'TAES_data' filesep 'new_data' filesep 'pai_results' ...
-%     filesep 'results_det_15.mat'], 'detection_res', 'pvalue', '-v7.3');
-% warning('on','all')
+save(['.' filesep 'data' filesep 'results_det_pai_9.mat'], 'detection_res', '-v7.3');
 
 rmpath(['..' filesep '..' filesep '.' filesep 'Sigtools' filesep])
 rmpath(['..' filesep '..' filesep  '.' filesep 'Sigtools' filesep 'NMF_algorithms'])
