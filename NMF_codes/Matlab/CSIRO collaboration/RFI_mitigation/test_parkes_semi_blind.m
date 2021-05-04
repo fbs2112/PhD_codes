@@ -15,36 +15,37 @@ clear;
 clc;
 close all;
 
-addpath(['..' filesep '..' filesep 'Sigtools' filesep])
-addpath(['..' filesep '..' filesep 'signalsGeneration' filesep]);
 addpath(['..' filesep '..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 
 frequency = '1152';
 fileName = '2018-09-01-09_52_55_0000000000000000.000000'; %test
 year = '2018';
+filePath2 = ['E:' filesep 'Parkes data' filesep year filesep frequency filesep 'signal frames' filesep];
 
-load(['..' filesep 'data' filesep 'dataParkesNew' filesep  frequency filesep fileName '_labels.mat']);
-load(['.' filesep 'data' filesep year filesep frequency filesep 'results1.mat']); %trained W0
+fileNumberSOI = 1;
+fileNumberRFI = 2;
 
+matObj = matfile(['..' filesep 'Labels' filesep year filesep frequency filesep fileName '_labels.mat']);
+trueLabels = find(matObj.interferenceDetFlag == 1 | matObj.interferenceDetFlag == 3 | matObj.interferenceDetFlag == 5 | matObj.interferenceDetFlag == 6);
+
+matObjSOI = matfile(['.' filesep 'data' filesep year filesep frequency filesep 'W_SOI_' num2str(fileNumberSOI) '_'  fileName '.mat']);
+matObjRFI = matfile(['.' filesep 'data' filesep year filesep frequency filesep 'W_RFI_' num2str(fileNumberRFI) '_'  fileName '.mat']);
+
+W0SOIA = matObjSOI.W0SOIA;
+W0SOIB = matObjSOI.W0SOIB;
+
+params = matObjSOI.params;
 params.numberOfComponentsPerSource = [10 10];
-params.verbose = true;
-params.alg = 'vanilla_semi';
-params.mu = [0 0];
-params.numberOfSources = sum(params.numberOfSources);
+params.verbose = false;
+params.numberOfSources = sum(params.numberOfComponentsPerSource);
 
+params.alg = 'vanilla_semi';
 paramsA = params;
 paramsB = params;
-paramsA.W0 = W0A;
-paramsB.W0 = W0B;
+paramsA.W0 = W0SOIA;
+paramsB.W0 = W0SOIB;
 
-trueLabels = find(interferenceDetFlag);
-trueLabels = sort(trueLabels);
-trueLabels = trueLabels(trueLabels <= 100);
-falseLabels = find(~interferenceDetFlag);
-falseLabels = sort(falseLabels);
-falseLabels = falseLabels(falseLabels < 100);
-
-numberOfSignalFrames = length(trueLabels);
+numberOfSignalFrames = find(trueLabels >= 100, 1, 'first');
 
 xHatA = zeros(1280000, 2, length(params.JNRVector), 100);
 xHatB = zeros(1280000, 2, length(params.JNRVector), 100);
@@ -56,51 +57,57 @@ HB = cell(1,numberOfSignalFrames);
 
 for loopIndex = 1:numberOfSignalFrames
     disp(['Loop index: ' num2str(loopIndex)]);
-    load(['..' filesep 'data' filesep 'dataParkesNew' filesep frequency filesep fileName '_' num2str(trueLabels(loopIndex)) '.mat']);
+    load([filePath2 fileName '_' num2str(trueLabels(loopIndex)) '.mat']);
     interferenceFramesA = parkesSignalA;
     interferenceFramesB = parkesSignalB;
-    [WTestA, HTestA, errorCell, PxxA, f, t] = nmf_eval_v2(interferenceFramesA, paramsA);
-    [WTestB, HTestB, ~, PxxB, ~, ~] = nmf_eval_v2(interferenceFramesB, paramsB);
-%     aux = WTest{1,1}(:,1:10);
-%     aux(aux < max(max(aux))/2) = 0;
-    SA = zeros([size(PxxA{1,1}) 2]);
-    WA{1,loopIndex} = WTestA;
-    HA{1,loopIndex} = HTestA;
-%     WTest{1,1}(:,1:10) = aux;
-
-    %Polarisaton A---------------------------------------------------------
-    for i = 1:2
-        %------Wiener solution to reconstruct the complex spectrograms
-        SA(:,:,i) = (WTestA{1,1}(:,((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2)) * ...
-            HTestA{1,1}(((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2),:)./ (WTestA{1,1}*HTestA{1,1})).*PxxA{1,1};
-        %--------------------------------------------------------------
-        %Time domain reconstruction via iSTFT--------------------------
-        xHatA(:,i,1,trueLabels(loopIndex)) = istft(SA(:,:,i), params.fs, 'Window', ....
-            params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft, 'centered', false);
-        %--------------------------------------------------------------
-    end
+    interferenceFramesABuffer = buffer(interferenceFramesA, length(interferenceFramesA)/20, 0, 'nodelay');
+    interferenceFramesBBuffer = buffer(interferenceFramesB, length(interferenceFramesB)/20, 0, 'nodelay');
     
-    %----------------------------------------------------------------------
-    
-    %Polarisaton B---------------------------------------------------------
-    SB = zeros([size(PxxB{1,1}) 2]);
-    WB{1,loopIndex} = WTestB;
-    HB{1,loopIndex} = HTestB;
-    for i = 1:2
-        %------Wiener solution to reconstruct the complex spectrograms
-        SB(:,:,i) = (WTestB{1,1}(:,((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2)) * ...
-            HTestB{1,1}(((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2),:)./ (WTestB{1,1}*HTestB{1,1})).*PxxB{1,1};
-        %--------------------------------------------------------------
-        %Time domain reconstruction via iSTFT--------------------------
-        xHatB(:,i,1,trueLabels(loopIndex)) = istft(SB(:,:,i), params.fs, 'Window',...
-            params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft, 'centered', false);
-        %--------------------------------------------------------------
+    xHatAAux = zeros(size(interferenceFramesABuffer, 1), size(interferenceFramesABuffer, 2), 2);
+    xHatBAux = zeros(size(interferenceFramesABuffer, 1), size(interferenceFramesABuffer, 2), 2);
+    for signalIndex = 1:size(interferenceFramesABuffer, 2)
+        [WTestA, HTestA, errorCell, PxxA, f, t] = nmf_eval_v2(interferenceFramesABuffer(:,signalIndex), paramsA);
+        [WTestB, HTestB, ~, PxxB, ~, ~] = nmf_eval_v2(interferenceFramesBBuffer(:,signalIndex), paramsB);
+        
+        
+        %Polarisation A---------------------------------------------------------
+        SA = zeros([size(PxxA{1,1}) 2]);
+        WA{1,loopIndex} = WTestA;
+        HA{1,loopIndex} = HTestA;
+        for i = 1:2
+            %------Wiener solution to reconstruct the complex spectrograms
+            SA(:,:,i) = (WTestA{1,1}(:,((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2)) * ...
+                HTestA{1,1}(((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2),:)./ (WTestA{1,1}*HTestA{1,1})).*PxxA{1,1};
+            %--------------------------------------------------------------
+            %Time domain reconstruction via iSTFT--------------------------
+           xHatAAux(:,signalIndex,i) = istft(SA(:,:,i), params.fs, 'Window', ....
+                params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft, 'centered', false);
+            %--------------------------------------------------------------
+        end
+        
+        %----------------------------------------------------------------------
+        
+        %Polarisation B---------------------------------------------------------
+        SB = zeros([size(PxxB{1,1}) 2]);
+        WB{1,loopIndex} = WTestB;
+        HB{1,loopIndex} = HTestB;
+        for i = 1:2
+            %------Wiener solution to reconstruct the complex spectrograms
+            SB(:,:,i) = (WTestB{1,1}(:,((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2)) * ...
+                HTestB{1,1}(((i-1)*params.numberOfSources/2) + 1:(i*params.numberOfSources/2),:)./ (WTestB{1,1}*HTestB{1,1})).*PxxB{1,1};
+            %--------------------------------------------------------------
+            %Time domain reconstruction via iSTFT--------------------------
+            xHatBAux(:,signalIndex,i) = istft(SB(:,:,i), params.fs, 'Window',...
+                params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft, 'centered', false);
+            %--------------------------------------------------------------
+        end
+        %----------------------------------------------------------------------
+        
     end
-    %----------------------------------------------------------------------
+    xHatA(:,:,1,trueLabels(loopIndex)) = reshape(xHatAAux, [], 2);
+    xHatB(:,:,1,trueLabels(loopIndex)) = reshape(xHatBAux, [], 2);
 end
 
-save(['.' filesep 'data' filesep year filesep frequency filesep 'results2.mat'], 'xHatA', 'xHatB', 'WA', 'HA', 'WB', 'HB');
+save(['.' filesep 'data' filesep year filesep frequency filesep 'results6.mat'], 'xHatA', 'xHatB', '-v7.3');
 
-rmpath(['..' filesep '..' filesep 'Sigtools' filesep])
-rmpath(['..' filesep '..' filesep 'signalsGeneration' filesep]);
 rmpath(['..' filesep '..' filesep 'Sigtools' filesep 'NMF_algorithms'])
