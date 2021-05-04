@@ -68,7 +68,7 @@ HA = cell(1,numberOfSignalFrames);
 WB = cell(1,numberOfSignalFrames);
 HB = cell(1,numberOfSignalFrames);
 
-for loopIndex = 1:5%numberOfSignalFrames
+for loopIndex = 1:numberOfSignalFrames
     disp(['Loop index: ' num2str(loopIndex)]);
     load([filePath2 fileName '_' num2str(trueLabels(loopIndex)) '.mat']);
     interferenceFramesA = parkesSignalA;
