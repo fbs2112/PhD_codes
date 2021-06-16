@@ -1,0 +1,6 @@
+nmf_training_1: 60 components for each source, hamming window, nfft = 256
+nmf_training_2: 60 components for each source, hamming window, nfft = 256, only GPS;
+nmf_training_3: 60 components for each source, kaiser window, beta = 60, nfft = 256
+nmf_testing_1: 60 components for each source, hamming window, nfft = 256 for JNR = 10 dB;
+nmf_testing_2: 60 components for each source, hamming window, nfft = 256 for JNR = 0:5:30 dB;
+nmf_testing_3 60 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB;
