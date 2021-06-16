@@ -76,6 +76,10 @@ if ~isfield(params, 'type')
     params.type = 'mag';
 end
 
+if ~isfield(params, 'tf')
+    params.tf = 'stft';
+end
+
 dataCell = cell(dataCellLength, length(params.JNRVector));
 W2 = cell(dataCellLength, length(params.JNRVector));
 H2 = cell(dataCellLength, length(params.JNRVector));
@@ -86,18 +90,24 @@ for i = 1:size(mixtureSignal, 2)
     
     data{1, i} = mixtureSignal(:,i);
     
-    if params.reassigned
-        if params.centered
-            [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType, 'reassigned');
+    if strcmp(params.tf, 'stft') 
+        if params.reassigned
+            if params.centered
+                [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType, 'reassigned');
+            else
+                [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, params.specType, 'reassigned');
+            end
         else
-            [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, params.specType, 'reassigned');
+            if params.centered
+                [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
+            else 
+                [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, params.specType);
+            end
         end
+    elseif strcmp(params.tf, 'fsst') 
+        [PxxAux, f, t] = fsst(data{1, i}, params.fs, params.window);
     else
-        if params.centered
-            [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, 'centered', params.specType);
-        else 
-            [PxxAux, f, t] = spectrogram(data{1, i}, params.window, params.overlap, params.nfft, params.fs, params.specType);
-        end
+        error('Time-frequency transform not available');
     end
     
     dataCell{1, i} = PxxAux;
@@ -129,7 +139,6 @@ for i = 1:size(mixtureSignal, 2)
             inputNMF = inputNMF - inputNMF_TPSW;
             inputNMF(inputNMF < 0) = eps;
         end
-        
         
         WAux = cell(params.repetitions, 1);
         HAux = cell(params.repetitions, 1);
