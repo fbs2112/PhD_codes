@@ -6,10 +6,10 @@ addpath(['..' filesep 'Sigtools' filesep])
 addpath(['..' filesep 'signalsGeneration' filesep]);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 
-load(['.' filesep 'data' filesep 'nmf_training_3.mat']);
+load(['.' filesep 'data' filesep 'nmf_training_4.mat']);
 load(['..' filesep  'signalsGeneration' filesep 'sim_params' filesep 'sim_params_3.mat']);
 
-monteCarloLoops = 1;
+monteCarloLoops = 100;
 SNR = -20;
 numberOfSources = 2;
 
@@ -20,6 +20,7 @@ paramsNMF = params;
 paramsNMF.numberOfSources = paramsNMF.numberOfSources*numberOfSources;
 paramsNMF.init = 'custom';
 paramsNMF.transform = false;
+paramsNMF.verbose = false;
 
 numberOfZerosVector = params.fs*(1e-3)*[0];
 
@@ -91,15 +92,19 @@ for loopIndex = 1:monteCarloLoops
                         S = S.';
                     end
                     
-                    xHatAux = istft(S, paramsNMF.fs, 'Window', paramsNMF.window, 'OverlapLength', paramsNMF.overlap, 'FFTLength', paramsNMF.nfft);
+                    if ~isfield(params, 'tf')
+                        xHatAux = istft(S, paramsNMF.fs, 'Window', paramsNMF.window, 'OverlapLength', paramsNMF.overlap, 'FFTLength', paramsNMF.nfft);
+                    elseif isfield(params, 'tf') && strcmp(params.tf, 'fsst')
+                        xHatAux = ifsst(S, params.window);
+                    end
                     xHat(:,i,JNRIndex,numberOfZerosIndex,bandwidthIndex,loopIndex) = xHatAux(edgeZeros+1:end-edgeZeros); %removing zeros at the edge
                     
                 end
                 %Trying subtracting RFI spectrogram
 
-                S2 = abs(abs(Pxx{1,JNRIndex}) -  W{1,JNRIndex}(:,1:(i*paramsNMF.numberOfSources/numberOfSources)) * ...
-                        H{1,JNRIndex}(1:(i*paramsNMF.numberOfSources/numberOfSources),:)) .* exp(1j*angle(Pxx{1,JNRIndex}));
-                xHat2(:,1,JNRIndex,numberOfZerosIndex,bandwidthIndex,loopIndex) = istft(S2, paramsNMF.fs, 'Window', paramsNMF.window, 'OverlapLength', paramsNMF.overlap, 'FFTLength', paramsNMF.nfft);
+%                 S2 = abs(abs(Pxx{1,JNRIndex}) -  W{1,JNRIndex}(:,1:(i*paramsNMF.numberOfSources/numberOfSources)) * ...
+%                         H{1,JNRIndex}(1:(i*paramsNMF.numberOfSources/numberOfSources),:)) .* exp(1j*angle(Pxx{1,JNRIndex}));
+%                 xHat2(:,1,JNRIndex,numberOfZerosIndex,bandwidthIndex,loopIndex) = istft(S2, paramsNMF.fs, 'Window', paramsNMF.window, 'OverlapLength', paramsNMF.overlap, 'FFTLength', paramsNMF.nfft);
             end
         end
         
@@ -108,7 +113,7 @@ end
 
 xHat = single(xHat);
 
-save(['.' filesep 'data' filesep 'nmf_testing_3.mat'], 'xHat', 'xHat2', 'JNRVector', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_6.mat'], 'xHat', 'JNRVector', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep 'Sigtools' filesep])
