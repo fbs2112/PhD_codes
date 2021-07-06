@@ -6,7 +6,7 @@ addpath(['..' filesep 'Sigtools' filesep])
 addpath(['..' filesep 'signalsGeneration' filesep]);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 
-load(['.' filesep 'data' filesep 'nmf_training_5.mat']);
+load(['.' filesep 'data' filesep 'nmf_training_6.mat']);
 load(['..' filesep  'signalsGeneration' filesep 'sim_params' filesep 'sim_params_3.mat']);
 
 monteCarloLoops = 100;
@@ -48,7 +48,7 @@ for loopIndex = 1:monteCarloLoops
     loopIndex
     
     if paramsSignal.FreqDopp ~= 0
-        noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1)/20;
+        noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
         noiseVar = 2;
     else
         noise = randn(totalSamples, 1);
@@ -100,11 +100,6 @@ for loopIndex = 1:monteCarloLoops
                     xHat(:,i,JNRIndex,numberOfZerosIndex,bandwidthIndex,loopIndex) = xHatAux(edgeZeros+1:end-edgeZeros); %removing zeros at the edge
                     
                 end
-                %Trying subtracting RFI spectrogram
-
-%                 S2 = abs(abs(Pxx{1,JNRIndex}) -  W{1,JNRIndex}(:,1:(i*paramsNMF.numberOfSources/numberOfSources)) * ...
-%                         H{1,JNRIndex}(1:(i*paramsNMF.numberOfSources/numberOfSources),:)) .* exp(1j*angle(Pxx{1,JNRIndex}));
-%                 xHat2(:,1,JNRIndex,numberOfZerosIndex,bandwidthIndex,loopIndex) = istft(S2, paramsNMF.fs, 'Window', paramsNMF.window, 'OverlapLength', paramsNMF.overlap, 'FFTLength', paramsNMF.nfft);
             end
         end
         
@@ -113,7 +108,7 @@ end
 
 xHat = single(xHat);
 
-save(['.' filesep 'data' filesep 'nmf_testing_7.mat'], 'xHat', 'JNRVector', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_12.mat'], 'xHat', 'JNRVector', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep 'Sigtools' filesep])
