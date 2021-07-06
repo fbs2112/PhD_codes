@@ -6,7 +6,7 @@ addpath(['..' filesep 'Sigtools' filesep])
 addpath(['..' filesep 'signalsGeneration' filesep]);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 
-load(['.' filesep 'data' filesep 'nmf_training_6.mat']);
+load(['.' filesep 'data' filesep 'nmf_training_5.mat']);
 load(['..' filesep  'signalsGeneration' filesep 'sim_params' filesep 'sim_params_3.mat']);
 
 monteCarloLoops = 100;
