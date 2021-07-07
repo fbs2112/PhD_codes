@@ -9,7 +9,7 @@ addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 load(['.' filesep 'data' filesep 'nmf_training_5.mat']);
 load(['..' filesep  'signalsGeneration' filesep 'sim_params' filesep 'sim_params_3.mat']);
 
-monteCarloLoops = 1;
+monteCarloLoops = 100;
 SNR = -20;
 numberOfSources = 2;
 
@@ -21,7 +21,7 @@ paramsNMF = params;
 paramsNMF.numberOfComponentsPerSource = [paramsNMF.numberOfSources paramsNMF.numberOfSources];
 paramsNMF.numberOfSources = paramsNMF.numberOfSources*numberOfSources;
 paramsNMF.init = 'random';
-paramsNMF.verbose = true;
+paramsNMF.verbose = false;
 
 numberOfZerosVector = params.fs*(1e-3)*[0];
 
