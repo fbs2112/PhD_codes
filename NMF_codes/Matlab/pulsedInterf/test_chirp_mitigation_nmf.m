@@ -49,7 +49,7 @@ for loopIndex = 1:monteCarloLoops
     loopIndex
     
     if paramsSignal.FreqDopp ~= 0
-        noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1)/20;
+        noise = randn(totalSamples, 1) + 1j*randn(totalSamples, 1);
         noiseVar = 2;
     else
         noise = randn(totalSamples, 1);

@@ -44,7 +44,7 @@ JNRVector = matObj3.JNRVector;
 corrOut = zeros(7, length(JNRVector), length(bandwidthVector), monteCarloLoops);
 generalisedSNR = zeros(7, length(JNRVector), length(bandwidthVector), monteCarloLoops);
 
-for loopIndex = 1:monteCarloLoops
+for loopIndex = 1:1
     loopIndex
     xHatAux = squeeze(matObj1.xHat(:,2,:,1,1,:,loopIndex));
     xHatPaiPerfAux = squeeze(matObj2.xHatPaiPerf(:,:,1,1,:,loopIndex));
@@ -88,7 +88,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'fig_merig_1.mat'], 'corrOut', 'generalisedSNR', '-v7.3');
+% save(['.' filesep 'data' filesep 'fig_merit_2.mat'], 'corrOut', 'generalisedSNR', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);
