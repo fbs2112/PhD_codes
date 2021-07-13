@@ -7,7 +7,7 @@ addpath(['..' filesep 'Sigtools' filesep])
 
 load(['..' filesep  'signalsGeneration' filesep 'sim_params' filesep 'sim_params_3.mat']);
 
-matObj1 = matfile(['..' filesep 'pulsedInterf' filesep 'data' filesep 'nmf_testing_35.mat']);
+matObj1 = matfile(['..' filesep 'pulsedInterf' filesep 'data' filesep 'nmf_testing_37.mat']);
 matObj2 = matfile(['..' filesep 'pulsedInterf' filesep 'data' filesep 'resultsPai07.mat']);
 matObj3 = matfile(['.' filesep 'data' filesep 'nmf_testing_12.mat']);
 matObj4 = matfile(['.' filesep 'data' filesep 'nmf_testing_11.mat']);
@@ -88,7 +88,7 @@ for loopIndex = 1:1
     end
 end
 
-% save(['.' filesep 'data' filesep 'fig_merit_2.mat'], 'corrOut', 'generalisedSNR', '-v7.3');
+save(['.' filesep 'data' filesep 'fig_merit_2.mat'], 'corrOut', 'generalisedSNR', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);
