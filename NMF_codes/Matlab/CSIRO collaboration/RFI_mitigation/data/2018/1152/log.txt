@@ -1,0 +1,7 @@
+results1: results using WRFI from the first 20 frames without zeroing  (2018-09-01-09_52_55_0000000000000000.000000)
+results2: results using WRFI from the first 20 frames with zeroing (133 - 7:133 + 7) (2018-09-01-09_52_55_0000000000000000.000000)
+results3: results using WRFI from the first 20 frames with zeroing (133 - 7:133 + 7) for the first 100 frames (2018-09-01-09_52_55_0000000000000000.000000)
+results4: results using semiblind NMF for the first 100 frames (2018-09-01-09_52_55_0000000000000000.000000)
+results5: results using WRFI from the first 20 frames with zeroing (133 - 7:133 + 7) for the first 100 frames (2018-09-01-09_52_55_0000000000000000.000000) using blocks of 500 mus
+results6: results using semiblind NMF for the first 100 frames (2018-09-01-09_52_55_0000000000000000.000000) using blocks of 500 mus
+results7: results using WRFI (kaiser window) for the first 100 frames (2018-09-01-09_52_55_0000000000000000.000000)
