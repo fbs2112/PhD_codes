@@ -74,8 +74,8 @@ for loopIndex = 1:numberOfSignalFrames
     interferenceFramesA = parkesSignalA;
     interferenceFramesB = parkesSignalB;
     
-    interferenceFramesABuffer = buffer(interferenceFramesA, length(interferenceFramesA)/20, 0, 'nodelay');
-    interferenceFramesBBuffer = buffer(interferenceFramesB, length(interferenceFramesB)/20, 0, 'nodelay');
+    interferenceFramesABuffer = buffer(interferenceFramesA, length(interferenceFramesA)/1, 0, 'nodelay');
+    interferenceFramesBBuffer = buffer(interferenceFramesB, length(interferenceFramesB)/1, 0, 'nodelay');
     
     xHatAAux = zeros(size(interferenceFramesABuffer, 1), size(interferenceFramesABuffer, 2), 2);
     xHatBAux = zeros(size(interferenceFramesABuffer, 1), size(interferenceFramesABuffer, 2), 2);
