@@ -16,10 +16,11 @@ numberOfSources = 2;
 params.JNRVector = 0:5:30;
 
 JNRVector = params.JNRVector;
+params.alg = 'vanilla_semi';
 paramsNMF = params;
+paramsNMF.numberOfComponentsPerSource = [paramsNMF.numberOfSources paramsNMF.numberOfSources];
 paramsNMF.numberOfSources = paramsNMF.numberOfSources*numberOfSources;
-paramsNMF.init = 'custom';
-paramsNMF.transform = false;
+paramsNMF.init = 'random';
 paramsNMF.verbose = false;
 
 numberOfZerosVector = params.fs*(1e-3)*[0];
@@ -79,8 +80,8 @@ for loopIndex = 1:monteCarloLoops
                 mixtureSignalZeros = [zeros(edgeZeros, 1); mixtureSignalZeros; zeros(edgeZeros, 1)];
                 mixtureSignal(:,JNRIndex,loopIndex) = mixtureSignalZeros;
             end
-            paramsNMF.W0 = W0{1,bandwidthIndex}(:,1:params.numberOfSources*numberOfSources);
-            
+            paramsNMF.W0 = W0{1,bandwidthIndex}(:,params.numberOfSources+1:end);
+           
             [W, H, error, Pxx, f, t] = nmf_eval_v2(mixtureSignal(:,:,loopIndex), paramsNMF);
             
             for JNRIndex = 1:length(paramsNMF.JNRVector)
@@ -108,7 +109,7 @@ end
 
 xHat = single(xHat);
 
-save(['.' filesep 'data' filesep 'nmf_testing_12.mat'], 'xHat', 'JNRVector', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_14.mat'], 'xHat', 'JNRVector', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep 'Sigtools' filesep])
