@@ -82,7 +82,7 @@ for loopIndex = 1:monteCarloLoops
                     xHatPaiPerf(:,JNRIndex,numberOfZerosIndex,nbitsIndex,bandwidthIndex,loopIndex) = NF_pai(mixtureSignal, iflawestiTF, kalpha, rho);
 
                     [iflawestiTF, IFrate, linearflag] = IFEstimator_pai(mixtureSignal, iflaw(:,bandwidthIndex), IFEstimationFlag2);
-                    xHatPaiIFest(:,JNRIndex,numberOfZerosIndex,nbitsIndex,bandwidthIndex,loopIndex) = KF_pai(mixtureSignal, IFEstimationFlag2, iflawestiTF, IFrate, linearflag);
+                    xHatPaiIFest(:,JNRIndex,numberOfZerosIndex,nbitsIndex,bandwidthIndex,loopIndex) = NF_pai(mixtureSignal, iflawestiTF, kalpha, rho);
                 end
             end
             
