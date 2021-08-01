@@ -6,7 +6,7 @@ addpath(['..' filesep 'Sigtools' filesep])
 addpath(['..' filesep 'signalsGeneration' filesep]);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 
-load(['.' filesep 'data' filesep 'nmf_training_8.mat']);
+load(['.' filesep 'data' filesep 'nmf_training_5.mat']);
 load(['..' filesep  'signalsGeneration' filesep 'sim_params' filesep 'sim_params_3.mat']);
 
 monteCarloLoops = 100;
@@ -115,7 +115,7 @@ end
 
 xHat = single(xHat);
 
-save(['.' filesep 'data' filesep 'nmf_testing_16.mat'], 'xHat', 'JNRVector', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_20.mat'], 'xHat', 'JNRVector', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep 'Sigtools' filesep])
