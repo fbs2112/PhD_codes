@@ -123,7 +123,7 @@ for loopIndex = 1:monteCarloLoops
     end
 end
 
-save(['.' filesep 'data' filesep 'fig_merit_5.mat'], 'corrOut', 'generalisedSNR', 'peakRatio', 'DopFreq', 'delay', '-v7.3');
+save(['.' filesep 'data' filesep 'fig_merit_5.mat'], 'corrOut', 'generalisedSNR', 'peakRatio', 'DopFreq', 'codeDelay', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);
