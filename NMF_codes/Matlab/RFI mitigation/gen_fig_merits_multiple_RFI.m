@@ -14,6 +14,8 @@ matObj4 = matfile(['.' filesep 'data' filesep 'nmf_testing_18.mat']);           
 matObj5 = matfile(['..' filesep 'pulsedInterf' filesep 'data' filesep 'resultsPai11.mat']);%kalman
 matObj6 = matfile(['..' filesep 'pulsedInterf' filesep 'data' filesep 'resultsPai10.mat']);%notch
 matObj7 = matfile(['.' filesep 'data' filesep 'wav_testing_2.mat']);                       %wavelet
+matObj8 = matfile(['.' filesep 'data' filesep 'nmf_testing_19.mat']);
+matObj9 = matfile(['.' filesep 'data' filesep 'nmf_testing_20.mat']);
 
 fi = 0;
 fs = paramsSignal.Freqsamp;
@@ -42,8 +44,11 @@ bandwidthVector = [2 8 14];
 monteCarloLoops = 100;
 JNRVector = matObj3.JNRVector;
 
-corrOut = zeros(9, length(JNRVector), length(bandwidthVector), monteCarloLoops);
-generalisedSNR = zeros(9, length(JNRVector), length(bandwidthVector), monteCarloLoops);
+corrOut = zeros(11, length(JNRVector), length(bandwidthVector), monteCarloLoops);
+generalisedSNR = zeros(11, length(JNRVector), length(bandwidthVector), monteCarloLoops);
+peakRatio = zeros(11, length(JNRVector), length(bandwidthVector), monteCarloLoops);
+DopFreq = zeros(11, length(JNRVector), length(bandwidthVector), monteCarloLoops);
+codeDelay = zeros(11, length(JNRVector), length(bandwidthVector), monteCarloLoops);
 
 for loopIndex = 1:monteCarloLoops
     loopIndex
@@ -56,6 +61,8 @@ for loopIndex = 1:monteCarloLoops
     xHatPaiPerfAuxNotch = squeeze(matObj6.xHatPaiPerf(:,:,1,1,:,loopIndex));
     xHatPaiIFestAuxNotch = squeeze(matObj6.xHatPaiIFest(:,:,1,1,:,loopIndex));
     xHatAux5 = squeeze(matObj7.xHat(:,:,1,:,loopIndex));
+    xHatAux6 = squeeze(matObj8.xHat(:,2,:,1,:,loopIndex));
+    xHatAux7 = squeeze(matObj9.xHat(:,2,:,1,:,loopIndex));
     
     for bandwidthIndex = 1:length(bandwidthVector)
         bandwidthIndex
@@ -70,8 +77,9 @@ for loopIndex = 1:monteCarloLoops
             GPSSignals(7,:) = xHatPaiPerfAuxNotch(:,JNRIndex,bandwidthIndex);
             GPSSignals(8,:) = xHatPaiIFestAuxNotch(:,JNRIndex,bandwidthIndex);
             GPSSignals(9,:) = xHatAux5(:,JNRIndex,bandwidthIndex);
-            
-            for i = 1:9
+            GPSSignals(10,:) = xHatAux6(:,JNRIndex,bandwidthIndex);
+            GPSSignals(11,:) = xHatAux7(:,JNRIndex,bandwidthIndex);
+            for i = 1:11
                 sspace = 0;                 % Search space were the results will be stored
                 for ii = 1:K
                     y = GPSSignals(i, (ii - 1) * Nc + (1:Nc) );   % use just 1 period of code at the time
@@ -80,7 +88,7 @@ for loopIndex = 1:monteCarloLoops
                     sspace = sspace + Tsspace;  % Non-coherently accumulate the results
                 end
                 
-                [~, DopInd] = max(max(sspace.'));
+                [maxVal, DopInd] = max(max(sspace.'));
                 [~, codInd] = max(max(sspace));
                 
                 corrOut(i,JNRIndex,bandwidthIndex,loopIndex) = searchSpace(DopInd,codInd);
@@ -92,12 +100,38 @@ for loopIndex = 1:monteCarloLoops
                 peakAux = (mean(correctPeak - sspaceAux)^2);
                 varSspace = var(sspace(:));
                 generalisedSNR(i,JNRIndex,bandwidthIndex,loopIndex) = peakAux/varSspace;
+                
+                 %--- Find 1 chip wide C/A code phase exclude range around the peak ----
+                samplesPerCodeChip = round(fs / paramsSignal.Freqcode);
+                excludeRangeIndex1 = codInd - samplesPerCodeChip;
+                excludeRangeIndex2 = codInd + samplesPerCodeChip;
+                
+                %--- Correct C/A code phase exclude range if the range includes array
+                %boundaries
+                if excludeRangeIndex1 < 2
+                    codePhaseRange = excludeRangeIndex2 : ...
+                        (Nc + excludeRangeIndex1);
+                    
+                elseif excludeRangeIndex2 >= Nc
+                    codePhaseRange = (excludeRangeIndex2 - Nc) : ...
+                        excludeRangeIndex1;
+                else
+                    codePhaseRange = [1:excludeRangeIndex1, ...
+                        excludeRangeIndex2 : Nc];
+                end
+                
+                %--- Find the second highest correlation peak in the same freq. bin ---
+                secondPeakSize = max(sspace(DopInd, codePhaseRange));
+                
+                peakRatio(i,JNRIndex,bandwidthIndex,loopIndex) = maxVal / secondPeakSize;
+                DopFreq(i,JNRIndex,bandwidthIndex,loopIndex) = Freq(DopInd);
+                codeDelay(i,JNRIndex,bandwidthIndex,loopIndex) = codeDl(codInd)*1e6;
             end
         end
     end
 end
 
-save(['.' filesep 'data' filesep 'fig_merit_4.mat'], 'corrOut', 'generalisedSNR', '-v7.3');
+save(['.' filesep 'data' filesep 'fig_merit_6.mat'], 'corrOut', 'generalisedSNR', 'peakRatio', 'DopFreq', 'codeDelay', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);
