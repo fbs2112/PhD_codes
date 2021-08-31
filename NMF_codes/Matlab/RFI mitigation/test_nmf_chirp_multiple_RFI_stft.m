@@ -6,13 +6,13 @@ addpath(['..' filesep 'Sigtools' filesep])
 addpath(['..' filesep 'signalsGeneration' filesep]);
 addpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 
-load(['.' filesep 'data' filesep 'nmf_training_7.mat']);
+load(['.' filesep 'data' filesep 'nmf_training_4.mat']); %CHANGE HERE FOR BLIND NMF TO 7
 load(['..' filesep  'signalsGeneration' filesep 'sim_params' filesep 'sim_params_3.mat']);
 
 monteCarloLoops = 100;
 SNR = -20;
 numberOfSources = 2;
-
+    
 params.JNRVector = 0:5:30;
 
 JNRVector = params.JNRVector;
@@ -115,7 +115,7 @@ end
 
 xHat = single(xHat);
 
-save(['.' filesep 'data' filesep 'nmf_testing_15.mat'], 'xHat', 'JNRVector', '-v7.3');
+save(['.' filesep 'data' filesep 'nmf_testing_19.mat'], 'xHat', 'JNRVector', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep 'NMF_algorithms'])
 rmpath(['..' filesep 'Sigtools' filesep])
