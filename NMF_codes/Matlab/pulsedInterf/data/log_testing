@@ -30,7 +30,10 @@ nmf_testing_31: testing using coherence time of 1 ms, error thresholds of 1e-3 a
 nmf_testing_32: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp for various bandwidth values
 nmf_testing_33: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp for various bandwidth values using clean GPS signals during the training
 nmf_testing_34: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp for various bandwidth values using clean GPS signals during the training and assuming knowledge about the interference
+nmf_testing_35: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, semi supervised, interference signal: chirp for various bandwidth values using GPS + noise during the training and assuming knowledge about the interference using silence periods of params.fs*(1e-3)*[0 0.25 0.5];
+nmf_testing_36: testing using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, interference signal: chirp for various bandwidth values using GPS + noise during the training and assuming knowledge about the interference with 500 MonteCarlo loops
 
-
+nmf_testing_37: testing using coherence time of 1 ms, error thresholds of 1e-6 and max it = 500, interference signal: chirp for various bandwidth values using GPS + noise during the training and assuming knowledge about the interference with 100 MonteCarlo loops and noise variance fixed
+ 
 
     

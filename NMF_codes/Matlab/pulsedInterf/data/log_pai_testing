@@ -1,2 +1,10 @@
 resultsPai02: results using perfect IF estimation
-resultsPai03: results using estimated IF estimation
+resultsPai03: results using estimated IF 
+resultsPai04: results using perfect IF estimation and baseband chirp bandwidth
+resultsPai05: results using estimated IF and baseband chirp bandwidth
+resultsPai06: results using both estimated and perfect IF estimation for B: 2:6:14 MHz and JNR from 0:5:30 dB
+resultsPai07: results using both estimated and perfect IF estimation for B: 2:6:14 MHz and JNR from 0:5:30 dB using silence periods of params.fs*(1e-3)*[0 0.25 0.5];
+resultsPai08: results using both estimated and perfect IF estimation for B: 2:6:14 MHz and JNR from 0:5:30 dB using silence periods of params.fs*(1e-3)*[0] with 500 MonteCarlo loops;
+resultsPai09: results using both estimated and perfect IF estimation for B: 2:6:14 MHz and JNR from 0:5:30 dB using silence periods of params.fs*(1e-3)*[0] using notch filter [Pai ref num 14] 100 MC;
+resultsPai10: results using both estimated and perfect IF estimation for B: 2:6:14 MHz and JNR from 0:5:30 dB using silence periods of params.fs*(1e-3)*[0] using notch filter [Pai ref num 14] 100 MC chirp + CW;
+resultsPai11: results using both estimated and perfect IF estimation for B: 2:6:14 MHz and JNR from 0:5:30 dB using silence periods of params.fs*(1e-3)*[0] using kalman filter 100 MC chirp + CW;

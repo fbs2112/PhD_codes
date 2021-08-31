@@ -24,3 +24,9 @@ nmf_training_23: training using coherence time of 1 ms, error thresholds of 1e-3
 nmf_training_24: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, nfft = 1024
 nmf_training_25: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, nfft = 256, JNR adjusted
 nmf_training_26: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 5, GPS signals without noise, nfft = 256, JNR adjusted, chirp bandwidth fixed
+nmf_training_27: training using coherence time of 1 ms, error thresholds of 1e-3 and max it = 500, no quantisation, n_sources = 100, GPS signals without noise, nfft = 256, JNR adjusted, chirp bandwidth fixed
+nmf_training_28: training using coherence time of 1 ms, error thresholds of 1e-6 and max it = 500, no quantisation, n_sources = 10, 10 components for the GPS signal, RFI, and noise, nfft = 256, JNR adjusted, chirp bandwidth fixed
+nmf_training_28: training using coherence time of 1 ms, error thresholds of 1e-6 and max it = 500, no quantisation, n_sources = 10, 10 components for the GPS signal, RFI, and noise, nfft = 256, overlap = nfft/2, JNR adjusted, chirp bandwidth fixed
+nmf_training_29: training using coherence time of 1 ms, error thresholds of 1e-6 and max it = 500, no quantisation, n_sources = 5, 5 components for the GPS signal, RFI, and noise, nfft = 256, overlap = nfft-1, chirp bandwidth fixed from [2 8 14] MHz
+nmf_training_30: training using coherence time of 1 ms, error thresholds of 1e-6 and max it = 500, no quantisation, n_sources = 5, 5 components for the GPS signal + noise, RFI, and noise, nfft = 256, overlap = nfft-1, chirp bandwidth fixed from [2 8 14] MHz
+
