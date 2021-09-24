@@ -1,0 +1,5 @@
+fig_merit_2 and fig_merit_2_1: figures of merit for single RFI (chirp) Gen SNR and Correlation peak
+fig_merit_4 and fig_merit_4_1: figures of merit for multiple RFI (chirp + CW) Gen SNR and Correlation peak
+
+fig_merit_5: fig_merit_2 and fig_merit_2_1 merged into one file without old STFT results;
+fig_merit_6: fig_merit_4 and fig_merit_4_1 merged into one file;
