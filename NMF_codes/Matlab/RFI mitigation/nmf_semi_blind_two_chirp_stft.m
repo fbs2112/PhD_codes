@@ -66,7 +66,7 @@ for loopIndex = 1:monteCarloLoops
         [interferenceSignal, ~] = interferenceGen(paramsSignal);
         interferenceSignal = interferenceSignal(1:numberOfRawSamples);
         interferenceSignal2 = circshift(interferenceSignal, round(paramsSignal.Noneperiod/4));
-        interferenceSignal = interferenceSignal + interferenceSignalCW + interferenceSignal2;
+        interferenceSignal = interferenceSignal + interferenceSignal2;
         interferenceSignalPower = pow_eval(interferenceSignal);
         
         for numberOfZerosIndex = 1:length(numberOfZerosVector)
