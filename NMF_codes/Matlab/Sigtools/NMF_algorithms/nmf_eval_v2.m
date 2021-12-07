@@ -80,6 +80,12 @@ if ~isfield(params, 'tf')
     params.tf = 'stft';
 end
 
+if ~isfield(params, 'betaDivergence')
+    params.betaDivergence = 1;
+elseif strcmp(params.betaDivergence, 'kullback-leibler')
+    params.betaDivergenceAux = 1;
+end
+
 dataCell = cell(dataCellLength, length(params.JNRVector));
 W2 = cell(dataCellLength, length(params.JNRVector));
 H2 = cell(dataCellLength, length(params.JNRVector));
@@ -158,8 +164,14 @@ for i = 1:size(mixtureSignal, 2)
                     [W, H, reconstructError] = nmf_vanilla(inputNMF, params);
                 case 'vanilla_sparse_H'
                     [W, H, reconstructError] = nmf_vanilla_sparse_H(inputNMF, params);
+                case 'vanilla_ort_W'
+                    [W, H, reconstructError] = nmf_vanilla_orthogonal_W(inputNMF, params);
+                case 'vanilla_ort_H'
+                    [W, H, reconstructError] = nmf_vanilla_orthogonal_H(inputNMF, params);
                 case 'snmf'
                     [W, H, reconstructError] = nmf_sparse_well_done(inputNMF, params);
+                case 'snmf_v2'
+                    [W, H, reconstructError] = nmf_sparse_well_done_v2(inputNMF, params);
                 case 'vanilla_semi'
                     [W, H, reconstructError] = nmf_vanilla_semi(inputNMF, params);
                 case 'snmf_semi'
