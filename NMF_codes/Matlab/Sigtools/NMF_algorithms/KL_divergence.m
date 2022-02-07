@@ -21,5 +21,21 @@ res = sum(res(:));
 
 if nargin == 4
     mu = varargin{1};
-    res = res + mu(1)*norm(W, 1) + mu(2)*norm(H, 1);
+    res = res + mu(1)*norm(W(:), 1) + mu(2)*norm(H(:), 1);
+end
+
+if nargin > 4
+    if strcmp(varargin{1}, 'ort')
+        mu = varargin{2};
+        WAux = (W.'*W);
+        HAux = H*H.';
+        res = res + mu(1)*(sum(WAux(:)) - norm(W, 'fro')^2)/2 + mu(2)*(sum(HAux(:)) - norm(H, 'fro')^2)/2;
+    elseif strcmp(varargin{1}, 'ort_H')
+        mu = varargin{2};
+        numberOfComponentsPerSource = varargin{3};
+        HAux = H(1:numberOfComponentsPerSource(1),:)*H(1:numberOfComponentsPerSource(1),:).';
+        res = res + mu(2)*(sum(HAux(:)) - norm(H(1:numberOfComponentsPerSource(1),:), 'fro')^2)/2;
+    else
+        error('Please type ort when calling this function, followed by the penalty constants');  
+    end
 end

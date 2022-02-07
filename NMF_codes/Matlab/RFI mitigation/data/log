@@ -1,6 +1,36 @@
 nmf_training_1: 60 components for each source, hamming window, nfft = 256
 nmf_training_2: 60 components for each source, hamming window, nfft = 256, only GPS;
-nmf_training_3: 60 components for each source, kaiser window, beta = 60, nfft = 256
+nmf_training_3: 60 components for each source, kaiser window, beta = 60, nfft = 256;
+nmf_training_4: 5 components for each source, kaiser window, beta = 60, nfft = 256;
+nmf_training_5: 5 components for each source, kaiser window, beta = 60, nfft = 256 using fsst;
+nmf_training_6: 60 components for each source, kaiser window, beta = 60, nfft = 256 using fsst;
+nmf_training_7: 5 components for each source, kaiser window, beta = 60, nfft = 256 using stft with CW + chirp;
+nmf_training_8: 5 components for each source, kaiser window, beta = 60, nfft = 256 using fsst with CW + chirp;
+nmf_training_9: 5 components for each source, kaiser window, beta = 60, nfft = 256 using stft with CW + chirp + phase shifted chirp ;
+nmf_training_10: 5 components for each source, kaiser window, beta = 60, nfft = 256 using fsst with CW + chirp + phase shifted chirp ;
+
+
 nmf_testing_1: 60 components for each source, hamming window, nfft = 256 for JNR = 10 dB;
 nmf_testing_2: 60 components for each source, hamming window, nfft = 256 for JNR = 0:5:30 dB;
-nmf_testing_3 60 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB;
+nmf_testing_3: 60 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB;
+nmf_testing_4: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB;
+nmf_testing_5: 5 components for each source, kaiser window, beta = 60, nfft = 256 using fsst;
+nmf_testing_6: same as nmf_testing_4 using 100 MonteCarlo loops;
+nmf_testing_7: same as nmf_testing_5 using 100 MonteCarlo loops;
+nmf_testing_8: 60 components for each source, kaiser window, beta = 60, nfft = 256 using fsst;
+nmf_testing_9: same as nmf_testing_4 using 500 MonteCarlo loops;
+nmf_testing_10: same as nmf_testing_5 using 500 MonteCarlo loops;
+nmf_testing_11: same as nmf_testing_4 with fixed noise variance;
+nmf_testing_12: same as nmf_testing_5 with fixed noise variance;
+nmf_testing_13: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB and semi-blind approach; (100 MC)
+nmf_testing_14: 5 components for each source, kaiser window, beta = 60, nfft = 256 using fsst and semi-blind approach; (100 MC)
+nmf_testing_15: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, stft with CW + chirp;
+nmf_testing_16: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, fsst with CW + chirp;
+nmf_testing_17: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, stft with CW + chirp, semi blind;
+nmf_testing_18: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, fsst with CW + chirp, semi blind;
+nmf_testing_19: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, stft with CW + chirp with WRFI calculated from chirp only;
+nmf_testing_20: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, fsst with CW + chirp with WRFI calculated from chirp only;
+nmf_testing_21: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, stft with CW + 2 chirps (only 8 MHz);
+nmf_testing_22: 5 components for each source, kaiser window, beta = 60, nfft = 256 for JNR = 0:5:30 dB, fsst with CW + 2 chirps (only 8 MHz);
+
+
