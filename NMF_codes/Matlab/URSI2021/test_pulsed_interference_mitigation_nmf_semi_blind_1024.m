@@ -85,7 +85,7 @@ end
 xHat = single(xHat);
 mixtureSignal = single(mixtureSignal);
 
-save(['.' filesep 'data' filesep 'nmf_testing_13.mat'], 'xHat', 'mixtureSignal', 'JNRVector', 'numberOfComponentsVector');
+save(['.' filesep 'data' filesep 'nmf_testing_13.mat'], 'xHat', 'mixtureSignal', 'JNRVector', 'numberOfComponentsVector', '-v7.3');
 
 rmpath(['..' filesep 'Sigtools' filesep])
 rmpath(['..' filesep 'signalsGeneration' filesep]);
