@@ -27,6 +27,8 @@ function [W, H, reconstructError] = nmf_vanilla_orthogonal_H(X, params, varargin
 
 if ~isfield(params, 'numberOfComponentsPerSource')
     numberOfComponentsPerSource = [params.numberOfSources/2 params.numberOfSources/2];
+else
+    numberOfComponentsPerSource = params.numberOfComponentsPerSource;
 end
 
 numberOfSources = params.numberOfSources;
