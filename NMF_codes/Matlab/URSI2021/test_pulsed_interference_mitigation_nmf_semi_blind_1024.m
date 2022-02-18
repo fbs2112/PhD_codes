@@ -80,6 +80,9 @@ for loopIndex = 1:monteCarloLoops
             xHat(:,JNRIndex,numberOfComponentsIndex,loopIndex) = istft(S, params.fs, 'Window', params.window, 'OverlapLength', params.overlap, 'FFTLength', params.nfft);
         end
     end
+    fileID = fopen('temp.txt','a');
+    fprintf(fileID,'%i\n', loopIndex);
+    fclose(fileID);
 end
 
 xHat = single(xHat);
