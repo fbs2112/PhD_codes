@@ -169,13 +169,11 @@ for i = 1:size(mixtureSignal, 2)
                 case 'vanilla_ort_H'
                     [W, H, reconstructError] = nmf_vanilla_orthogonal_H(inputNMF, params);
                 case 'snmf'
-                    [W, H, reconstructError] = nmf_sparse_well_done(inputNMF, params);
-                case 'snmf_v2'
                     [W, H, reconstructError] = nmf_sparse_well_done_v2(inputNMF, params);
-                case 'vanilla_semi'
-                    [W, H, reconstructError] = nmf_vanilla_semi(inputNMF, params);
                 case 'snmf_semi'
                     [W, H, reconstructError] = nmf_sparse_well_done_semi(inputNMF, params);
+                case 'vanilla_semi'
+                    [W, H, reconstructError] = nmf_vanilla_semi(inputNMF, params);
                 otherwise
                     error('NMF algorithm not supported');
             end
